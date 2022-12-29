@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ProDat.Web2.Migrations
 {
-    public partial class initial : Migration
+    public partial class initial_sl : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -1500,8 +1500,8 @@ namespace ProDat.Web2.Migrations
                     LocationDesc = table.Column<string>(maxLength: 255, nullable: false),
                     Longitude = table.Column<string>(nullable: true),
                     Latitude = table.Column<string>(nullable: true),
-                    Elevation = table.Column<int>(nullable: false),
-                    ParentLocationID = table.Column<int>(nullable: false),
+                    Elevation = table.Column<int>(nullable: true),
+                    ParentLocationID = table.Column<int>(nullable: true),
                     LocationType = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -1518,7 +1518,7 @@ namespace ProDat.Web2.Migrations
                         column: x => x.ParentLocationID,
                         principalTable: "Location",
                         principalColumn: "LocationID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(

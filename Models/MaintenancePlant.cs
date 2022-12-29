@@ -16,9 +16,11 @@ namespace ProDat.Web2.Models
         }
 
         public int MaintenancePlantId { get; set; }
+        
         [Required]
         [Display(Name = "Maint. Plant Number")]
         public string MaintenancePlantNum { get; set; }
+       
         [Display(Name = "Maint. Plant Desc")]
         public string MaintenancePlantDesc { get; set; }
 

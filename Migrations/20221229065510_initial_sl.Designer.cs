@@ -10,8 +10,8 @@ using ProDat.Web2.Data;
 namespace ProDat.Web2.Migrations
 {
     [DbContext(typeof(TagContext))]
-    [Migration("20221229024711_initial")]
-    partial class initial
+    [Migration("20221229065510_initial_sl")]
+    partial class initial_sl
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -1080,7 +1080,7 @@ namespace ProDat.Web2.Migrations
                     b.Property<int>("AreaId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Elevation")
+                    b.Property<int?>("Elevation")
                         .HasColumnType("int");
 
                     b.Property<string>("Latitude")
@@ -1102,7 +1102,7 @@ namespace ProDat.Web2.Migrations
                     b.Property<string>("Longitude")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ParentLocationID")
+                    b.Property<int?>("ParentLocationID")
                         .HasColumnType("int");
 
                     b.HasKey("LocationID");
@@ -3897,9 +3897,7 @@ namespace ProDat.Web2.Migrations
 
                     b.HasOne("ProDat.Web2.Models.Location", "ParentLocation")
                         .WithMany()
-                        .HasForeignKey("ParentLocationID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ParentLocationID");
                 });
 
             modelBuilder.Entity("ProDat.Web2.Models.LocationTypes", b =>

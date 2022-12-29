@@ -924,12 +924,12 @@ CREATE TABLE [Location] (
     [LocationDesc] nvarchar(255) NOT NULL,
     [Longitude] nvarchar(max) NULL,
     [Latitude] nvarchar(max) NULL,
-    [Elevation] int NOT NULL,
-    [ParentLocationID] int NOT NULL,
+    [Elevation] int NULL,
+    [ParentLocationID] int NULL,
     [LocationType] nvarchar(max) NULL,
     CONSTRAINT [PK_Location] PRIMARY KEY ([LocationID]),
     CONSTRAINT [FK_Location_Area] FOREIGN KEY ([AreaId]) REFERENCES [Area] ([AreaID]) ON DELETE NO ACTION,
-    CONSTRAINT [FK_Location_Location_ParentLocationID] FOREIGN KEY ([ParentLocationID]) REFERENCES [Location] ([LocationID]) ON DELETE CASCADE
+    CONSTRAINT [FK_Location_Location_ParentLocationID] FOREIGN KEY ([ParentLocationID]) REFERENCES [Location] ([LocationID]) ON DELETE NO ACTION
 );
 
 GO
@@ -2083,7 +2083,7 @@ CREATE UNIQUE INDEX [U_Vib] ON [Vib] ([VibName]);
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20221229024711_initial', N'3.1.30');
+VALUES (N'20221229065510_initial_sl', N'3.1.30');
 
 GO
 

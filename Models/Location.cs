@@ -33,9 +33,9 @@ namespace ProDat.Web2.Models
 
         public string Latitude { get; set; }
 
-        public int Elevation { get; set; }
+        public int? Elevation { get; set; }
 
-        public int ParentLocationID { get; set; }
+        public int? ParentLocationID { get; set; }
 
         public string LocationType { get; set; }
         
