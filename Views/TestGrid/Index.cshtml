@@ -1,0 +1,618 @@
+﻿@model ProDat.Web2.ViewModels.UC1_TagsVM
+
+@{
+    ViewData["Title"] = "Test Grid";
+}
+
+
+<div id="form" class="dx-swatch-Datagrid_White" style="overflow-y: hidden; overflow-x: hidden">
+     @(Html.DevExtreme().DataGrid<ProDat.Web2.ViewModels.UC1_TagsVM>()
+            .ID("TagRegister")
+            .Height(1150)
+            .DataSource( ds => ds.Mvc()
+                .Controller("TestGrid")
+                .LoadAction("TagRegister_GetData")
+                //.InsertAction("TagRegister_Insert")
+                //.UpdateAction("TagRegister_Update")
+                //.DeleteAction("TagRegister_Delete")
+                .Key("TagId")
+            )
+            .Editing(editing =>
+            {
+                editing.Mode(GridEditMode.Cell);
+            })
+            .Selection(s => s.Mode(SelectionMode.Multiple))
+            .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+            //.OnExporting("exporting")
+            .RemoteOperations(false)
+            .AllowColumnReordering(true)
+            .RowAlternationEnabled(true)
+            //.OnContextMenuPreparing("GridViewContextMenuDefault")
+            //.OnContentReady("TagRegister_OnContentReady")
+            //.OnToolbarPreparing("TagRegister_OnToolbarPreparing")
+            .ShowBorders(true)
+            .FilterRow(f => f
+                .Visible(true)
+                .ApplyFilter(GridApplyFilterMode.Auto)
+            ) 
+            .OnEditorPreparing("OnEditorPreparing_lookupCols")
+            .HeaderFilter(x=> x.Visible(true))
+            .ColumnChooser(c=> c.Enabled(true))
+            .ColumnFixing(c => c.Enabled(true))
+            .ColumnResizingMode(ColumnResizingMode.Widget)
+            .AllowColumnResizing(true)
+            .SearchPanel(s => s
+                .Visible(true)
+                .HighlightCaseSensitive(true)
+             )
+            .GroupPanel(g => g
+                .Visible(true)
+                .AllowColumnDragging(true)
+            )
+            .Grouping(g => g.AutoExpandAll(false))
+            .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+            .Paging(p=> p.PageSize(45))
+            //.OnCellPrepared("DataGrid_OnCellPrepared")
+            .Columns(columns =>
+            {
+                columns.AddFor(x => x.TagId);
+
+                columns.Add()
+                    .DataField("TagNumber")
+                    .Caption("Tag Number");
+                
+                columns.AddFor(x => x.TagFloc);
+
+                columns.AddFor(x => x.TagFlocDesc);
+
+                columns.AddFor(x => x.EngDiscId)
+                    .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("EngDisc_Lookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                columns.AddFor(x => x.MaintLocationId)
+                    .SetCellValue("setCellValue_MaintLocation")
+                    .SelectedFilterOperation(FilterOperations.Contains)
+                    .CalculateFilterExpression("calculateFilterExpression_lookupCols")
+                    .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintLocation_Lookup")
+                        .Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+
+                columns.AddFor(x => x.EngStatusId)
+                    .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("EngStatus_Lookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+
+                columns.AddFor(x => x.MaintParentId)
+                    .AllowEditing(false)
+                    .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintParent_Lookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                
+            })
+
+        )
+</div>
+
+
+<script>
+    // List lookup columns to use text searching. The column definition for these items needs to include calculateFilterExpression_lookupCols
+    function OnEditorPreparing_lookupCols(e) {
+        if (e.parentType === "filterRow" && e.dataField === "MaintLocationId") {
+            e.editorName = "dxTextBox"; 
+            e.editorOptions.valueChangeEvent = "keyup change";
+        }
+    }
+
+    // for cols that you want to override searching behaviour, add this to column function:
+    // .CalculateFilterExpression("calculateFilterExpression_lookupCols")
+    function calculateFilterExpression_lookupCols(filterValue, selectedFilterOperaion, target) {
+        var column = this;
+        if (target === "filterRow" && filterValue) {
+            return [function (data) {
+                var value = column.calculateCellValue(data);
+                var text = column.lookup.calculateCellValue(value) || "";
+                return text;
+            }, "contains", filterValue];
+        }
+
+        return this.defaultCalculateFilterExpression.apply(this, arguments);
+    }
+
+</script>
+
+<!-- Trigger events for search UI ddls -->
+<script>
+    // Perform action when fields updated/edited.
+    function Option_ColumnSets(e) {
+        //reload page with ?columnSetsName=e.value;
+        return $("#Form1").submit();
+    }
+
+</script>
+
+
+<!-- Lookup functions -->
+<script>
+
+    // need to create one of these for every star field... If I could retrieve the FieldName it was related to, I could build on the fly..
+    function setCellValue_EngDisc(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.EngDiscId = currentRowData.EngDiscId;
+            target = '/EngDiscs';
+            window.open(target);
+        }
+        else {
+            newData.EngDiscId = value;
+        }
+    }
+
+    //setCellValue_Vib
+    function setCellValue_Vib(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.VibId = currentRowData.VibId;
+            target = '/Vibs';
+            window.open(target);
+        }
+        else {
+            newData.VibId = value;
+        }
+    }
+
+    //Rcm_Lookup
+    function setCellValue_Rcm(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.RcmId = currentRowData.RcmId;
+            target = '/Rcms';
+            window.open(target);
+        }
+        else {
+            newData.RcmId = value;
+        }
+    }
+
+    //setCellValue_RbiSil
+    function setCellValue_RbiSil(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.RbiSilId = currentRowData.RbiSilId;
+            target = '/RbiSils';
+            window.open(target);
+        }
+        else {
+            newData.RbiSilId = value;
+        }
+    }
+
+    //setCellValue_Rbm
+    function setCellValue_Rbm(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.RbmId = currentRowData.RbmId;
+            target = '/Rbms';
+            window.open(target);
+        }
+        else {
+            newData.RbmId = value;
+        }
+    }
+
+    //setCellValue_MaintScePsReviewTeam
+    function setCellValue_MaintScePsReviewTeam(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintScePsReviewTeamId = currentRowData.MaintScePsReviewTeamId;
+            target = '/MaintScePsReviewTeams';
+            window.open(target);
+        }
+        else {
+            newData.MaintScePsReviewTeamId = value;
+        }
+    }
+
+    //setCellValue_EnvZone
+    function setCellValue_EnvZone(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.EnvZoneId = currentRowData.EnvZoneId;
+            target = '/EnvZones';
+            window.open(target);
+        }
+        else {
+            newData.EnvZoneId = value;
+        }
+    }
+
+
+    //setCellValue_Ipf
+    function setCellValue_Ipf(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.IpfId = currentRowData.IpfId;
+            target = '/Ipfs';
+            window.open(target);
+        }
+        else {
+            newData.IpfId = value;
+        }
+    }
+
+
+    function setCellValue_EngStatus(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.EngStatusId = currentRowData.EngStatusId;
+            target = '/EngStatus';
+            window.open(target);
+        }
+        else {
+            newData.EngStatusId = value;
+        }
+    }
+
+    //setCellValue_EngClass
+    function setCellValue_EngClass(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.EngClassId = currentRowData.EngClassId;
+            target = '/EngClasses';
+            window.open(target);
+        }
+        else {
+            newData.EngClassId = value;
+        }
+    }
+
+
+    //setCellValue_ComnpanyCode
+    function setCellValue_ComnpanyCode(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.CompanyCodeId = currentRowData.CompanyCodeId;
+            target = '/ComnpanyCode';
+            window.open(target);
+        }
+        else {
+            newData.CompanyCodeId = value;
+        }
+    }
+
+
+    //CommissioningSubsystem_Lookup
+    function setCellValue_CommissioningSubsystem(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.CommissioningSubsystemId = currentRowData.CommissioningSubsystemId;
+            target = '/CommissioningSubsystems';
+            window.open(target);
+        }
+        else {
+            newData.CommissioningSubsystemId = value;
+        }
+    }
+
+    function setCellValue_ExMethod(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.ExMethodId = currentRowData.ExMethodId;
+            target = '/ExMethods';
+            window.open(target);
+        }
+        else {
+            newData.ExMethodId = value;
+        }
+    }
+
+    function setCellValue_CommZone(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.CommZoneId = currentRowData.CommZoneId;
+            target = '/CommZones';
+            window.open(target);
+        }
+        else {
+            newData.CommZoneId = value;
+        }
+    }
+
+    function setCellValue_Location(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.LocationId = currentRowData.LocationId;
+            target = '/Locations';
+            window.open(target);
+        }
+        else {
+            newData.LocationId = value;
+        }
+    }
+    function setCellValue_MaintType(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintTypeId = currentRowData.MaintTypeId;
+            target = '/MaintTypes';
+            window.open(target);
+        }
+        else {
+            newData.MaintTypeId = value;
+        }
+    }
+
+    function setCellValue_SAPStatus(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.SAPStatusId = currentRowData.SAPStatusId;
+            target = '/SAPStatus';
+            window.open(target);
+        }
+        else {
+            newData.SAPStatusId = value;
+        }
+    }
+
+    function setCellValue_EngDataCode(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.EngDataCodeId = currentRowData.EngDataCodeId;
+            target = '/EngDataCodes';
+            window.open(target);
+        }
+        else {
+            newData.EngDataCodeId = value;
+        }
+    }
+
+    function setCellValue_Manufacturer(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.ManufacturerId = currentRowData.ManufacturerId;
+            target = '/Manufacturers';
+            window.open(target);
+        }
+        else {
+            newData.ManufacturerId = value;
+        }
+    }
+
+    function setCellValue_Model(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.ModelId = currentRowData.ModelId;
+            target = '/Models';
+            window.open(target);
+        }
+        else {
+            newData.ModelId = value;
+        }
+    }
+
+    // ???
+    function setCellValue_MaintenancePlant(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintenancePlantId = currentRowData.MaintenancePlantId;
+            target = '/MaintenancePlant';
+            window.open(target);
+        }
+        else {
+            newData.MaintenancePlantId = value;
+        }
+    }
+
+    function setCellValue_MaintLocation(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintLocationId = currentRowData.MaintLocationId;
+            target = '/MaintLocations';
+            window.open(target);
+        }
+        else {
+            newData.MaintLocationId = value;
+        }
+    }
+
+    function setCellValue_Area(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.AreaId = currentRowData.AreaId;
+            target = '/Areas';
+            window.open(target);
+        }
+        else {
+            newData.AreaId = value;
+        }
+    }
+
+    function setCellValue_MaintCriticality(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintCriticalityId = currentRowData.MaintCriticalityId;
+            target = '/MaintCriticalities';
+            window.open(target);
+        }
+        else {
+            newData.MaintCriticalityId = value;
+        }
+    }
+
+    function setCellValue_MaintObjectType(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintObjectTypeId = currentRowData.MaintObjectTypeId;
+            target = '/MaintObjectTypes';
+            window.open(target);
+        }
+        else {
+            newData.MaintObjectTypeId = value;
+        }
+    }
+
+    function setCellValue_SubSystem(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.SubSystemId = currentRowData.SubSystemId;
+            target = '/SubSystems';
+            window.open(target);
+        }
+        else {
+            newData.SubSystemId = value;
+        }
+    }
+
+    function setCellValue_MaintWorkCentre(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintWorkCentreId = currentRowData.MaintWorkCentreId;
+            target = '/MaintWorkCentres';
+            window.open(target);
+        }
+        else {
+            newData.MaintWorkCentreId = value;
+        }
+    }
+
+    function setCellValue_WBSElement(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.WBSElementId = currentRowData.WBSElementId;
+            target = '/WBSElements';
+            window.open(target);
+        }
+        else {
+            newData.WBSElementId = value;
+        }
+    }
+
+    function setCellValue_MaintSortProcess(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintSortProcessId = currentRowData.MaintSortProcessId;
+            target = '/MaintSortProcesses';
+            window.open(target);
+        }
+        else {
+            newData.MaintSortProcessId = value;
+        }
+    }
+
+    function setCellValue_MaintStatus(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintStatusId = currentRowData.MaintStatusId;
+            target = '/MaintStatus';
+            window.open(target);
+        }
+        else {
+            newData.MaintStatusId = value;
+        }
+    }
+
+    function setCellValue_Pbs(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.PbsId = currentRowData.PbsId;
+            target = '/Pbs';
+            window.open(target);
+        }
+        else {
+            newData.PbsId = value;
+        }
+    }
+
+    function setCellValue_PerformanceStandard(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.PerformanceStandardId = currentRowData.PerformanceStandardId;
+            target = '/PerformanceStandards';
+            window.open(target);
+        }
+        else {
+            newData.PerformanceStandardId = value;
+        }
+    }
+
+    function setCellValue_PlannerPlants(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.PlannerPlantdId = currentRowData.PlannerPlantdId;
+            target = '/PlannerPlants';
+            window.open(target);
+        }
+        else {
+            newData.PlannerPlantdId = value;
+        }
+    }
+
+    function setCellValue_Po(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.PoId = currentRowData.PoId;
+            target = '/Poes';
+            window.open(target);
+        }
+        else {
+            newData.PoId = value;
+        }
+    }
+
+    function setCellValue_CompanyCode(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.CompanyCodeId = currentRowData.CompanyCodeId;
+            target = '/CompanyCodes';
+            window.open(target);
+        }
+        else {
+            newData.CompanyCodeId = value;
+        }
+    }
+
+    function setCellValue_SortField(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.SortFieldId = currentRowData.SortFieldId;
+            target = '/SortFields';
+            window.open(target);
+        }
+        else {
+            newData.SortFieldId = value;
+        }
+    }
+
+    function setCellValue_PlannerPlant(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.PlannerPlantId = currentRowData.PlannerPlantId;
+            target = '/PlannerPlants';
+            window.open(target);
+        }
+        else {
+            newData.PlannerPlantId = value;
+        }
+    }
+
+    function setCellValue_MaintPlannerGroup(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintPlannerGroupId = currentRowData.MaintPlannerGroupId;
+            target = '/MaintPlannerGroups';
+            window.open(target);
+        }
+        else {
+            newData.MaintPlannerGroupId = value;
+        }
+    }
+
+    //setCellValue_MaintPlan
+    function setCellValue_Maintenanceplan(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintenancePlanId = currentRowData.MaintenancePlanId;
+            target = '/MaintPlans';
+            window.open(target);
+        }
+        else {
+            newData.MaintenancePlanId = value;
+        }
+    }
+
+
+    function setCellValue_MaintEdcCode(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintEdcCodeId = currentRowData.MaintEdcCodeId;
+            target = '/MaintEdcCodes';
+            window.open(target);
+        }
+        else {
+            newData.MaintEdcCodeId = value;
+        }
+    }
+
+    function setCellValue_MaintStructureIndicator(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintStructureIndicatorId = currentRowData.MaintStructureIndicatorId;
+            target = '/MaintStructureIndicators';
+            window.open(target);
+        }
+        else {
+            newData.MaintStructureIndicatorId = value;
+        }
+    }
+
+</script>

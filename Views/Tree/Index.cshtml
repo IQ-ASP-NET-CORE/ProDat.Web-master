@@ -1,0 +1,64 @@
+﻿<!-- model IEnumerable<ProDat.Web2.Models.Tag>  -->
+
+@{
+    ViewData["Title"] = "Maintenance Hierarchy";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Maintenance Hierarchy</h1>
+
+<div class="container_hierarchy_tree">
+    <div id="jstree">
+    </div>
+</div>
+
+@using (Html.BeginForm("Index", "Tree", FormMethod.Post))
+{
+    <input type="hidden" name="selectedItems" id="selectedItems" />
+    <input type="submit" value="Submit" class="btn-lg"/>
+}
+
+@section scripts{
+    <link rel="stylesheet" href="~/lib/jquery/dist/themes/default/style.min.css" />
+    <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="~/lib/jquery/dist/jstree.min.js"></script>
+    <script type="text/javascript">
+    $(function () {
+        $('#jstree').on('changed.jstree', function (e, data) {
+            var i, j;
+            var postedItems = [];
+            for(i = 0, j = data.selected.length; i < j; i++) {
+
+                //Fetch the Id.
+                var id = data.selected[i];
+
+                //Remove the ParentId.
+                if(id.indexOf('-') != -1){
+                    id = id.split("-")[1];
+                }
+
+                //Add the Node to the JSON Array.
+                postedItems.push({
+                    text: data.instance.get_node(data.selected[i]).text,
+                    id: id,
+                    parent: data.node.parents[0]
+                });
+            }
+
+            //Serialize the JSON Array and save in HiddenField.
+            $('#selectedItems').val(JSON.stringify(postedItems));
+        }).jstree({
+            "core": {
+                "themes": {
+                    "variant": "small"
+                },
+                "data": @Html.Raw(ViewBag.Json)
+            },
+            "checkbox": {
+                "keep_selected_style": false
+            },
+            "plugins": ["wholerow"],
+        });
+    });
+    </script>
+}

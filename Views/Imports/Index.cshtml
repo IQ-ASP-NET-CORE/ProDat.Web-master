@@ -1,0 +1,123 @@
+﻿@model IEnumerable<ProDat.Web2.Models.ETL.Import>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Import Register</h1>
+
+<p>
+    <a asp-action="Create">New Import</a>
+</p>
+<div>
+    <fieldset class="links">
+        <legend class="ExpandLinks">Download Formats</legend>
+        <div id="downloadLinks" class="hider" style="display:none">
+            <table id="exportLinks" width="50%">
+                <tr>
+                    <td class="MainLinks" width="50px">
+                        <a asp-controller="UC1" asp-route-CurrentFilter="{}" asp-action="Excel">Tag</a>
+                    </td>
+                    <td class="MainLinks" width="50px">
+                        <a asp-controller="TLHRegister" asp-route-CurrentFilter="{}" asp-action="Excel">TLH</a>
+                    </td>
+                    <td class="MainLinks" width="50px">
+                        <a asp-controller="TLORegister" asp-route-CurrentFilter="{}" asp-action="Excel">TLO</a>
+                    </td>
+                    <td class="MainLinks" width="50px">
+                        <a asp-controller="MIRegister" asp-route-CurrentFilter="{}" asp-action="Excel">MI</a>
+                    </td>
+                    <td class="MainLinks" width="50px">
+                        <a asp-controller="MPRegister" asp-route-CurrentFilter="{}" asp-action="Excel">MP</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </fieldset>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ImportType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Created)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedComment)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Approved)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApprovedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ApprovedComment)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ImportStatus)
+            </th>
+            <th>Actions</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ImportType.ImportTypeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Created)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedBy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedComment)
+                </td>
+                <td>
+                  @{ if (item.Approved != DateTime.MinValue)
+                      {
+                         @Html.DisplayFor(modelItem => item.Approved)
+                      }
+                   }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ApprovedBy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ApprovedComment)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ImportStatus)
+                </td>
+                <td>
+                    <!-- todo: show a items only if status in [okSet] -->
+                    <!-- Edit: allow setting of import status to 'cancel' or 'stop' only. These will be actouned by ETL package. -->
+                    @{ if (item.ImportStatus == "Transformed Import" || item.ImportStatus == "Imported" || item.ImportStatus == "Approved")
+                       {
+                            <a asp-action="Details" asp-route-id="@item.ImportId">Details</a>
+                            <a asp-action="ExcelReport" asp-route-id="@item.ImportId">XLS</a>
+                       }
+                     }
+              
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    $('.links').click(function () {
+        $(this).find('.hider').toggle();
+    });
+</script>

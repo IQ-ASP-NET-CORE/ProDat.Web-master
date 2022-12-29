@@ -1,0 +1,121 @@
+﻿@model ProDat.Web2.Models.TaskListHeader
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>TaskListHeader</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Counter)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Counter)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TaskListShortText)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TaskListShortText)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PerfStdAppDel)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PerfStdAppDel)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ScePsReviewId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ScePsReviewId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.RegBodyAppDel)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.RegBodyAppDel)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ChangeRequired)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ChangeRequired)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TaskListClassId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TaskListClassId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MaintPackage)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MaintPackage.MaintPackageName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MaintStrategy)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MaintStrategy.MaintStrategyName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MaintWorkCentre)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MaintWorkCentre.MaintWorkCentreName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MaintenancePlant)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MaintenancePlant.MaintenancePlantNum)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PerformanceStandard)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PerformanceStandard.PerformanceStandardDesc)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Pmassembly)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Pmassembly.PmassemblyName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.RegulatoryBody)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.RegulatoryBody.RegulatoryBodyName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SysCond)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SysCond.SysCondName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TaskListGroup)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TaskListGroup.TaskListGroupName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.TasklistCat)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.TasklistCat.TaskListCatName)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.TaskListHeaderId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

@@ -1,0 +1,45 @@
+﻿@model ProDat.Web2.ViewModels.UC2ComponentVM
+
+@{ var mod_h = (int)(Model.height * 0.9); }
+
+@(Html.DevExtreme().DataGrid<ProDat.Web2.Models.Pmassembly>()
+    .ID("PMAssembliesDataGridX")
+    .DataSource(d => d.Mvc()
+        .Controller("UC2")
+        .LoadAction("PMAssemblies_GetData")
+        .Key("PmassemblyId")
+    )
+
+
+
+    .RemoteOperations(true)
+    .Columns(
+        columns => {
+            columns.AddFor(m => m.PmassemblyName).SortOrder(SortOrder.Asc);
+            columns.AddFor(m => m.ShortText);
+
+        })
+
+
+
+
+
+
+
+    .FilterRow(f => f.Visible(true))
+    .HeaderFilter(f => f.Visible(true))
+    .GroupPanel(p => p.Visible(false))
+    .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+    .RowDragging(rd => rd
+        .Group("shared")
+        .Data("PMAssembliesDataGrid")
+        .Option("PmassemblyId", @Model)
+        .OnDragEnd("PMAOnDragEnd")
+    )
+    .AllowColumnResizing(true)
+    .ColumnAutoWidth(true)
+    .Height(mod_h)
+    .Width(Model.width)
+    .ShowBorders(true)
+    .Editing(e => e.AllowAdding(false).AllowDeleting(false).AllowUpdating(false))
+)

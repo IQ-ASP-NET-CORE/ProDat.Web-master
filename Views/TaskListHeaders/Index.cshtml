@@ -1,0 +1,132 @@
+﻿@model IEnumerable<ProDat.Web2.Models.TaskListHeader>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Counter)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskListShortText)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PerfStdAppDel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ScePsReviewId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RegBodyAppDel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ChangeRequired)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskListClassId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintPackage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintStrategy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintWorkCentre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintenancePlant)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PerformanceStandard)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Pmassembly)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RegulatoryBody)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SysCond)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TaskListGroup)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TasklistCat)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Counter)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskListShortText)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PerfStdAppDel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ScePsReviewId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RegBodyAppDel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ChangeRequired)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskListClassId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintPackage.MaintPackageName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintStrategy.MaintStrategyName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintWorkCentre.MaintWorkCentreName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintenancePlant.MaintenancePlantNum)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PerformanceStandard.PerformanceStandardDesc)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Pmassembly.PmassemblyName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RegulatoryBody.RegulatoryBodyName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SysCond.SysCondName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskListGroup.TaskListGroupName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TasklistCat.TaskListCatName)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.TaskListHeaderId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.TaskListHeaderId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.TaskListHeaderId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

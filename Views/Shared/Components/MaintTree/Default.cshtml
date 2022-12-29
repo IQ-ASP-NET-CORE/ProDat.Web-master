@@ -1,0 +1,60 @@
+﻿@model ProDat.Web2.ViewModels.UC2ComponentVM
+@{ var height_h = (int)(Model.height * 1.05); }
+
+@(Html.DevExtreme().Sortable()
+    .Filter(".dx-treeview-item")
+    .Data("MaintTree")
+    .Group("shared")
+    .AllowReordering(true)
+    .AllowDropInsideItem(true)
+    .OnDragChange("MaintTreeOnDragChange")
+    .OnDragEnd("MaintTreeOnDragEnd")
+    .Content(
+        Html.DevExtreme().TreeView()
+            .ID("treeViewMaintItems")
+            .ExpandNodesRecursive(false)
+
+            // Tree datasource (full load):
+            //.DataStructure(TreeViewDataStructure.Tree)
+            //.DataSource(d => d.Mvc().Controller("UC2").LoadAction("GetHierarchicalDataForDragAndDropDemand"))
+
+            // On Demand loading (by request load):
+            .DataStructure(TreeViewDataStructure.Plain)
+            .CreateChildren("treeView_createChildren")
+
+            // force expansion of node...
+            .OnContentReady("MaintTreeDemand_OnContentReady")
+
+            // mirror client/server values.
+            .KeyExpr("Id")
+            .DisplayExpr("Name")
+            .ItemsExpr("Items")
+            .ParentIdExpr("ParentId")
+            // added below to keep highlight of selected item.
+            .SelectionMode(NavSelectionMode.Single)
+            .SelectByClick(true)
+            .FocusStateEnabled(false)
+
+            // behaviour
+            .ExpandedExpr("IsExpanded")
+            .OnItemContextMenu("onTreeViewItemContextMenu")
+            .OnItemClick("MaintTree_OnClick")
+            .ItemTemplate(new JS("MaintTreeNodeTemplate"))
+
+            .Width(Model.width)
+            .Height(height_h)
+            .SearchTimeout(700)
+            .SearchEnabled(false)
+            .ToString()
+
+    ))
+@(Html.DevExtreme().ContextMenu()
+        .ID("contexmenu")
+        .Target("#treeViewMaintItems .dx-treeview-item")
+        .OnItemClick("onContextMenuItemClick")
+        .DataSource(new object[] {
+            new { id = "TagDetail", text = "Engineering data" },
+            new { id = "TagDoc", text = "Documents" },
+            new { id = "EngData", text = "Class and characteristic" }
+        })
+    )

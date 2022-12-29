@@ -1,0 +1,230 @@
+﻿@model ProDat.Web2.ViewModels.UC2ComponentVM
+@{ var mod_h = Model.height * 1;
+    Dictionary<string, ProDat.Web2.ViewModels.ColParams> colIndex = ViewBag.colIndex;
+ }
+
+@*<div class="TLOHeader">Task List Operations</div>*@
+
+@(Html.DevExtreme().DataGrid<ProDat.Web2.Models.TaskListOperations>()
+
+        .ID("TaskListOperationsDataGridX")
+        .Height(mod_h)
+        .Width(Model.width)
+        .DataSource(d => d.Mvc()
+            .Controller("TLORegister")
+            .LoadParams(new { parent = Model.parent })
+            .LoadAction("TaskListOperationsDataGrid_GetData")
+            .InsertAction("TLORegister_Insert")
+            .UpdateAction("TLORegister_Update")
+            .DeleteAction("TLORegister_Delete")
+            .Key("TaskListOperationId")
+        )
+        .Editing(editing =>
+        {
+            editing.Mode(GridEditMode.Row);
+            editing.AllowUpdating(true);
+            editing.AllowAdding(false);
+            editing.AllowDeleting(false);
+        })
+        //.Selection(s => s.Mode(SelectionMode.Multiple))
+        .Selection(x => x.Mode(SelectionMode.Single))
+        .RemoteOperations(true)
+        .AllowColumnReordering(true)
+        .RowAlternationEnabled(true)
+        
+        .OnContextMenuPreparing("TLORegister_OnContextMenuPreparing")
+        .OnToolbarPreparing("TaskListOperationsDataGrid_OnToolbarPreparing")
+        .ShowBorders(true)
+        .FilterRow(f => f.Visible(true))
+        .ColumnChooser(c => c.Enabled(true))
+        .ColumnResizingMode(ColumnResizingMode.Widget)
+        .ColumnAutoWidth(true)
+        .SearchPanel(s => s
+            .Visible(true)
+            .HighlightCaseSensitive(true)
+        )
+
+        .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+
+        .AllowColumnResizing(true)
+        
+        
+
+        // This requires configuring. UC3 should retrieve requirements for all objects, then this should be iterated by the JS for the widget. 
+        //.OnCellPrepared("DataGrid_OnCellPrepared")
+
+        
+        .Columns(columns =>
+        {
+            columns.AddFor(x => x.TaskListOperationId)
+                .AllowEditing(false)
+                .Visible(colIndex.ContainsKey("TaskListOperationId"))
+                .VisibleIndex(colIndex.ContainsKey("TaskListOperationId") ? colIndex["TaskListOperationId"].Order : int.MaxValue)
+                .Width(colIndex.ContainsKey("TaskListOperationId") ? colIndex["TaskListOperationId"].Width : 75);
+
+            columns.AddFor(x => x.TaskListHeaderId)
+                .Fixed(true)
+                .Visible(colIndex.ContainsKey("TaskListHeaderId"))
+                .VisibleIndex(colIndex.ContainsKey("TaskListHeaderId") ? colIndex["TaskListHeaderId"].Order : int.MaxValue)
+                .SortOrder(SortOrder.Asc).SortIndex(1)
+                .Width(colIndex.ContainsKey("TaskListHeaderId") ? colIndex["TaskListHeaderId"].Width : 75)
+                .SetCellValue("setCellValue_TaskListHeader")
+                .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("TaskListHeader_Lookup")
+                    .Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Text")
+                );
+
+            columns.AddFor(x => x.OperationNum)
+                .Fixed(true)
+                .Visible(colIndex.ContainsKey("OperationNum"))
+                .VisibleIndex(colIndex.ContainsKey("OperationNum") ? colIndex["OperationNum"].Order : int.MaxValue)
+                .SortOrder(SortOrder.Asc).SortIndex(1)
+                .Width(colIndex.ContainsKey("OperationNum") ? colIndex["OperationNum"].Width : 75);
+
+            columns.AddFor(x => x.SubOperationNum)
+                .Fixed(true)
+                .Visible(colIndex.ContainsKey("SubOperationNum"))
+                .VisibleIndex(colIndex.ContainsKey("SubOperationNum") ? colIndex["SubOperationNum"].Order : int.MaxValue)
+                .SortOrder(SortOrder.Asc).SortIndex(2)
+                .Width(colIndex.ContainsKey("SubOperationNum") ? colIndex["SubOperationNum"].Width : 75);
+
+            columns.AddFor(x => x.OperationId)
+                .Visible(colIndex.ContainsKey("OperationId"))
+                .VisibleIndex(colIndex.ContainsKey("OperationId") ? colIndex["OperationId"].Order : int.MaxValue)
+                .Width(colIndex.ContainsKey("OperationId") ? colIndex["OperationId"].Width : 75);
+
+            columns.AddFor(x => x.OperationDescription)
+                .Visible(colIndex.ContainsKey("OperationDescription"))
+                .VisibleIndex(colIndex.ContainsKey("OperationDescription") ? colIndex["OperationDescription"].Order : int.MaxValue)
+                .Width(colIndex.ContainsKey("OperationDescription") ? colIndex["OperationDescription"].Width : 75);
+
+            columns.AddFor(x => x.MaintWorkCentreId)
+                .Visible(colIndex.ContainsKey("MaintWorkCentreId"))
+                .VisibleIndex(colIndex.ContainsKey("MaintWorkCentreId") ? colIndex["MaintWorkCentreId"].Order : int.MaxValue)
+                .Width(colIndex.ContainsKey("MaintWorkCentreId") ? colIndex["MaintWorkCentreId"].Width : 75)
+                .SetCellValue("setCellValue_MaintWorkCentre")
+                .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintWorkCentre_Lookup")
+                    .Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Text")
+                );
+
+            columns.AddFor(x => x.MaintenancePlantId)
+                .Visible(colIndex.ContainsKey("MaintenancePlantId"))
+                .VisibleIndex(colIndex.ContainsKey("MaintenancePlantId") ? colIndex["MaintenancePlantId"].Order : int.MaxValue)
+                .Width(colIndex.ContainsKey("MaintenancePlantId") ? colIndex["MaintenancePlantId"].Width : 75)
+                .SetCellValue("setCellValue_MaintenancePlant")
+                .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintenancePlant_Lookup")
+                    .Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Text")
+                );
+
+            columns.AddFor(x => x.ControlKeyId)
+                .Visible(colIndex.ContainsKey("ControlKeyId"))
+                .VisibleIndex(colIndex.ContainsKey("ControlKeyId") ? colIndex["ControlKeyId"].Order : int.MaxValue)
+                .Width(colIndex.ContainsKey("ControlKeyId") ? colIndex["ControlKeyId"].Width : 75)
+                .SetCellValue("setCellValue_ControlKey")
+                .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("ControlKey_Lookup")
+                    .Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Text")
+                );
+
+            columns.AddFor(x => x.SysCondId)
+                .Visible(colIndex.ContainsKey("SysCondId"))
+                .VisibleIndex(colIndex.ContainsKey("SysCondId") ? colIndex["SysCondId"].Order : int.MaxValue)
+                .Width(colIndex.ContainsKey("SysCondId") ? colIndex["SysCondId"].Width : 75)
+                .SetCellValue("setCellValue_SysCond")
+                .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("SysCond_Lookup")
+                    .Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Text")
+                );
+
+            columns.AddFor(x => x.RelationshiptoOperationId)
+                .Visible(colIndex.ContainsKey("RelationshiptoOperationId"))
+                .VisibleIndex(colIndex.ContainsKey("RelationshiptoOperationId") ? colIndex["RelationshiptoOperationId"].Order : int.MaxValue)
+                .Width(colIndex.ContainsKey("RelationshiptoOperationId") ? colIndex["RelationshiptoOperationId"].Width : 75)
+                .SetCellValue("setCellValue_RelationshiptoOperation")
+                .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("RelationshiptoOperation_Lookup")
+                    .Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Text")
+                );
+
+            columns.AddFor(x => x.OperationShortText)
+                .Visible(colIndex.ContainsKey("OperationShortText"))
+                .VisibleIndex(colIndex.ContainsKey("OperationShortText") ? colIndex["OperationShortText"].Order : int.MaxValue)
+                .Width(colIndex.ContainsKey("OperationShortText") ? colIndex["OperationShortText"].Width : 75);
+
+            columns.AddFor(x => x.OperationLongText)
+                .Visible(colIndex.ContainsKey("OperationLongText"))
+                .VisibleIndex(colIndex.ContainsKey("OperationLongText") ? colIndex["OperationLongText"].Order : int.MaxValue)
+                .Width(colIndex.ContainsKey("OperationLongText") ? colIndex["OperationLongText"].Width : 75);
+
+            columns.AddFor(x => x.WorkHrs)
+                .Visible(colIndex.ContainsKey("WorkHrs"))
+                .VisibleIndex(colIndex.ContainsKey("WorkHrs") ? colIndex["WorkHrs"].Order : int.MaxValue)
+                .Width(colIndex.ContainsKey("WorkHrs") ? colIndex["WorkHrs"].Width : 75);
+
+            columns.AddFor(x => x.CapNo)
+                .Visible(colIndex.ContainsKey("CapNo"))
+                .VisibleIndex(colIndex.ContainsKey("CapNo") ? colIndex["CapNo"].Order : int.MaxValue)
+                .Width(colIndex.ContainsKey("CapNo") ? colIndex["CapNo"].Width : 75);
+
+            columns.AddFor(x => x.MaintPackageId)
+                .Visible(colIndex.ContainsKey("MaintPackageId"))
+                .VisibleIndex(colIndex.ContainsKey("MaintPackageId") ? colIndex["MaintPackageId"].Order : int.MaxValue)
+                .Width(colIndex.ContainsKey("MaintPackageId") ? colIndex["MaintPackageId"].Width : 75)
+                .SetCellValue("setCellValue_MaintPackage")
+                .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintPackage_Lookup")
+                    .Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Text")
+                );
+
+            columns.AddFor(x => x.DocId)
+                .Visible(colIndex.ContainsKey("DocId"))
+                .VisibleIndex(colIndex.ContainsKey("DocId") ? colIndex["DocId"].Order : int.MaxValue)
+                .Width(colIndex.ContainsKey("DocId") ? colIndex["DocId"].Width : 75)
+                .SetCellValue("setCellValue_Doc")
+                .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("Doc_Lookup")
+                    .Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Text")
+                );
+
+            columns.AddFor(x => x.Ti)
+                .Visible(colIndex.ContainsKey("Ti"))
+                .VisibleIndex(colIndex.ContainsKey("Ti") ? colIndex["Ti"].Order : int.MaxValue)
+                .Width(colIndex.ContainsKey("Ti") ? colIndex["Ti"].Width : 75);
+
+
+            columns.AddFor(x => x.OffSite)
+                .Visible(colIndex.ContainsKey("OffSite"))
+                .VisibleIndex(colIndex.ContainsKey("OffSite") ? colIndex["OffSite"].Order : int.MaxValue)
+                .Width(colIndex.ContainsKey("OffSite") ? colIndex["OffSite"].Width : 75);
+
+            columns.AddFor(x => x.FixedOperQty)
+                .Visible(colIndex.ContainsKey("FixedOperQty"))
+                .VisibleIndex(colIndex.ContainsKey("FixedOperQty") ? colIndex["FixedOperQty"].Order : int.MaxValue)
+                .Width(colIndex.ContainsKey("FixedOperQty") ? colIndex["FixedOperQty"].Width : 75);
+
+            columns.AddFor(x => x.ChangeRequired)
+                .Visible(colIndex.ContainsKey("ChangeRequired"))
+                .VisibleIndex(colIndex.ContainsKey("ChangeRequired") ? colIndex["ChangeRequired"].Order : int.MaxValue)
+                .Width(colIndex.ContainsKey("ScePsReviewId") ? colIndex["ChangeRequired"].Width : 75);
+
+        })
+
+    )

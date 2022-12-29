@@ -1,0 +1,93 @@
+﻿
+
+
+
+@{ ViewData["Title"] = "MeasPoints";}
+
+<div id="form" class="dx-swatch-Datagrid_White" style="overflow-y: hidden; overflow-x: hidden">
+    <!-- <div id="form" style="overflow-y: hidden; overflow-x: hidden"> -->
+    @(Html.DevExtreme().DataGrid<ProDat.Web2.Models.MeasPoint>()
+            .ID("MeasPoints")
+            .Height(1150)
+            //.Width()
+            .DataSource(ds => ds.Mvc()
+               .Controller("MeasPoints")
+               .LoadAction("MeasPoints_GetData")
+               .InsertAction("MeasPoints_Insert")
+               .UpdateAction("MeasPoints_Update")
+               .DeleteAction("MeasPoints_Delete")
+               .Key("MeasPointId")
+            )
+            .Editing(editing =>
+            {
+                editing.Mode(GridEditMode.Cell);
+                editing.AllowUpdating(true);
+                editing.AllowAdding(true);
+                editing.AllowDeleting(true);
+            })
+            .Selection(s => s.Mode(SelectionMode.Multiple))
+            .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+            .OnExporting("exporting")
+            .RemoteOperations(false)
+            .AllowColumnReordering(true)
+            .RowAlternationEnabled(true)
+            .ShowBorders(true)
+            .FilterRow(f => f.Visible(true))
+            .CustomizeColumns("ignoreIDValidation")
+
+            //Do not need column chooser because there are not many columns
+            //.ColumnChooser(c => c.Enabled(true))
+            .ColumnFixing(c => c.Enabled(true))
+            .ColumnResizingMode(ColumnResizingMode.Widget)
+            .AllowColumnResizing(true)
+            .SearchPanel(s => s
+                .Visible(true)
+                .HighlightCaseSensitive(true)
+             )
+
+            //.GroupPanel(g => g.Visible(true))
+            .Grouping(g => g.AutoExpandAll(false))
+            .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+            .Paging(p => p.PageSize(45))
+
+            //.OnCellPrepared("DataGrid_OnCellPrepared")
+            .Columns(columns =>
+            {
+                columns.AddFor(x => x.MeasPointId).Visible(false);
+
+                columns.AddFor(x => x.MeasPointName);
+
+                columns.AddFor(x => x.MeasPointData);
+
+            })
+        )
+</div>
+
+<!-- UI structure to test SAP Validations -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+
+<!-- context menu management & export to excel -->
+<script>// Export to excel.
+    function exporting(e) {
+        var workbook = new ExcelJS.Workbook();
+        var worksheet = workbook.addWorksheet('ProDat MeasPoints');
+
+        DevExpress.excelExporter.exportDataGrid({
+            component: e.component,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            // https://github.com/exceljs/exceljs#writing-xlsx
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'MeasPoints.xlsx');
+            });
+        });
+        e.cancel = true;
+    }</script>
+
+<script>function ignoreIDValidation(columns) {
+        columns[0].validationRules = null;
+    }</script>

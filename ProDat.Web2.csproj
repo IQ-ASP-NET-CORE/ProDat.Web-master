@@ -1,0 +1,69 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>87430cd6-d37a-48c4-a3d4-538516a7dfe1</UserSecretsId>
+    <StartupObject>ProDat.Web2.Program</StartupObject>
+    <ApplicationIcon>wwwroot\img\MaintTree\M.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Views\Shared\Components\TagPropertiesDataGrid\**" />
+    <Content Remove="Views\Shared\Components\TagPropertiesDataGrid\**" />
+    <EmbeddedResource Remove="Views\Shared\Components\TagPropertiesDataGrid\**" />
+    <None Remove="Views\Shared\Components\TagPropertiesDataGrid\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Migrations\20210204064833_Altered SysCond and MI and Tag.cs" />
+    <Compile Remove="Migrations\20210204064833_Altered SysCond and MI and Tag.Designer.cs" />
+    <Compile Remove="Migrations\20210206040135_altered tables TaskListOperations.cs" />
+    <Compile Remove="Migrations\20210206040135_altered tables TaskListOperations.Designer.cs" />
+    <Compile Remove="Migrations\20210304163543_Added relationship EngDataCodes.cs" />
+    <Compile Remove="Migrations\20210304163543_Added relationship EngDataCodes.Designer.cs" />
+    <Compile Remove="Migrations\20210305004652_Added relationship EngDataCodes.cs" />
+    <Compile Remove="Migrations\20210305004652_Added relationship EngDataCodes.Designer.cs" />
+    <Compile Remove="Migrations\20210305050009_Added reference from Tag to MaintenancePlant.cs" />
+    <Compile Remove="Migrations\20210305050009_Added reference from Tag to MaintenancePlant.Designer.cs" />
+    <Compile Remove="Migrations\20210305050723_Added reference from Tag to MaintenancePlant.cs" />
+    <Compile Remove="Migrations\20210305050723_Added reference from Tag to MaintenancePlant.Designer.cs" />
+    <Compile Remove="Migrations\20210305062956_Added reference from MaintItem to MaintPlan.cs" />
+    <Compile Remove="Migrations\20210305062956_Added reference from MaintItem to MaintPlan.Designer.cs" />
+    <Compile Remove="Migrations\20210305065633_Added key MaintPlanId to MaintItem.cs" />
+    <Compile Remove="Migrations\20210305065633_Added key MaintPlanId to MaintItem.Designer.cs" />
+    <Compile Remove="Migrations\20210319024301_shortened MaintItemMaintPlanId and  MaintItemPlannerGroupId.cs" />
+    <Compile Remove="Migrations\20210319024301_shortened MaintItemMaintPlanId and  MaintItemPlannerGroupId.Designer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Controllers\CRUDS\ORMDataModel1.xpo" />
+    <None Remove="Controllers\CRUDS\ORMDataModel1.xpo.diagram" />
+  </ItemGroup>
+  <ItemGroup>
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\ProDat.pubxml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.95.3" />
+    <PackageReference Include="DevExpress.Xpo" Version="22.1.5" />
+    <PackageReference Include="EntityFramework" Version="6.4.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.8" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.8.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.30" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+    <PackageReference Include="MimeKit" Version="2.12.0" />
+    <PackageReference Include="SendGrid" Version="9.23.2" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\tree\maint\" />
+    <PackageReference Include="DevExtreme.AspNet.Core" Version="21.2.10" />
+    <PackageReference Include="DevExtreme.AspNet.Data" Version="2.8.0" />
+  </ItemGroup>
+</Project>

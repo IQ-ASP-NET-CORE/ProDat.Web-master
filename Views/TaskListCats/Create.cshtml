@@ -1,0 +1,44 @@
+﻿@model ProDat.Web2.Models.TaskListCat
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4>TaskListCat</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="TaskListCatId" class="control-label"></label>
+                <input asp-for="TaskListCatId" class="form-control" />
+                <span asp-validation-for="TaskListCatId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskListCatName" class="control-label"></label>
+                <input asp-for="TaskListCatName" class="form-control" />
+                <span asp-validation-for="TaskListCatName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskListCatDesc" class="control-label"></label>
+                <input asp-for="TaskListCatDesc" class="form-control" />
+                <span asp-validation-for="TaskListCatDesc" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

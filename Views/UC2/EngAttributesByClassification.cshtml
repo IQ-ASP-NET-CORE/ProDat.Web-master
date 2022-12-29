@@ -1,0 +1,126 @@
+﻿@{
+    ViewData["Title"] = ViewBag.TagNumber + " - Eng. Properties";
+}
+
+<h3> @ViewBag.TagNumber @ViewBag.TagFlocDesc</h3>
+<div id="form" class="col">
+    @(Html.DevExtreme().DataGrid()
+        .ID("gridContainer")
+        //.Height()
+        //.Width()
+        .DataSource(ds => ds.Mvc()
+            .Controller("UC2")
+            .LoadAction("TagProperties_GetDataGrid")
+            .LoadParams(new { TagId  = ViewBag.TagId })
+            .UpdateAction("TagProperties_UpdateDataGrid")
+            .Key("DevExKey")
+            )
+        .Editing(editing =>
+        {
+            editing.Mode(GridEditMode.Cell);
+            editing.AllowUpdating(true);
+        })
+        .RemoteOperations(false)
+        .AllowColumnReordering(true)
+        .RowAlternationEnabled(true)
+        .ShowBorders(true)
+        .AllowColumnResizing(true)
+        .OnContentReady("TagPropertiesOnContentReady")
+        .SearchPanel(s => s
+            .Visible(true)
+            .HighlightCaseSensitive(true)
+        )
+        .GroupPanel(g => g.Visible(true))
+        .Grouping(g => g.AutoExpandAll(false))
+        .Columns(columns => {
+            columns.Add()
+                .DataField("MaintClassName")
+                .AllowEditing(false)
+                .Caption("CLASS")
+                .GroupIndex(0);
+
+            columns.Add()
+                .DataField("EngDataCodeId")
+                .DataType(GridColumnDataType.Number)
+                .Lookup(lookup => lookup
+                        .DataSource(d => d
+                                    .Mvc().Controller("Lookups").LoadAction("EngDataCode_Lookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    )
+                .AllowEditing(false);
+
+
+            // To do: 
+            // 1. Add lookup, which is filtered to be a lookup based on EngDataCodeId. USE TEXT NOT ID FOR THESE because of #2
+            // 2. Allow free text entry 
+            // 3. On update, if new entry, add to EngDataCodeDropDown Table for this EngDataCode.
+            // https://js.devexpress.com/Demos/WidgetsGallery/Demo/DataGrid/CascadingLookups/knockout/Light/
+
+            columns.Add()
+                .DataField("EngDatavalue")
+                .Caption("Value")
+                .AllowEditing(true)
+                .DataType(GridColumnDataType.String);
+
+            //columns.Add()
+            //    .DataField("DDL")
+            //    .Caption("Acceptable Values")
+            //    .DataType(GridColumnDataType.String)
+            //    .AllowEditing(true)
+            //    .Lookup(lookup => lookup
+            //            .DataSource(d => d
+            //                        .Mvc().Controller("Lookups").LoadAction("EngDataCodeDropDown_Lookup").Key("Text"))
+            //            .ValueExpr("Text")
+            //            .DisplayExpr("Text")
+            //        );
+
+            columns.Add()
+                .DataField("EngDataValue")
+                .Caption("Typical Values")
+                .AllowEditing(true)
+                .Lookup(l => l
+                    .DataSource("getDDL")
+                    .DisplayExpr("Text")
+                    .ValueExpr("Text")
+                );
+
+            // Hidden columns for updating.
+            columns.Add()
+                .DataField("TagId")
+                .DataType(GridColumnDataType.Number)
+                .Visible(false);
+
+            columns.Add()
+                .DataField("DevExKey")
+                .DataType(GridColumnDataType.String)
+                .Visible(false);
+
+        })
+    )
+</div>
+
+<script>
+
+    function TagPropertiesOnContentReady() {
+        console.log("contentReady");
+    }
+
+    function getDDL(options)
+    {
+        return {
+                store: DevExpress.data.AspNet.createStore(
+                {
+                    key: "Text",
+                    value: "Text",
+                    loadUrl: '@Url.Action("EngDataCodeDropDown_Lookup", "Lookups", new { httproute = true })'
+                    //onLoaded: "testDDL"
+                }),
+                filter: options.data ? ["Parent", "=", options.data.EngDataCodeId] : null
+        };
+    }
+
+</script>
+<script>
+    document.getElementById("layoutHeader").style.display = "none";
+</script>

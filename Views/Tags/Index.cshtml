@@ -1,0 +1,287 @@
+﻿@model IEnumerable<ProDat.Web2.Models.Tag>
+
+@using ProDat.Web2.TagLibrary
+
+@{
+
+    ViewData["Title"] = "Tag Register";
+    Layout = "_LayoutTags";
+    var pagedList = (PaginatedList<ProDat.Web2.Models.Tag>)Model;
+    var currentSearchModel = ViewBag.CurrentSearchModel as ProDat.Web2.ViewModels.TagRegisterSearchViewModel;
+    var modelExists = false;
+    if (currentSearchModel != null) modelExists = true;
+
+    //set TagViewColumns based on view logic.
+    List<ViewColsData> tagViewColumns = new List<ViewColsData>();
+    if (currentSearchModel != null && currentSearchModel.TagViewId != null) {
+        foreach (var x in (ViewBag.TagViewColumns as List<ProDat.Web2.TagLibrary.ViewColsData>))
+        {
+            if (x.viewId == currentSearchModel.TagViewId)
+                tagViewColumns.Add(x);
+        }
+    }
+
+    //bool isReadOnly = true;
+    string sDisabled = "disabled";
+    if (User.IsInRole("User"))
+    {
+        //isReadOnly = false;
+        sDisabled = "";
+    }
+
+}
+
+<!-- Global Search criteria/settings -->
+<form id="search1" method="get" asp-action="Index">
+    <table class="table-borderless">
+        <tr>
+            <td width="150px">
+                <a asp-action="Create">Create New</a>
+            </td> <!-- Create New Tag -->
+            <td width="100px">
+                <input id="Filter" type="submit" class="btn btn-link" value="Filter">
+            </td> <!-- apply filter -->
+            <td width="100px">
+                <a asp-action="Index">Clear Filter</a>
+            </td> <!-- clear filter -->
+            <td width="130px">
+                &nbsp; Include Deleted
+                @{
+                    if (modelExists && currentSearchModel.TagDeleted == true)
+                    {
+                        <input type="checkbox" form="search1" class="search" name="TagDeleted" value=true checked />
+                    }
+                    else
+                    {
+                        <input type="checkbox" form="search1" class="search" name="TagDeleted" value=true />
+                    }
+                }
+            </td> <!-- Include Deleted-->
+            <td width="190px">
+                &nbsp; Active Maint Query Only
+                @{
+                    if (modelExists && currentSearchModel.TagMaintQuery == true)
+                    {
+                        <input type="checkbox" form="search1" class="search" name="TagMaintQuery" value="true" checked />
+                    }
+                    else
+                    {
+                        <input type="checkbox" form="search1" class="search" name="TagMaintQuery" value="true" />
+                    }
+                }
+            </td> <!-- active maint query -->
+            <td width="120px">&nbsp; Records to Display:</td>
+            <td width="50px">
+                <select name="PageRecordsId" form="search1" class="searchDDl" id="PageRecords">
+
+                    @{ int? pid = -1;
+                        if (modelExists && currentSearchModel.PageRecordsId != null)
+                        {
+                            pid = currentSearchModel.PageRecordsId;
+
+                            if (pid > -1)
+                            {
+                                <option value="@pid" selected>placeholder</option>
+                            }
+                        }
+                    }
+                </select>
+            </td> <!-- result Set Size -->
+            <td width="100px">&nbsp; Column View:</td>
+            <td width="100px">
+                <select name="TagViewId" form="search1" class="searchDDl" id="ViewRecords">
+                    @{ int? vid = -1;
+                        if (modelExists && currentSearchModel.TagViewId != null)
+                        {
+                            vid = currentSearchModel.TagViewId;
+
+                            if (vid > -1)
+                            {
+                                <option value="@vid" selected>placeholder</option>
+                            }
+                        }
+                    }
+                </select>
+            </td> <!-- Change Views-->
+            <td style="width: 100px">
+                <a asp-action="Excel" asp-route-currentFilter="@ViewData["CurrentSearchModelJson"]">Generate Excel</a>
+            </td> <!-- generate Excel-->
+            <td style="width: 140px">
+                @{
+                    if (modelExists && currentSearchModel.ExportAllColumns == true)
+                    {
+                        <input type="checkbox" form="search1" class="search" id="ExportAllColumnsId" name="ExportAllColumns" value="true" checked /><label for="ExportAllColumnsId">Export all Columns</label>
+                    }
+                    else
+                    {
+                        <input type="checkbox" form="search1" class="search" id="ExportAllColumnsId" name="ExportAllColumns" value="true" /><label for="ExportAllColumnsId">Export all Columns</label>
+                    }
+                }
+            </td> <!-- All Columns Excel -->
+        </tr>
+    </table>
+</form>
+
+<p></p>
+
+<div id="tag_register" class="container_register">
+<table class="table-responsive-md resizable" id="tags">
+    <thead>
+        <!-- SEARCH FILTER ROW -->
+        <tr>
+            @{ foreach (var x in tagViewColumns)
+                {
+                    //var fName = fieldName.Split(";");
+                    //public static IHtmlContent SearchFilter(fieldName, thClass, formId, controlClass, currentSearchModel, ddls, width)
+                    @Html.SearchFilter(x.fkField, "searchHeader", "search1", "search", currentSearchModel, (Dictionary<string, List<string>>)ViewData["ddls"], x.width.ToString());
+                }
+            }
+
+            <!-- fixed View search Fields -->
+            <th class="hide"></th> <!-- TagDeleted-->
+            <th class="hide"></th> <!-- TagMaintQuery-->
+            <th class="hide"><input type="hidden" form="search1" name="Posted" value="true" /></th> <!-- TagId-->
+        </tr>
+        <!-- HEADER ROW -->
+        <tr>
+            @{
+                foreach (var x in tagViewColumns)
+                {
+                    //var fName = fieldName.Split(";");
+                    @Html.HeaderColumns(x.fkField, (string)ViewData["TagSortParam"], "Tags");
+                }
+            }
+            <!-- fixed View search Fields -->
+            <th class="hide"></th> <!-- tag deleted -->
+            <th class="hide"></th> <!-- tag maint query -->
+            <th class="hide"></th> <!-- tagId-->
+        </tr>
+    </thead>
+    <!-- RECORDS -->
+    <tbody>
+        @{
+            int i = 0;
+        }
+        @foreach (var item in Model)
+        {
+            i = i + 1;
+            
+        <tr>
+            
+            @{
+              int j = 0;
+              @foreach (var x in tagViewColumns){
+                j++;
+                //var fName = fieldName.Split(";");
+                @Html.DataColumn(x.fkField, "recordDDl", j==1, sDisabled, item)
+              }
+            }
+
+            <!-- fixed fields -->
+            <td class="hide">
+                @Html.HiddenFor(modelItem => item.TagDeleted)
+            </td>
+            <td class="hide">
+                @Html.HiddenFor(modelItem => item.TagMaintQuery)
+            </td>
+            <td class="hide">
+                @Html.HiddenFor(modelItem => item.TagId)
+            </td>
+        </tr>
+        } <!--data iterator -->
+    </tbody>
+</table>
+</div>
+
+<!-- Context-menu -->
+<div class='context-menu'>
+    <ul>
+        <li><span class='TagEngDatas/Details/'></span>&nbsp;<span class="context-text">Show Engineering Data</span></li>
+        <li><span class='TagXdocs/DocByTagId/'></span>&nbsp;<span class="context-text">Show Documents.</span></li>
+        <li><span class='Mods/Details/'></span>&nbsp;<span class="context-text">Show Modifications</span></li>
+        <li><span class='Tasks/Details/'></span>&nbsp;<span class="context-text">Show Tasks</span></li>
+    </ul>
+
+    <div class="container">
+        <input type='hidden' value='test' id='txt_id'>
+    </div>
+
+</div>
+
+<!-- JSON DDL Values-->
+<div id="ddl">
+    <input type="hidden" id="EngDiscListJson" value="@ViewData["EngDiscListJson"]" />
+    <input type="hidden" id="MaintLocationListJson" value="@ViewData["MaintLocationListJson"]" />
+    <input type="hidden" id="MaintCriticalityListJson" value="@ViewData["MaintCriticalityListJson"]" />
+    <input type="hidden" id="MaintObjectTypeListJson" value="@ViewData["MaintObjectTypeListJson"]" />
+    <input type="hidden" id="SubSystemListJson" value="@ViewData["SubSystemListJson"]" />
+    <input type="hidden" id="MaintWorkCentreListJson" value="@ViewData["MaintWorkCentreListJson"]" />
+
+    <!-- alternate ddl values -->
+    <input type="hidden" id="MaintParentListJson" value="@ViewData["MaintParentListJson"]" />
+    <input type="hidden" id="MaintEdcCodeListJson" value="@ViewData["MaintEdcCodeListJson"]" />
+    <input type="hidden" id="MaintStructureIndicatorListJson" value="@ViewData["MaintStructureIndicatorListJson"]" />
+    <input type="hidden" id="PerformanceStandardListJson" value="@ViewData["PerformanceStandardListJson"]" />
+    <input type="hidden" id="ExMethodListJson" value="@ViewData["ExMethodListJson"]" />
+
+    <!-- UI ddls -->
+    <input type="hidden" id="PageRecordsListJson" value="@ViewData["PageRecordsListJson"]" />
+    <input type="hidden" id="TagViewListJson" value="@ViewData["TagViewListJson"]" />
+    <input type="hidden" id="SapValidationJson" value="@ViewData["SapValidationJson"]" />
+
+</div>
+
+<!-- PAGINATION -->
+@{
+    var prevDisabled = !pagedList.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !pagedList.HasNextPage ? "disabled" : "";
+}
+<table>
+    <tr>
+        <td>
+            <a asp-action="Index"
+               asp-route-sortOrder="@ViewData["CurrentSort"]"
+               asp-route-pageNumber=1
+               asp-route-currentFilter="@ViewData["CurrentSearchModelJson"]"
+               class="btn btn-default @prevDisabled">
+                &lt;&lt;
+            </a>
+        </td>
+        <td>
+            <a asp-action="Index"
+               asp-route-sortOrder="@ViewData["CurrentSort"]"
+               asp-route-pageNumber="@(pagedList.PageIndex - 1)"
+               asp-route-currentFilter="@ViewData["CurrentSearchModelJson"]"
+               class="btn btn-default @prevDisabled">
+                &lt;
+            </a>
+        </td>
+        <td>
+            Page @(pagedList.PageIndex) of @(pagedList.TotalPages)
+        </td>
+        <td>
+            <a asp-action="Index"
+               asp-route-sortOrder="@ViewData["CurrentSort"]"
+               asp-route-pageNumber="@(pagedList.PageIndex + 1)"
+               asp-route-currentFilter="@ViewData["CurrentSearchModelJson"]"
+               class="btn btn-default @nextDisabled">
+                &gt;
+            </a>
+        </td>
+        <td>
+            <a asp-action="Index"
+               asp-route-sortOrder="@ViewData["CurrentSort"]"
+               asp-route-pageNumber="@(pagedList.TotalPages)"
+               asp-route-currentFilter="@ViewData["CurrentSearchModelJson"]"
+               class="btn btn-default @nextDisabled">
+                &gt;&gt;
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="5" style="text-align:center">@(pagedList.TotalRecords) Records</td>
+    </tr>
+</table>
+
+<!-- Hover button that displays when Tag register container is scrolled down -->
+<button onclick="topFunction()" id="ScrollBtn" title="Go to top">Top</button>

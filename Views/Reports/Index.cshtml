@@ -1,0 +1,49 @@
+﻿
+@{
+    ViewData["Title"] = "Download Reports";
+}
+
+<h1>Download Reports</h1>
+
+<p>
+    &nbsp;
+</p>
+<p>
+    &nbsp;
+</p>
+
+<label>Export Regardless of SAP Status:&nbsp;</label>
+<input type="checkbox" name="Export All" id="ExportAll" checked />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Report Name</th>
+            <th>Link</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in ViewBag.Reports)
+        {
+        <tr>
+            <td width="100"></td>
+            <td width="250">
+                @item
+            </td>
+            <td width="250">
+                <input type="button" onclick='getReport("@item")' value="Get Report" />
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+
+    function getReport(reportName)
+    {
+        exportAll = $('#ExportAll').prop('checked');
+        window.open('/Reports/ExcelReport?fileName=' + reportName + '&ExportAll=' + exportAll)
+    }
+</script>

@@ -1,0 +1,112 @@
+﻿@model ProDat.Web2.ViewModels.ApproveReport
+
+@{
+    ViewData["Title"] = "Import Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Excel Import</h1>
+
+<p>
+    <a asp-action="Create">New Import</a>
+</p>
+<p>
+    <a asp-controller="Tags" asp-route-CurrentFilter="{}" asp-action="Excel">Download Template</a>
+</p>
+
+<table class="table">
+    <tbody>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Import.ImportType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Import.Created)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Import.CreatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Import.CreatedComment)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Import.ApprovedComment)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Import.ImportStatus)
+            </th>
+            <th>Actions</th>
+        </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(model => model.Import.ImportType)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Import.Created)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Import.CreatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Import.CreatedComment)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Import.ApprovedComment)
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.Import.ImportStatus)
+            </td>
+            <td>
+                @{ if (Model.Import.ImportStatus == "Transformed Import")
+                  {
+                    <a asp-action="Approve" asp-route-id=@Model.Import.ImportId>Approve</a> 
+                    <a asp-action="Remove" asp-route-id=@Model.Import.ImportId>Remove</a>
+                  }
+                 }
+            </td>
+        </tr>
+
+    </tbody>
+</table>
+
+<h2>Change Summary</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th width="100px">Load Type</th>
+            <th width="170px">Identifier</th>
+            <th>Attribute Name</th>
+            <th>Attribute Value</th>
+            <th>Attribute Value (Prior)</th>
+            <th>Error Description</th>
+        </tr>
+    </thead>
+    <tbody>
+    <!-- update below to iterate over ImportReport -->
+    @foreach (var item in Model.ImportReport)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.LoadType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EntityPseudoPK)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AttributeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AttributeValue)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AttributeValueOld)
+            </td>
+            <td class="text-danger">
+                @Html.DisplayFor(modelItem => item.ErrorDescription)
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<a asp-action="Index">Back to Import Register</a>

@@ -1,0 +1,32 @@
+﻿@model ProDat.Web2.Models.EngPlantSection
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>EngDataCode</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EngPlantSectionName)
+        </dt>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.EngPlantId)
+        </dt>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Longitude)
+        </dt>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Latitude)
+        </dt>
+
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.EngPlantSectionId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

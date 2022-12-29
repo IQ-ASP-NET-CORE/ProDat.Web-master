@@ -1,0 +1,170 @@
+﻿@page
+@model RoleManagerModel
+@{
+    ViewData["Title"] = "Role Manager";
+    ViewData["ActivePage"] = ManageNavPages.RoleManager;
+    List<ProDatWeb2User> myUsers = (List<ProDatWeb2User>)ViewData["users"];
+    List<IdentityRole> roles = (List<IdentityRole>)ViewData["roles"];
+    string userRoles = (string)ViewData["userRoles"];
+}
+<style>
+    .bodyStyle {
+        z-index: -10;
+    }
+</style>
+<h4>@ViewData["Title"]</h4>
+<partial name="_StatusMessage" for="StatusMessage" />
+
+<input type="hidden" id="UserRoles" value="@ViewData["userroles"]" />
+
+<div class="row">
+    <div class="col">
+        Selected User
+        <select id="selectedUser" name="users" onchange="leaveChange(this)">
+            <option value="">-</option>
+            @foreach (var u in @myUsers)
+            {
+                <option value="@u.Email">@u.Email</option>
+            }
+        </select>
+    </div>
+</div>
+<div class="row">
+    <br />
+    <br />
+</div>
+<div class="row">
+    <div class="col">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" />
+        <button onClick="resetPwd()">Reset Password</button>
+    </div>
+</div>
+
+<br />
+
+<div class="row">
+    <div class="col">
+        Current Roles<br />
+        <select id="userroleslist" multiple="multiple" name="CurrentRoles" size="10" style="width:300px">
+            <option value="">-</option>
+        </select>
+        <br />
+        <button onClick="removeSelectedRoles()">Remove Selected Roles</button>
+    </div>
+    <div class="col">
+        Available Roles<br />
+        <select id="roleslist" multiple="multiple" name="AvailableRoles" size="10" style="width:300px">
+            @foreach (var r in roles)
+            {
+                <option value="@r.NormalizedName">@r.NormalizedName</option>
+            }
+        </select>
+        <br />
+        <button onClick="addSelectedRoles()">Add Selected Roles</button>
+    </div>
+</div>
+
+
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+    <script>
+        function leaveChange(obj) {
+            // populate UserRole list for selected user.
+            var email = obj.value;
+
+            // empty map
+            $('#userroleslist').empty();
+
+            //get userroles input
+            var strDDl = $('#UserRoles').val();
+            var data = JSON.parse(strDDl);
+
+            // update list.
+            if (data[email] != null) {
+                var roles = data[email];
+
+                for (var i = 0; i < roles.length; i++) {
+                    var opt = new Option(roles[i], roles[i])
+                    $('#userroleslist').append(opt);
+                }
+            }
+        }
+    </script>
+
+    <script>
+        function removeSelectedRoles(obj) {
+            // get user email
+            var email = $("#selectedUser").val();
+
+            // for each selected current role
+            var items = [];
+            $("#userroleslist option:selected").each(function () { items.push($(this).val()); });
+            // removeRole(user, role)
+            for (i = 0; i < items.length; i++) {
+                removerole(email, items[i]);
+            }
+            setTimeout(() => { location.reload(); }, 2000);
+        }
+
+        function addSelectedRoles(obj) {
+            // get user email
+            var email = $("#selectedUser").val();
+
+            // for each selected available role
+            var items = [];
+            $("#roleslist option:selected").each(function () { items.push($(this).val()); });
+            // addRole(user, role)
+            for (i = 0; i < items.length; i++) {
+                addrole(email, items[i]);
+            }
+            setTimeout(() => { location.reload(); }, 2000);
+
+        }
+
+        function removerole(email, role) {
+            console.log('removeRole(' + email + ', ' + role + ')');
+            $.ajax({
+                url: "/UserAPI/RemUserRole",
+                data: { Email: email, Role: role },
+                success: function (data) {
+                    $("#status").html(data);
+                }
+            })
+        }
+
+        function addrole(email, role) {
+            console.log('addRole(' + email + ', ' + role + ')');
+            $.ajax({
+                url: "/UserAPI/AddUserRole",
+                data: { Email: email, Role: role },
+                success: function (data) {
+                    $("#status").html(data);
+                }
+            })
+        }
+
+        function resetPwd() {
+
+            var email = $("#selectedUser").val();
+            var pwd = $("#password").val();
+
+            if (email.length > 6 && pwd.length > 6) {
+                console.log('resetPwd(' + email + ', ' + pwd + ')');
+
+                $.ajax({
+                    url: "/UserAPI/ResetUserPwd",
+                    data: { Email: email, newPwd: pwd },
+                    success: function (data) {
+                        $("#status").html(data);
+                    }
+                })
+
+                setTimeout(() => { location.reload(); }, 2000);
+            }
+        }
+
+    </script>

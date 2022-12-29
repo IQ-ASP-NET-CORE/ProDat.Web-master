@@ -1,0 +1,251 @@
+﻿@model ProDat.Web2.ViewModels.UC2ComponentVM
+
+@{ var mod_h = Model.height * 1;
+   Dictionary<string, ProDat.Web2.ViewModels.ColParams> colIndex = ViewBag.colIndex;
+}
+
+@*<div class="TLHHeader">Task List Headers</div>*@
+
+@(Html.DevExtreme().DataGrid<ProDat.Web2.ViewModels.TaskListHeader_UC3v2>()
+    .ID("TaskListHeaderX")
+    .Height(mod_h)
+    .Width(Model.width)
+    .DataSource(d => d.Mvc()
+        .Controller("TLHRegister")
+        //.LoadParams(new { parent = Model.parent })
+        .LoadAction("TaskListHeader_GetData")
+        .InsertAction("TLHRegister_Insert")
+        .UpdateAction("TLHRegister_Update")
+        .DeleteAction("TLHRegister_Delete")
+        .Key("TaskListHeader.TaskListHeaderId")
+    )
+    .Editing(editing =>
+    {
+        editing.Mode(GridEditMode.Row);
+        editing.AllowUpdating(true);
+        editing.AllowAdding(false);
+        editing.AllowDeleting(true);
+    })
+    .Selection(x => x.Mode(SelectionMode.Single)) // to un-select click and hold...
+    //.Selection(x => x
+    //    .Mode(SelectionMode.Multiple) 
+    //    .ShowCheckBoxesMode(GridSelectionShowCheckBoxesMode.OnLongTap)
+    //)
+    .RemoteOperations(true)
+    .AllowColumnReordering(true)
+    .RowAlternationEnabled(true)
+    .OnContextMenuPreparing("TaskListHeader_OnContextMenuPreparing")
+    .OnToolbarPreparing("TaskListHeaderDataGrid_OnToolbarPreparing")
+    .ShowBorders(true)
+    .FilterRow(f => f.Visible(true))
+    .ColumnChooser(c => c.Enabled(true))
+    .ColumnFixing(c => c.Enabled(true))
+    .ColumnResizingMode(ColumnResizingMode.Widget)
+    .AllowColumnResizing(true)
+    .ColumnAutoWidth(true)
+    .SearchPanel(s => s
+        .Visible(true)
+        .HighlightCaseSensitive(true)
+    )
+    //.HeaderFilter(f => f.Visible(true))
+    //.GroupPanel(p => p.Visible(false))
+    .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+
+    .OnSelectionChanged("TaskListHeader_SelectionChanged")
+    //.OnCellPrepared("DataGrid_OnCellPrepared")
+
+    .Columns( columns =>
+    {
+        columns.AddFor(m => m.TaskListHeader.TaskListGroupId)
+            .Fixed(true)
+            .Width(100)
+            .Alignment(HorizontalAlignment.Right)
+            .SortOrder(SortOrder.Asc).SortIndex(0)
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("TaskListGroup_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Short")
+            );
+
+        columns.AddFor(m => m.TaskListHeader.Counter)
+            .Fixed(true)
+            .Width(110)
+            .Format("00")
+            .SortOrder(SortOrder.Asc).SortIndex(1);
+
+        columns.AddFor(m => m.TaskListHeader.TaskListShortText)
+            .Visible(colIndex.ContainsKey("TaskListShortText") ? colIndex["TaskListShortText"].Visible: false)
+            .VisibleIndex(colIndex.ContainsKey("TaskListShortText") ? colIndex["TaskListShortText"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TaskListShortText") ? colIndex["TaskListShortText"].Width : 75);
+
+        columns.AddFor(m => m.TaskListHeader.MaintWorkCentreId)
+            .Visible(colIndex.ContainsKey("MaintWorkCentreId") ? colIndex["MaintWorkCentreId"].Visible : false)
+            .VisibleIndex(colIndex.ContainsKey("MaintWorkCentreId") ? colIndex["MaintWorkCentreId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintWorkCentreId") ? colIndex["MaintWorkCentreId"].Width : 75)
+            .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintWorkCentre_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Short")
+                );
+
+        columns.AddFor(m => m.TaskListHeader.MaintenancePlantId)
+            .Visible(colIndex.ContainsKey("MaintenancePlantId") ? colIndex["MaintenancePlantId"].Visible : false)
+            .VisibleIndex(colIndex.ContainsKey("MaintenancePlantId") ? colIndex["MaintenancePlantId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintenancePlantId") ? colIndex["MaintenancePlantId"].Width : 75)
+            .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintenancePlant_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Short")
+                );
+
+        columns.AddFor(m => m.TaskListHeader.SysCondId)
+            .Visible(colIndex.ContainsKey("SysCondId") ? colIndex["SysCondId"].Visible : false)
+            .VisibleIndex(colIndex.ContainsKey("SysCondId") ? colIndex["SysCondId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("SysCondId") ? colIndex["SysCondId"].Width : 75)
+            .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("SysCond_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Short")
+                );
+
+        columns.AddFor(m => m.TaskListHeader.MaintStrategyId)
+            .Visible(colIndex.ContainsKey("MaintStrategyId") ? colIndex["MaintStrategyId"].Visible : false)
+            .VisibleIndex(colIndex.ContainsKey("MaintStrategyId") ? colIndex["MaintStrategyId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintStrategyId") ? colIndex["MaintStrategyId"].Width : 75)
+            .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintStrategy_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Short")
+                );
+
+        columns.AddFor(m => m.TaskListHeader.MaintPackageId)
+            .Visible(colIndex.ContainsKey("MaintPackageId") ? colIndex["MaintPackageId"].Visible : false)
+            .VisibleIndex(colIndex.ContainsKey("MaintPackageId") ? colIndex["MaintPackageId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintPackageId") ? colIndex["MaintPackageId"].Width : 75)
+            .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintPackage_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Short")
+                );
+
+        columns.AddFor(m => m.TaskListHeader.PmassemblyId)
+            .Visible(colIndex.ContainsKey("PmassemblyId") ? colIndex["PmassemblyId"].Visible : false)
+            .VisibleIndex(colIndex.ContainsKey("PmassemblyId") ? colIndex["PmassemblyId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("PmassemblyId") ? colIndex["PmassemblyId"].Width : 75)
+            .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("Pmassembly_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Short")
+                );
+
+        columns.AddFor(m => m.TaskListHeader.TasklistCatId)
+            .Visible(colIndex.ContainsKey("TasklistCatId") ? colIndex["TasklistCatId"].Visible : false)
+            .VisibleIndex(colIndex.ContainsKey("TasklistCatId") ? colIndex["TasklistCatId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TasklistCatId") ? colIndex["TasklistCatId"].Width : 75)
+            .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("TasklistCat_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Short")
+                );
+
+        columns.AddFor(m => m.TaskListHeader.PerformanceStandardId)
+            .Visible(colIndex.ContainsKey("PerformanceStandardId") ? colIndex["PerformanceStandardId"].Visible : false)
+            .VisibleIndex(colIndex.ContainsKey("PerformanceStandardId") ? colIndex["PerformanceStandardId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("PerformanceStandardId") ? colIndex["PerformanceStandardId"].Width : 75)
+            .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("PerformanceStandard_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Short")
+                );
+
+        columns.AddFor(m => m.TaskListHeader.PerfStdAppDel)
+            .Visible(colIndex.ContainsKey("PerfStdAppDel") ? colIndex["PerfStdAppDel"].Visible : false)
+            .VisibleIndex(colIndex.ContainsKey("PerfStdAppDel") ? colIndex["PerfStdAppDel"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("PerfStdAppDel") ? colIndex["PerfStdAppDel"].Width : 75);
+
+        columns.AddFor(m => m.TaskListHeader.ScePsReviewId)
+            .Visible(colIndex.ContainsKey("ScePsReviewId") ? colIndex["ScePsReviewId"].Visible : false)
+            .VisibleIndex(colIndex.ContainsKey("ScePsReviewId") ? colIndex["ScePsReviewId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("ScePsReviewId") ? colIndex["ScePsReviewId"].Width : 75)
+            .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("ScePsReview_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Short")
+                );
+
+        columns.AddFor(m => m.TaskListHeader.RegulatoryBodyId)
+            .Visible(colIndex.ContainsKey("RegulatoryBodyId") ? colIndex["RegulatoryBodyId"].Visible : false)
+            .VisibleIndex(colIndex.ContainsKey("RegulatoryBodyId") ? colIndex["RegulatoryBodyId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("RegulatoryBodyId") ? colIndex["RegulatoryBodyId"].Width : 75)
+            .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("RegulatoryBody_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Short")
+                );
+
+        columns.AddFor(m => m.TaskListHeader.RegBodyAppDel)
+            .Visible(colIndex.ContainsKey("RegBodyAppDel") ? colIndex["RegBodyAppDel"].Visible : false)
+            .VisibleIndex(colIndex.ContainsKey("RegBodyAppDel") ? colIndex["RegBodyAppDel"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("RegBodyAppDel") ? colIndex["RegBodyAppDel"].Width : 75);
+
+        columns.AddFor(m => m.TaskListHeader.ChangeRequired)
+            .Visible(colIndex.ContainsKey("ChangeRequired") ? colIndex["ChangeRequired"].Visible : false)
+            .VisibleIndex(colIndex.ContainsKey("ChangeRequired") ? colIndex["ChangeRequired"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("ChangeRequired") ? colIndex["ChangeRequired"].Width : 75);
+
+        // TaskListClass is MaintClass?
+        columns.AddFor(m => m.TaskListHeader.TaskListClassId)
+            .Visible(colIndex.ContainsKey("TaskListClassId") ? colIndex["TaskListClassId"].Visible : false)
+            .VisibleIndex(colIndex.ContainsKey("TaskListClassId") ? colIndex["TaskListClassId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TaskListClassId") ? colIndex["TaskListClassId"].Width : 75)
+            .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintClass_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Short")
+                );
+
+        columns.AddFor(m => m.TaskListHeader.MaintPlannerGroupId)
+            .Visible(colIndex.ContainsKey("MaintPlannerGroupId") ? colIndex["MaintPlannerGroupId"].Visible : false)
+            .VisibleIndex(colIndex.ContainsKey("MaintPlannerGroupId") ? colIndex["MaintPlannerGroupId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintPlannerGroupId") ? colIndex["MaintPlannerGroupId"].Width : 75)
+            .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintPlannerGroup_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Short")
+                );
+
+        // MaintStatus? SAPStatus?
+        columns.AddFor(m => m.TaskListHeader.StatusId)
+            .Visible(colIndex.ContainsKey("StatusId") ? colIndex["StatusId"].Visible : false)
+            .VisibleIndex(colIndex.ContainsKey("StatusId") ? colIndex["StatusId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("StatusId") ? colIndex["StatusId"].Width : 75)
+            .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("SAPStatus_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Short")
+                );
+
+        // MaintItem M2M added in TaskListHeaders_GetData.
+        // Filters for searching.
+        columns.AddFor(m => m.MaintItemId)
+            .Visible(colIndex.ContainsKey("MaintItemId") ? colIndex["MaintItemId"].Visible : false)
+            .VisibleIndex(colIndex.ContainsKey("MaintItemId") ? colIndex["MaintItemId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintItemId") ? colIndex["MaintItemId"].Width : 75)
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintItem_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Short")
+            );
+
+        columns.AddFor(m => m.MaintPlanId)
+            .Visible(colIndex.ContainsKey("MaintPlanId") ? colIndex["MaintPlanId"].Visible : false)
+            .VisibleIndex(colIndex.ContainsKey("MaintPlanId") ? colIndex["MaintPlanId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintPlanId") ? colIndex["MaintPlanId"].Width : 75)
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintPlan_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Short")
+            );
+    })
+
+)

@@ -1,0 +1,95 @@
+﻿@model ProDat.Web2.Models.MaintPlan
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4>MaintPlan</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="MaintPlanId" />
+            <div class="form-group">
+                <label asp-for="MaintPlanName" class="control-label"></label>
+                <input asp-for="MaintPlanName" class="form-control" />
+                <span asp-validation-for="MaintPlanName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ShortText" class="control-label"></label>
+                <input asp-for="ShortText" class="form-control" />
+                <span asp-validation-for="ShortText" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintStrategyId" class="control-label"></label>
+                <select asp-for="MaintStrategyId" class="form-control" asp-items="ViewBag.MaintStrategyId"></select>
+                <span asp-validation-for="MaintStrategyId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintSortProcessId" class="control-label"></label>
+                <select asp-for="MaintSortProcessId" class="form-control" asp-items="ViewBag.MaintSortProcessId"></select>
+                <span asp-validation-for="MaintSortProcessId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Sort" class="control-label"></label>
+                <input asp-for="Sort" class="form-control" />
+                <span asp-validation-for="Sort" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CycleModFactor" class="control-label"></label>
+                <input asp-for="CycleModFactor" class="form-control" />
+                <span asp-validation-for="CycleModFactor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StartDate" class="control-label"></label>
+                <input asp-for="StartDate" class="form-control" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MeasPointId" class="control-label"></label>
+                <select asp-for="MeasPointId" class="form-control" asp-items="ViewBag.MeasPointId"></select>
+                <span asp-validation-for="MeasPointId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ChangeStatus" class="control-label"></label>
+                <input asp-for="ChangeStatus" class="form-control" />
+                <span asp-validation-for="ChangeStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StartingInstructions" class="control-label"></label>
+                <input asp-for="StartingInstructions" class="form-control" />
+                <span asp-validation-for="StartingInstructions" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CallHorizon" class="control-label"></label>
+                <input asp-for="CallHorizon" class="form-control" />
+                <span asp-validation-for="CallHorizon" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SchedulingPeriodValue" class="control-label"></label>
+                <input asp-for="SchedulingPeriodValue" class="form-control" />
+                <span asp-validation-for="SchedulingPeriodValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SchedulingPeriodUomId" class="control-label"></label>
+                <input asp-for="SchedulingPeriodUomId" class="form-control" />
+                <span asp-validation-for="SchedulingPeriodUomId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

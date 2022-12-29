@@ -1,0 +1,1365 @@
+﻿@model ProDat.Web2.ViewModels.UC1_TagsVM
+
+@{
+    ViewData["Title"] = "Tag Register";
+
+    //Dictionary<string, int> colIndex = ViewBag.colIndex;
+    Dictionary<string, ProDat.Web2.ViewModels.ColParams> colIndex = ViewBag.colIndex;
+
+    bool isUser = User.IsInRole("User");
+    bool isAdmin = User.IsInRole("Admin");
+}
+
+<div class="options">
+    <div class="option">
+        <form id="Form1" method="post">
+            <table>
+                <tr>
+                    <td>Column Format: </td>
+                    <td>
+                        @(Html.DevExtreme().SelectBox()
+                            .ID("ColumnSetsName")
+                            .Name("ColumnSetsName")
+                            .DataSource( d => d
+                                .Mvc()
+                                .Controller("Lookups")
+                                .LoadParams(new { ColumnSetsEntity = "Tag" })
+                                .LoadAction("ColumnSets_Lookup")
+                                .Key("Text"))
+                            .DisplayExpr("Text")
+                            .ValueExpr("Text")
+                            .Value(ViewBag.columnSetsName)
+                            .OnValueChanged("Option_ColumnSets")
+                        )
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+
+<div id="form" class="dx-swatch-Datagrid_White" style="overflow-y: hidden; overflow-x: hidden">
+    <!-- <div id="form" style="overflow-y: hidden; overflow-x: hidden"> -->
+    @(Html.DevExtreme().DataGrid<ProDat.Web2.ViewModels.UC1_TagsVM>()
+    .ID("TagRegister")
+    .Height(1150)
+    //.Width()
+    .DataSource( ds => ds.Mvc()
+        .Controller("UC1")
+        .LoadAction("TagRegister_GetData")
+        .InsertAction("TagRegister_Insert")
+        .UpdateAction("TagRegister_Update")
+        .DeleteAction("TagRegister_Delete")
+        .Key("TagId")
+    )
+    .Editing(editing =>
+    {
+        editing.Mode(GridEditMode.Cell);
+        editing.AllowUpdating(isUser);
+    })
+    .OnEditorPreparing("OnEditorPreparing_lookupCols")
+    .Selection(s => s.Mode(SelectionMode.Multiple))
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting")
+    .RemoteOperations(false)
+    .AllowColumnReordering(true)
+    .RowAlternationEnabled(true)
+    .OnContextMenuPreparing("GridViewContextMenuDefault")
+    .OnContentReady("TagRegister_OnContentReady")
+    .OnToolbarPreparing("TagRegister_OnToolbarPreparing")
+    .ShowBorders(true)
+    .FilterRow(f => f.Visible(true)) // won't txt search lookup columns. 
+                                     //.SelectionFilter(true)
+    .HeaderFilter(x=> x.Visible(true))
+    .ColumnChooser(c=> c
+        .Enabled(true)
+    )
+    .ColumnFixing(c => c.Enabled(true))
+    .ColumnResizingMode(ColumnResizingMode.Widget)
+    .AllowColumnResizing(true)
+    .SearchPanel(s => s
+        .Visible(true)
+        .HighlightCaseSensitive(true)
+     )
+    .GroupPanel(g => g
+        .Visible(true)
+        .AllowColumnDragging(true)
+    )
+    .Grouping(g => g.AutoExpandAll(false))
+    .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+    .Paging(p=> p.PageSize(45))
+    .OnCellPrepared("DataGrid_OnCellPrepared")
+    .Columns(columns =>
+    {
+        columns.AddFor(x => x.TagId)
+            .Visible(colIndex.ContainsKey("TagId"))
+            .Caption("TagId")
+            .VisibleIndex(colIndex.ContainsKey("TagId") ? colIndex["TagId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagId") ? colIndex["TagId"].Width : 75);
+
+        columns.AddFor(x => x.TagDeleted)
+            .Visible(colIndex.ContainsKey("TagDeleted"))
+            .Caption("Deleted")
+            .VisibleIndex(colIndex.ContainsKey("TagDeleted") ? colIndex["TagDeleted"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagDeleted") ? colIndex["TagDeleted"].Width : 75)
+            .SelectedFilterOperation(FilterOperations.Equal)
+            .FilterValue(false);
+
+        columns.AddFor(x => x.Tagnoneng)
+            .Visible(colIndex.ContainsKey("Tagnoneng"))
+            .Caption("Non Engineering")
+            .VisibleIndex(colIndex.ContainsKey("Tagnoneng") ? colIndex["Tagnoneng"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("Tagnoneng") ? colIndex["Tagnoneng"].Width : 75);
+
+        columns.AddFor(x => x.TagMaintQuery)
+            .Visible(colIndex.ContainsKey("TagMaintQuery"))
+            .Caption("Has MaintQuery")
+            .VisibleIndex(colIndex.ContainsKey("TagMaintQuery") ? colIndex["TagMaintQuery"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagMaintQuery") ? colIndex["TagMaintQuery"].Width : 75);
+
+        columns.Add()
+            .DataField("TagNumber")
+            .Caption("Tag Number")
+            .Fixed(true)
+            .Visible(colIndex.ContainsKey("TagNumber"))
+            .Width(colIndex.ContainsKey("TagNumber") ? colIndex["TagNumber"].Width : 75);
+
+        columns.AddFor(x => x.TagFloc)
+            .Visible(colIndex.ContainsKey("TagFloc"))
+            .VisibleIndex(colIndex.ContainsKey("TagFloc") ? colIndex["TagFloc"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagFloc") ? colIndex["TagFloc"].Width : 75);
+
+        columns.AddFor(x => x.TagFlocDesc)
+            .Visible(colIndex.ContainsKey("TagFlocDesc"))
+            .VisibleIndex(colIndex.ContainsKey("TagFlocDesc") ? colIndex["TagFlocDesc"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagFlocDesc") ? colIndex["TagFlocDesc"].Width : 75);
+
+        columns.AddFor(x => x.EngDiscId)
+            .Visible(colIndex.ContainsKey("EngDiscId"))
+            .VisibleIndex(colIndex.ContainsKey("EngDiscId") ? colIndex["EngDiscId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("EngDiscId") ? colIndex["EngDiscId"].Width : 75)
+            .SetCellValue("setCellValue_EngDisc")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("EngDisc_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.MaintLocationId)
+            .Visible(colIndex.ContainsKey("MaintLocationId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintLocationId") ? colIndex["MaintLocationId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintLocationId") ? colIndex["MaintLocationId"].Width : 75)
+            .CalculateFilterExpression("calculateFilterExpression_lookupCols")
+            .SetCellValue("setCellValue_MaintLocation")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintLocation_Lookup")
+                .Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+
+        columns.AddFor(x => x.MaintenancePlantId)
+            .Visible(colIndex.ContainsKey("MaintenancePlantId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintenancePlantId") ? colIndex["MaintenancePlantId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintenancePlantId") ? colIndex["MaintenancePlantId"].Width : 75)
+            .SetCellValue("setCellValue_MaintenancePlant")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintenancePlant_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.MaintCriticalityId)
+            .Visible(colIndex.ContainsKey("MaintCriticalityId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintCriticalityId") ? colIndex["MaintCriticalityId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintCriticalityId") ? colIndex["MaintCriticalityId"].Width : 75)
+            .SetCellValue("setCellValue_MaintCriticality")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintCriticality_Lookup")
+                .Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.MaintObjectTypeId)
+            .Visible(colIndex.ContainsKey("MaintObjectTypeId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintObjectTypeId") ? colIndex["MaintObjectTypeId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintObjectTypeId") ? colIndex["MaintObjectTypeId"].Width : 75)
+            .SetCellValue("setCellValue_MaintObjectType")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintObjectType_Lookup")
+                .Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.SubSystemId)
+            .Visible(colIndex.ContainsKey("SubSystemId"))
+            .VisibleIndex(colIndex.ContainsKey("SubSystemId") ? colIndex["SubSystemId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("SubSystemId") ? colIndex["SubSystemId"].Width : 75)
+            .SetCellValue("setCellValue_SubSystem")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("SubSystem_Lookup")
+                .Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.MaintWorkCentreId)
+            .Visible(colIndex.ContainsKey("MaintWorkCentreId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintWorkCentreId") ? colIndex["MaintWorkCentreId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintWorkCentreId") ? colIndex["MaintWorkCentreId"].Width : 75)
+            .SetCellValue("setCellValue_MaintWorkCentre")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintWorkCentre_Lookup")
+                .Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.ManufacturerId)
+            .Visible(colIndex.ContainsKey("ManufacturerId"))
+            .VisibleIndex(colIndex.ContainsKey("ManufacturerId") ? colIndex["ManufacturerId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("ManufacturerId") ? colIndex["ManufacturerId"].Width : 75)
+            .SetCellValue("setCellValue_Manufacturer")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("Manufacturer_Lookup")
+                .Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+                //columns.AddFor(x => x.ModelId)
+                //    .Visible(colIndex.ContainsKey("ModelId"))
+                //    .VisibleIndex(colIndex.ContainsKey("ModelId") ? colIndex["ModelId"].Order : int.MaxValue)
+                //    .Width(colIndex.ContainsKey("ModelId") ? colIndex["ModelId"].Width : 75)
+                //    .SetCellValue("setCellValue_Model")
+                //    .Lookup(lookup => lookup
+                //        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("Models_Lookup")
+                //        .Key("Value"))
+                //        .ValueExpr("Value")
+                //        .DisplayExpr("Text")
+                //    );
+
+                columns.AddFor(x => x.ModelDescription)
+            .Visible(colIndex.ContainsKey("ModelDescription"))
+            .VisibleIndex(colIndex.ContainsKey("ModelDescription") ? colIndex["ModelDescription"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("ModelDescription") ? colIndex["ModelDescription"].Width : 75);
+
+        columns.AddFor(x => x.TagRawDesc)
+            .Visible(colIndex.ContainsKey("TagRawDesc"))
+            .VisibleIndex(colIndex.ContainsKey("TagRawDesc") ? colIndex["TagRawDesc"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagRawDesc") ? colIndex["TagRawDesc"].Width : 75);
+
+        columns.AddFor(x => x.TagRawNumber)
+            .Visible(colIndex.ContainsKey("TagRawNumber"))
+            .VisibleIndex(colIndex.ContainsKey("TagRawNumber") ? colIndex["TagRawNumber"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagRawNumber") ? colIndex["TagRawNumber"].Width : 75);
+
+        columns.AddFor(x => x.MaintScePsJustification)
+            .Visible(colIndex.ContainsKey("MaintScePsJustification"))
+            .VisibleIndex(colIndex.ContainsKey("MaintScePsJustification") ? colIndex["MaintScePsJustification"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintScePsJustification") ? colIndex["MaintScePsJustification"].Width : 75);
+
+        columns.AddFor(x => x.MEXEquipList)
+            .Visible(colIndex.ContainsKey("MEXEquipList"))
+            .VisibleIndex(colIndex.ContainsKey("MEXEquipList") ? colIndex["MEXEquipList"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MEXEquipList") ? colIndex["MEXEquipList"].Width : 75);
+
+        columns.AddFor(x => x.MEXParentEquip)
+            .Visible(colIndex.ContainsKey("MEXParentEquip"))
+            .VisibleIndex(colIndex.ContainsKey("MEXParentEquip") ? colIndex["MEXParentEquip"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MEXParentEquip") ? colIndex["MEXParentEquip"].Width : 75);
+
+        columns.AddFor(x => x.SerialNumber)
+            .Visible(colIndex.ContainsKey("SerialNumber"))
+            .VisibleIndex(colIndex.ContainsKey("SerialNumber") ? colIndex["SerialNumber"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("SerialNumber") ? colIndex["SerialNumber"].Width : 75);
+
+        columns.AddFor(x => x.SupFunctLoc)
+            .Visible(colIndex.ContainsKey("SupFunctLoc"))
+            .VisibleIndex(colIndex.ContainsKey("SupFunctLoc") ? colIndex["SupFunctLoc"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("SupFunctLoc") ? colIndex["SupFunctLoc"].Width : 75);
+
+        columns.AddFor(x => x.TagBomReq)
+            .Visible(colIndex.ContainsKey("TagBomReq"))
+            .VisibleIndex(colIndex.ContainsKey("TagBomReq") ? colIndex["TagBomReq"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagBomReq") ? colIndex["TagBomReq"].Width : 75);
+
+        columns.AddFor(x => x.TagCharacteristic)
+            .Visible(colIndex.ContainsKey("TagCharacteristic"))
+            .VisibleIndex(colIndex.ContainsKey("TagCharacteristic") ? colIndex["TagCharacteristic"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagCharacteristic") ? colIndex["TagCharacteristic"].Width : 75);
+
+        columns.AddFor(x => x.TagCharDesc)
+            .Visible(colIndex.ContainsKey("TagCharDesc"))
+            .VisibleIndex(colIndex.ContainsKey("TagCharDesc") ? colIndex["TagCharDesc"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagCharDesc") ? colIndex["TagCharDesc"].Width : 75);
+
+        columns.AddFor(x => x.TagCharValue)
+            .Visible(colIndex.ContainsKey("TagCharValue"))
+            .VisibleIndex(colIndex.ContainsKey("TagCharValue") ? colIndex["TagCharValue"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagCharValue") ? colIndex["TagCharValue"].Width : 75);
+
+        columns.AddFor(x => x.TagComment)
+            .Visible(colIndex.ContainsKey("TagComment"))
+            .VisibleIndex(colIndex.ContainsKey("TagComment") ? colIndex["TagComment"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagComment") ? colIndex["TagComment"].Width : 75);
+
+        columns.AddFor(x => x.TagMaintCritComments)
+            .Visible(colIndex.ContainsKey("TagMaintCritComments"))
+            .VisibleIndex(colIndex.ContainsKey("TagMaintCritComments") ? colIndex["TagMaintCritComments"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagMaintCritComments") ? colIndex["TagMaintCritComments"].Width : 75);
+
+        columns.AddFor(x => x.TagRbmMethod)
+            .Visible(colIndex.ContainsKey("TagRbmMethod"))
+            .VisibleIndex(colIndex.ContainsKey("TagRbmMethod") ? colIndex["TagRbmMethod"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagRbmMethod") ? colIndex["TagRbmMethod"].Width : 75);
+
+        columns.AddFor(x => x.TagService)
+            .Visible(colIndex.ContainsKey("TagService"))
+            .VisibleIndex(colIndex.ContainsKey("TagService") ? colIndex["TagService"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagService") ? colIndex["TagService"].Width : 75);
+
+        columns.AddFor(x => x.TagSource)
+            .Visible(colIndex.ContainsKey("TagSource"))
+            .VisibleIndex(colIndex.ContainsKey("TagSource") ? colIndex["TagSource"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagSource") ? colIndex["TagSource"].Width : 75);
+
+        columns.AddFor(x => x.TagSpNo)
+            .Visible(colIndex.ContainsKey("TagSpNo"))
+            .VisibleIndex(colIndex.ContainsKey("TagSpNo") ? colIndex["TagSpNo"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagSpNo") ? colIndex["TagSpNo"].Width : 75);
+
+        columns.AddFor(x => x.TagSrcKeyList)
+            .Visible(colIndex.ContainsKey("TagSrcKeyList"))
+            .VisibleIndex(colIndex.ContainsKey("TagSrcKeyList") ? colIndex["TagSrcKeyList"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagSrcKeyList") ? colIndex["TagSrcKeyList"].Width : 75);
+
+        columns.AddFor(x => x.TagVendorTag)
+            .Visible(colIndex.ContainsKey("TagVendorTag"))
+            .VisibleIndex(colIndex.ContainsKey("TagVendorTag") ? colIndex["TagVendorTag"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagVendorTag") ? colIndex["TagVendorTag"].Width : 75);
+
+        columns.AddFor(x => x.TagVib)
+            .Visible(colIndex.ContainsKey("TagVib"))
+            .VisibleIndex(colIndex.ContainsKey("TagVib") ? colIndex["TagVib"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagVib") ? colIndex["TagVib"].Width : 75);
+
+
+                // Lookup Fields
+                columns.AddFor(x => x.CommissioningSubsystemId)
+            .Visible(colIndex.ContainsKey("CommissioningSubsystemId"))
+            .VisibleIndex(colIndex.ContainsKey("CommissioningSubsystemId") ? colIndex["CommissioningSubsystemId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("CommissioningSubsystemId") ? colIndex["CommissioningSubsystemId"].Width : 75)
+            .SetCellValue("setCellValue_CommissioningSubsystem")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("CommissioningSubsystem_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.CommClassId)
+            .Visible(colIndex.ContainsKey("CommClassId"))
+            .VisibleIndex(colIndex.ContainsKey("CommClassId") ? colIndex["CommClassId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("CommClassId") ? colIndex["CommClassId"].Width : 75);
+
+        columns.AddFor(x => x.CommZoneId)
+            .Visible(colIndex.ContainsKey("CommZoneId"))
+            .VisibleIndex(colIndex.ContainsKey("CommZoneId") ? colIndex["CommZoneId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("CommZoneId") ? colIndex["CommZoneId"].Width : 75)
+            .SetCellValue("setCellValue_CommZone")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("CommZone_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.ComnpanyCodeId)
+            .Visible(colIndex.ContainsKey("ComnpanyCodeId"))
+            .VisibleIndex(colIndex.ContainsKey("ComnpanyCodeId") ? colIndex["ComnpanyCodeId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("ComnpanyCodeId") ? colIndex["ComnpanyCodeId"].Width : 75)
+            .SetCellValue("setCellValue_ComnpanyCode")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("ComnpanyCode_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.EngClassId)
+            .Visible(colIndex.ContainsKey("EngClassId"))
+            .VisibleIndex(colIndex.ContainsKey("EngClassId") ? colIndex["EngClassId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("EngClassId") ? colIndex["EngClassId"].Width : 75)
+            .SetCellValue("setCellValue_EngClass")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("EngClass_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.EngStatusId)
+            .Visible(colIndex.ContainsKey("EngStatusId"))
+            .VisibleIndex(colIndex.ContainsKey("EngStatusId") ? colIndex["EngStatusId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("EngStatusId") ? colIndex["EngStatusId"].Width : 75)
+            .SetCellValue("setCellValue_EngStatus")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("EngStatus_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.EnvZoneId)
+            .Visible(colIndex.ContainsKey("EnvZoneId"))
+            .VisibleIndex(colIndex.ContainsKey("EnvZoneId") ? colIndex["EnvZoneId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("EnvZoneId") ? colIndex["EnvZoneId"].Width : 75)
+            .SetCellValue("setCellValue_EnvZone")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("EnvZone_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.ExMethodId)
+            .Visible(colIndex.ContainsKey("ExMethodId"))
+            .VisibleIndex(colIndex.ContainsKey("ExMethodId") ? colIndex["ExMethodId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("ExMethodId") ? colIndex["ExMethodId"].Width : 75)
+            .SetCellValue("setCellValue_ExMethod")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("ExMethod_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.IpfId)
+            .Visible(colIndex.ContainsKey("IpfId"))
+            .VisibleIndex(colIndex.ContainsKey("IpfId") ? colIndex["IpfId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("IpfId") ? colIndex["IpfId"].Width : 75)
+            .SetCellValue("setCellValue_Ipf")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("Ipf_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+                // dont add documents via admin interface?
+                columns.AddFor(x => x.KeyDocId)
+            .Visible(colIndex.ContainsKey("KeyDocId"))
+            .VisibleIndex(colIndex.ContainsKey("KeyDocId") ? colIndex["KeyDocId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("KeyDocId") ? colIndex["KeyDocId"].Width : 75)
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("Doc_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+
+        columns.AddFor(x => x.LocationId)
+            .Visible(colIndex.ContainsKey("LocationId"))
+            .VisibleIndex(colIndex.ContainsKey("LocationId") ? colIndex["LocationId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("LocationId") ? colIndex["LocationId"].Width : 75)
+            .SetCellValue("setCellValue_Location")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("Location_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.MaintEdcCodeId)
+            .Visible(colIndex.ContainsKey("MaintEdcCodeId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintEdcCodeId") ? colIndex["MaintEdcCodeId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintEdcCodeId") ? colIndex["MaintEdcCodeId"].Width : 75)
+            .SetCellValue("setCellValue_MaintEdcCode")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintEdcCode_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.MaintenanceplanId)
+            .Visible(colIndex.ContainsKey("MaintenanceplanId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintenanceplanId") ? colIndex["MaintenanceplanId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintenanceplanId") ? colIndex["MaintenanceplanId"].Width : 75)
+            .SetCellValue("setCellValue_Maintenanceplan")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintPlan_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+
+        columns.AddFor(x => x.MaintParentId)
+            .Visible(colIndex.ContainsKey("MaintParentId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintParentId") ? colIndex["MaintParentId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintParentId") ? colIndex["MaintParentId"].Width : 75)
+            //.SetCellValue("setCellValue_MaintParent")
+            .AllowEditing(false)
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintParent_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.MaintPlannerGroupId)
+            .Visible(colIndex.ContainsKey("MaintPlannerGroupId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintPlannerGroupId") ? colIndex["MaintPlannerGroupId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintPlannerGroupId") ? colIndex["MaintPlannerGroupId"].Width : 75)
+            .SetCellValue("setCellValue_MaintPlannerGroup")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintPlannerGroup_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.MaintScePsReviewTeamId)
+            .Visible(colIndex.ContainsKey("MaintScePsReviewTeamId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintScePsReviewTeamId") ? colIndex["MaintScePsReviewTeamId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintScePsReviewTeamId") ? colIndex["MaintScePsReviewTeamId"].Width : 75)
+            .SetCellValue("setCellValue_MaintScePsReviewTeam")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintScePsReviewTeam_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+
+        columns.AddFor(x => x.MaintSortProcessId)
+            .Visible(colIndex.ContainsKey("MaintSortProcessId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintSortProcessId") ? colIndex["MaintSortProcessId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintSortProcessId") ? colIndex["MaintSortProcessId"].Width : 75)
+            .SetCellValue("setCellValue_MaintSortProcess")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintSortProcess_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.MaintStatusId)
+            .Visible(colIndex.ContainsKey("MaintStatusId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintStatusId") ? colIndex["MaintStatusId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintStatusId") ? colIndex["MaintStatusId"].Width : 75)
+            .SetCellValue("setCellValue_MaintStatus")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintStatus_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.MaintStructureIndicatorId)
+            .Visible(colIndex.ContainsKey("MaintStructureIndicatorId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintStructureIndicatorId") ? colIndex["MaintStructureIndicatorId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintStructureIndicatorId") ? colIndex["MaintStructureIndicatorId"].Width : 75)
+            .SetCellValue("setCellValue_MaintStructureIndicator")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintStructureIndicator_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.MaintTypeId)
+            .Visible(colIndex.ContainsKey("MaintTypeId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintTypeId") ? colIndex["MaintTypeId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintTypeId") ? colIndex["MaintTypeId"].Width : 75)
+            .SetCellValue("setCellValue_MaintType")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintType_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.PbsId)
+            .Visible(colIndex.ContainsKey("PbsId"))
+            .VisibleIndex(colIndex.ContainsKey("PbsId") ? colIndex["PbsId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("PbsId") ? colIndex["PbsId"].Width : 75)
+            .SetCellValue("setCellValue_Pbs")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("Pbs_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.PerformanceStandardId)
+            .Visible(colIndex.ContainsKey("PerformanceStandardId"))
+            .VisibleIndex(colIndex.ContainsKey("PerformanceStandardId") ? colIndex["PerformanceStandardId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("PerformanceStandardId") ? colIndex["PerformanceStandardId"].Width : 75)
+            .SetCellValue("setCellValue_PerformanceStandard")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("PerformanceStandard_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.PlannerPlantdId)
+            .Visible(colIndex.ContainsKey("PlannerPlantdId"))
+            .VisibleIndex(colIndex.ContainsKey("PlannerPlantdId") ? colIndex["PlannerPlantdId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("PlannerPlantdId") ? colIndex["PlannerPlantdId"].Width : 75)
+            .SetCellValue("setCellValue_PlannerPlants")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("PlannerPlant_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.PoId)
+            .Visible(colIndex.ContainsKey("PoId"))
+            .VisibleIndex(colIndex.ContainsKey("PoId") ? colIndex["PoId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("PoId") ? colIndex["PoId"].Width : 75)
+            .SetCellValue("setCellValue_Po")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("Po_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.RbiSilId)
+            .Visible(colIndex.ContainsKey("RbiSilId"))
+            .VisibleIndex(colIndex.ContainsKey("RbiSilId") ? colIndex["RbiSilId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("RbiSilId") ? colIndex["RbiSilId"].Width : 75)
+            .SetCellValue("setCellValue_RbiSil")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("RbiSil_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.RbmId)
+            .Visible(colIndex.ContainsKey("RbmId"))
+            .VisibleIndex(colIndex.ContainsKey("RbmId") ? colIndex["RbmId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("RbmId") ? colIndex["RbmId"].Width : 75)
+            .SetCellValue("setCellValue_Rbm")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("Rbm_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.RcmId)
+            .Visible(colIndex.ContainsKey("RcmId"))
+            .VisibleIndex(colIndex.ContainsKey("RcmId") ? colIndex["RcmId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("RcmId") ? colIndex["RcmId"].Width : 75)
+            .SetCellValue("setCellValue_Rcm")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("Rcm_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.SAPStatusId)
+            .Visible(colIndex.ContainsKey("SAPStatusId"))
+            .VisibleIndex(colIndex.ContainsKey("SAPStatusId") ? colIndex["SAPStatusId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("SAPStatusId") ? colIndex["SAPStatusId"].Width : 75)
+            .SetCellValue("setCellValue_SAPStatus")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("SAPStatus_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.SortFieldId)
+            .Visible(colIndex.ContainsKey("SortFieldId"))
+            .VisibleIndex(colIndex.ContainsKey("SortFieldId") ? colIndex["SortFieldId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("SortFieldId") ? colIndex["SortFieldId"].Width : 75)
+            .SetCellValue("setCellValue_SortField")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("SortField_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.VibId)
+            .Visible(colIndex.ContainsKey("VibId"))
+            .VisibleIndex(colIndex.ContainsKey("VibId") ? colIndex["VibId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("VibId") ? colIndex["VibId"].Width : 75)
+            .SetCellValue("setCellValue_Vib")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("Vib_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+
+        columns.AddFor(x => x.WBSElementId)
+            .Visible(colIndex.ContainsKey("WBSElementId"))
+            .VisibleIndex(colIndex.ContainsKey("WBSElementId") ? colIndex["WBSElementId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("WBSElementId") ? colIndex["WBSElementId"].Width : 75)
+            .SetCellValue("setCellValue_WBSElement")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("WBSElement_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
+    })
+
+        )
+</div>
+
+<!-- UI structure to test SAP Validations -->
+<input type="hidden" id="SapValidationJson" value="@ViewData["SapValidationJson"]" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+
+<!-- override basic functionality of dxdatagrid. 
+    NOT SUPPORTED BY DEVEX. -->
+<script>
+        DevExpress.ui.dxDataGrid.registerModule("columnChooserSorting", {
+            extenders: {
+                controllers: {
+                    columns: {
+                        getChooserColumns: function (loadAllColumns) {
+                            var result = this.callBase(loadAllColumns);
+                            return result.sort(function (column1, column2) {
+                                return column1.caption.localeCompare(column2.caption);
+                            });
+                        }
+                    }
+                }
+            }
+        });
+</script>
+
+<!-- Trigger events for search UI ddls -->
+<script>
+    // Perform action when fields updated/edited.
+    function Option_ColumnSets(e) {
+        return $("#Form1").submit();
+    }
+</script>
+
+<!-- TagRegister DataGrid Modifications-->
+<script>
+
+    function TagRegister_OnContentReady(e) {
+        e.element.find(".dx-datagrid-export-button").dxButton("instance").option("text", "Export current View");
+    }
+
+    function TagRegister_OnToolbarPreparing(e) {
+
+        var dataGrid = e.component;
+
+        e.toolbarOptions.items.unshift(
+            {
+                location: "after",
+                widget: "dxButton",
+                options: {
+                    text: "Export All",
+                    width: 136,
+                    onClick: function (e) {
+                        window.open("/UC1/Excel?CurrentFilter=%7B%7D", "_blank")
+                    }
+                }
+            });
+    }
+
+   
+    // Override default search for specified lookup columns. 
+    function OnEditorPreparing_lookupCols(e) {
+        if (e.parentType === "filterRow" && e.dataField === "MaintLocationId") {
+            e.editorName = "dxTextBox";
+            e.editorOptions.valueChangeEvent = "keyup change";
+        }
+    }
+
+    // where overridden, specify this function in column definition
+    //e.g. CalculateFilterExpression("calculateFilterExpression_lookupCols")
+    function calculateFilterExpression_lookupCols(filterValue, selectedFilterOperaion, target) {
+        var column = this;
+        if (target === "filterRow" && filterValue) {
+            return [function (data) {
+                var value = column.calculateCellValue(data);
+                var text = column.lookup.calculateCellValue(value) || "";
+                return text;
+            }, "contains", filterValue];
+        }
+
+        return this.defaultCalculateFilterExpression.apply(this, arguments);
+    }
+
+</script>
+
+<!-- OnCellPrepared functions -->
+<script>
+
+    window.sapatts = {};
+
+    function DataGrid_OnCellPrepared(options) {
+
+        // cache validation rules in window object, so we don't reload for every cell.
+        initGlobals();
+
+        if (options.rowType == 'data') {
+
+            // Hard coded test for SAP Status
+            if (options.column.dataField == 'TagNumber' && options.data) {
+                options.cellElement.addClass(options.data.TagDeleted ? "isDeleted" : "");
+                options.cellElement.addClass(options.data.TagMaintQuery ? "isMaintQuery" : "");
+            }
+
+            // Test SAP requirements
+            if (options.column.dataField in window.sapatts && options.data) {
+                for (var i = 0; i < window.sapatts[options.column.dataField].length; i++) {
+                    if (!isGoodSAP(
+                        window.sapatts[options.column.dataField][i].EntityAttributeRequirementType,
+                        window.sapatts[options.column.dataField][i].EntityAttributeRequirementCondition,
+                        window.sapatts[options.column.dataField][i].EntityAttributeRequirementValue,
+                        options.data[options.column.dataField])) {
+                        options.cellElement.addClass('badSAP');
+                    }
+                }
+            }
+        }
+    }
+
+    function isGoodSAP(TestType, testOperator, testValue, cellValue) {
+        if (TestType == 'AttributeLength' && cellValue != null) {
+            if (eval(cellValue.length + testOperator + testValue))
+                return true;
+            else
+                return false;
+
+        } // add more Test Types after this...
+
+        // if no applicable test, assume its fine.
+        return true;
+    }
+
+
+    // SAP Validation from Tags.cshtml.
+    // convert integer indexed structure to AttributeName indexed structure to speed up attribute checking.
+    function initGlobals() {
+        if (isObjectEmpty(window.sapatts)) {
+            var sapreq = JSON.parse($('#SapValidationJson').val());
+            for (var i = 0; i < sapreq.length; i++) {
+                window.sapatts[sapreq[i].EntityAttributeName] = sapreq[i].EntityAttributeRequirements;
+            }
+        }
+    }
+
+    function isObjectEmpty(value) {
+        return value && Object.keys(value).length === 0 && value.constructor === Object;
+    }
+
+</script>
+
+
+<!-- Lookup functions -->
+<script>
+
+    // need to create one of these for every star field... If I could retrieve the FieldName it was related to, I could build on the fly..
+    function setCellValue_EngDisc(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.EngDiscId = currentRowData.EngDiscId;
+            target = '/EngDiscs';
+            window.open(target);
+        }
+        else {
+            newData.EngDiscId = value;
+        }
+    }
+
+    //setCellValue_Vib
+    function setCellValue_Vib(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.VibId = currentRowData.VibId;
+            target = '/Vibs';
+            window.open(target);
+        }
+        else {
+            newData.VibId = value;
+        }
+    }
+
+    //Rcm_Lookup
+    function setCellValue_Rcm(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.RcmId = currentRowData.RcmId;
+            target = '/Rcms';
+            window.open(target);
+        }
+        else {
+            newData.RcmId = value;
+        }
+    }
+
+    //setCellValue_RbiSil
+    function setCellValue_RbiSil(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.RbiSilId = currentRowData.RbiSilId;
+            target = '/RbiSils';
+            window.open(target);
+        }
+        else {
+            newData.RbiSilId = value;
+        }
+    }
+
+    //setCellValue_Rbm
+    function setCellValue_Rbm(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.RbmId = currentRowData.RbmId;
+            target = '/Rbms';
+            window.open(target);
+        }
+        else {
+            newData.RbmId = value;
+        }
+    }
+
+    //setCellValue_MaintScePsReviewTeam
+    function setCellValue_MaintScePsReviewTeam(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintScePsReviewTeamId = currentRowData.MaintScePsReviewTeamId;
+            target = '/MaintScePsReviewTeams';
+            window.open(target);
+        }
+        else {
+            newData.MaintScePsReviewTeamId = value;
+        }
+    }
+
+    //setCellValue_EnvZone
+    function setCellValue_EnvZone(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.EnvZoneId = currentRowData.EnvZoneId;
+            target = '/EnvZones';
+            window.open(target);
+        }
+        else {
+            newData.EnvZoneId = value;
+        }
+    }
+
+
+    //setCellValue_Ipf
+    function setCellValue_Ipf(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.IpfId = currentRowData.IpfId;
+            target = '/Ipfs';
+            window.open(target);
+        }
+        else {
+            newData.IpfId = value;
+        }
+    }
+
+
+    function setCellValue_EngStatus(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.EngStatusId = currentRowData.EngStatusId;
+            target = '/EngStatuses';
+            window.open(target);
+        }
+        else {
+            newData.EngStatusId = value;
+        }
+    }
+
+    //setCellValue_EngClass
+    function setCellValue_EngClass(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.EngClassId = currentRowData.EngClassId;
+            target = '/EngClasses';
+            window.open(target);
+        }
+        else {
+            newData.EngClassId = value;
+        }
+    }
+
+
+    //setCellValue_ComnpanyCode
+    function setCellValue_ComnpanyCode(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.CompanyCodeId = currentRowData.CompanyCodeId;
+            target = '/ComnpanyCode';
+            window.open(target);
+        }
+        else {
+            newData.CompanyCodeId = value;
+        }
+    }
+
+
+    //CommissioningSubsystem_Lookup
+    function setCellValue_CommissioningSubsystem(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.CommissioningSubsystemId = currentRowData.CommissioningSubsystemId;
+            target = '/CommissioningSubsystems';
+            window.open(target);
+        }
+        else {
+            newData.CommissioningSubsystemId = value;
+        }
+    }
+
+    function setCellValue_ExMethod(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.ExMethodId = currentRowData.ExMethodId;
+            target = '/ExMethods';
+            window.open(target);
+        }
+        else {
+            newData.ExMethodId = value;
+        }
+    }
+
+    function setCellValue_CommZone(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.CommZoneId = currentRowData.CommZoneId;
+            target = '/CommZones';
+            window.open(target);
+        }
+        else {
+            newData.CommZoneId = value;
+        }
+    }
+
+    function setCellValue_Location(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.LocationId = currentRowData.LocationId;
+            target = '/Locations';
+            window.open(target);
+        }
+        else {
+            newData.LocationId = value;
+        }
+    }
+    function setCellValue_MaintType(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintTypeId = currentRowData.MaintTypeId;
+            target = '/MaintTypes';
+            window.open(target);
+        }
+        else {
+            newData.MaintTypeId = value;
+        }
+    }
+
+    function setCellValue_SAPStatus(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.SAPStatusId = currentRowData.SAPStatusId;
+            target = '/SAPStatus';
+            window.open(target);
+        }
+        else {
+            newData.SAPStatusId = value;
+        }
+    }
+
+    function setCellValue_EngDataCode(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.EngDataCodeId = currentRowData.EngDataCodeId;
+            target = '/EngDataCodes';
+            window.open(target);
+        }
+        else {
+            newData.EngDataCodeId = value;
+        }
+    }
+
+    function setCellValue_Manufacturer(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.ManufacturerId = currentRowData.ManufacturerId;
+            target = '/Manufacturers';
+            window.open(target);
+        }
+        else {
+            newData.ManufacturerId = value;
+        }
+    }
+
+    function setCellValue_Model(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.ModelId = currentRowData.ModelId;
+            target = '/Models';
+            window.open(target);
+        }
+        else {
+            newData.ModelId = value;
+        }
+    }
+
+    // ???
+    function setCellValue_MaintenancePlant(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintenancePlantId = currentRowData.MaintenancePlantId;
+            target = '/MaintenancePlant';
+            window.open(target);
+        }
+        else {
+            newData.MaintenancePlantId = value;
+        }
+    }
+
+    function setCellValue_MaintLocation(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintLocationId = currentRowData.MaintLocationId;
+            target = '/MaintLocations';
+            window.open(target);
+        }
+        else {
+            newData.MaintLocationId = value;
+        }
+    }
+
+    function setCellValue_Area(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.AreaId = currentRowData.AreaId;
+            target = '/Areas';
+            window.open(target);
+        }
+        else {
+            newData.AreaId = value;
+        }
+    }
+
+    function setCellValue_MaintCriticality(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintCriticalityId = currentRowData.MaintCriticalityId;
+            target = '/MaintCriticalities';
+            window.open(target);
+        }
+        else {
+            newData.MaintCriticalityId = value;
+        }
+    }
+
+    function setCellValue_MaintObjectType(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintObjectTypeId = currentRowData.MaintObjectTypeId;
+            target = '/MaintObjectTypes';
+            window.open(target);
+        }
+        else {
+            newData.MaintObjectTypeId = value;
+        }
+    }
+
+    function setCellValue_SubSystem(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.SubSystemId = currentRowData.SubSystemId;
+            target = '/SubSystems';
+            window.open(target);
+        }
+        else {
+            newData.SubSystemId = value;
+        }
+    }
+
+    function setCellValue_MaintWorkCentre(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintWorkCentreId = currentRowData.MaintWorkCentreId;
+            target = '/MaintWorkCentres';
+            window.open(target);
+        }
+        else {
+            newData.MaintWorkCentreId = value;
+        }
+    }
+
+    function setCellValue_WBSElement(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.WBSElementId = currentRowData.WBSElementId;
+            target = '/WBSElements';
+            window.open(target);
+        }
+        else {
+            newData.WBSElementId = value;
+        }
+    }
+
+    function setCellValue_MaintSortProcess(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintSortProcessId = currentRowData.MaintSortProcessId;
+            target = '/MaintSortProcesses';
+            window.open(target);
+        }
+        else {
+            newData.MaintSortProcessId = value;
+        }
+    }
+
+    function setCellValue_MaintStatus(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintStatusId = currentRowData.MaintStatusId;
+            target = '/MaintStatuses';
+            window.open(target);
+        }
+        else {
+            newData.MaintStatusId = value;
+        }
+    }
+
+    function setCellValue_Pbs(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.PbsId = currentRowData.PbsId;
+            target = '/Pbs';
+            window.open(target);
+        }
+        else {
+            newData.PbsId = value;
+        }
+    }
+
+    function setCellValue_PerformanceStandard(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.PerformanceStandardId = currentRowData.PerformanceStandardId;
+            target = '/PerformanceStandards';
+            window.open(target);
+        }
+        else {
+            newData.PerformanceStandardId = value;
+        }
+    }
+
+    function setCellValue_PlannerPlants(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.PlannerPlantdId = currentRowData.PlannerPlantdId;
+            target = '/PlannerPlants';
+            window.open(target);
+        }
+        else {
+            newData.PlannerPlantdId = value;
+        }
+    }
+
+    function setCellValue_Po(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.PoId = currentRowData.PoId;
+            target = '/Poes';
+            window.open(target);
+        }
+        else {
+            newData.PoId = value;
+        }
+    }
+
+    function setCellValue_CompanyCode(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.CompanyCodeId = currentRowData.CompanyCodeId;
+            target = '/CompanyCodes';
+            window.open(target);
+        }
+        else {
+            newData.CompanyCodeId = value;
+        }
+    }
+
+    function setCellValue_SortField(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.SortFieldId = currentRowData.SortFieldId;
+            target = '/SortFields';
+            window.open(target);
+        }
+        else {
+            newData.SortFieldId = value;
+        }
+    }
+
+    function setCellValue_PlannerPlant(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.PlannerPlantId = currentRowData.PlannerPlantId;
+            target = '/PlannerPlants';
+            window.open(target);
+        }
+        else {
+            newData.PlannerPlantId = value;
+        }
+    }
+
+    function setCellValue_MaintPlannerGroup(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintPlannerGroupId = currentRowData.MaintPlannerGroupId;
+            target = '/MaintPlannerGroups';
+            window.open(target);
+        }
+        else {
+            newData.MaintPlannerGroupId = value;
+        }
+    }
+
+    //setCellValue_MaintPlan
+    function setCellValue_Maintenanceplan(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintenancePlanId = currentRowData.MaintenancePlanId;
+            target = '/MaintPlans';
+            window.open(target);
+        }
+        else {
+            newData.MaintenancePlanId = value;
+        }
+    }
+
+
+    function setCellValue_MaintEdcCode(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintEdcCodeId = currentRowData.MaintEdcCodeId;
+            target = '/MaintEdcCodes';
+            window.open(target);
+        }
+        else {
+            newData.MaintEdcCodeId = value;
+        }
+    }
+
+    function setCellValue_MaintStructureIndicator(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintStructureIndicatorId = currentRowData.MaintStructureIndicatorId;
+            target = '/MaintStructureIndicators';
+            window.open(target);
+        }
+        else {
+            newData.MaintStructureIndicatorId = value;
+        }
+    }
+
+</script>
+
+<!-- context menu management & export to excel -->
+<script>
+
+    function GridViewContextMenuDefault(e) {
+        if (e.row.rowType === "data") {
+            e.items = [{
+                text: "Engineering data",
+                onItemClick: function () {
+                    var target = "/TagEngDatas/Index/" + e.row.data.TagId;
+                    window.open(target, '', "directories=no, titlebar=no, toolbar=no,location=no, status=no, menubar=no, resizable=yes, width=1000, Height=700, left=100, top=10");
+                }
+            },
+            {
+                text: "Documents",
+                onItemClick: function () {
+                    var target = "/TagXdocs/DocByTagId/" + e.row.data.TagId;
+                    window.open(target, '', "directories=no, titlebar=no, toolbar=no,location=no, status=no, menubar=no, resizable=yes, width=1000, Height=700, left=100, top=10");
+                }
+            },
+            {
+                text: "Class and characteristic",
+                onItemClick: function () {
+                    var target = "/UC2/EngAttributesByClassification/" + e.row.data.TagId;
+                    window.open(target, '', "directories=no, titlebar=no, toolbar=no,location=no, status=no, menubar=no, resizable=yes, width=1000, Height=700, left=100, top=10");
+                }
+            }];
+        }
+    }
+
+    // Export to excel.
+    function exporting(e) {
+        var workbook = new ExcelJS.Workbook();
+        var worksheet = workbook.addWorksheet('ProDat Tag Register');
+
+        DevExpress.excelExporter.exportDataGrid({
+            component: e.component,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            // https://github.com/exceljs/exceljs#writing-xlsx
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Tag_Register.xlsx');
+            });
+        });
+        e.cancel = true;
+    }
+
+</script>

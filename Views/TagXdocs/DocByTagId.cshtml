@@ -1,0 +1,87 @@
+﻿@model IEnumerable<ProDat.Web2.Models.TagXdoc>
+
+@{
+    ViewData["Title"] = "Tag Documents";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    document.getElementById("layoutHeader").style.display = "none";
+</script>
+<style>
+tr:nth-child(odd) { background-color: #fff; }
+tr:nth-child(even) { background-color: #e0ffff; }
+</style>
+<h4>Tag Documents</h4>
+
+    @{ if (Model.Count()>0) 
+       {
+    <h5>@Model.First().Tag.TagNumber</h5>
+       }
+       else
+       {
+    <h5>No Documents Found</h5>
+       }
+     }
+    <p>
+        @{
+            if (Model.Count() > 0)
+            {
+                        @Html.ActionLink("Create New", "Create", "TagXDocs", new { Id = Model.First().TagId });
+            }
+            else
+            {
+                        @Html.ActionLink("Create New", "Create", "TagXDocs");
+            }
+        }
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Doc)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Doc.DocTitle)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Doc.DocType.DocTypeName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DateCreated)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.XComment)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <a href="@item.Doc.DocLink" target="_blank">@item.Doc.DocNum</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Doc.DocTitle)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Doc.DocType.DocTypeName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DateCreated)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.XComment)
+                    </td>
+                    <!--
+            <td>
+            Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+            Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+            Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+            -->
+                </tr>
+            }
+        </tbody>
+    </table>
+

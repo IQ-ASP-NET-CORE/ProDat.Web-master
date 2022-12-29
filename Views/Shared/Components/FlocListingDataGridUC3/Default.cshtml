@@ -1,0 +1,70 @@
+﻿@model ProDat.Web2.ViewModels.UC2ComponentVM
+
+@{ 
+    // defaults... 
+    var mod_h = Model.height * 0.914;
+    var mod_w = Model.width * 1;
+
+    if(Model.height <= 232){
+        mod_h = Model.height * 0.88;
+    }
+    else if (Model.height <= 304)
+    {
+        mod_h = Model.height * 0.914;
+    }
+ }
+
+<div class="GridHeader">All Flocs</div>
+
+@(Html.DevExtreme().DataGrid<ProDat.Web2.ViewModels.FlocListingDataGridUC3ViewModel>()
+    .ID("FlocListingDataGridUC3X")
+    .DataSource(d => d.Mvc()
+        .Controller("UC3")
+        .LoadAction("FlocListingDataGridUC3_GetData")
+        .Key("TagId")
+    )
+    //.OnContextMenuPreparing("FlocListingDataGridUC3_OnContextMenuPreparing")
+    .RemoteOperations(true)
+    .Columns(
+        columns =>
+        {
+            columns.AddFor(m => m.TagFloc).SortOrder(SortOrder.Asc);
+
+            columns.AddFor(m => m.TagFlocDesc);
+
+            columns.AddFor(m => m.RTF);
+
+            columns.AddFor(m => m.MaintPlannerGroupId)
+                .Caption("Maint Plan Group")
+                .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintPlannerGroup_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Text")
+                );
+
+            columns.AddFor(m => m.MICount)
+                .AllowHeaderFiltering(false); // required as header filter breaks on calculated aggregate fields. You can use other filter to do this. 
+        })
+    .FilterRow(f => f.Visible(true))
+    .HeaderFilter(f => f.Visible(true))
+    .GroupPanel(p => p.Visible(false))
+    .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+    .Selection(x => x
+                .Mode(SelectionMode.Multiple)
+                .ShowCheckBoxesMode(GridSelectionShowCheckBoxesMode.None)
+     )
+    
+    .RowDragging(rd => rd
+        .Data("FlocListingDataGridUC3")
+        .Group("shared")
+        .Option("TagId", @Model)
+        .OnDragEnd("FlocListingDataGridUC3_OnDragEnd")
+    )
+    .AllowColumnResizing(true)
+    .ColumnAutoWidth(true)
+    .Height(mod_h)
+    .Width(mod_w)
+    .ShowBorders(true)
+    .Editing(e => e.AllowAdding(false).AllowDeleting(false).AllowUpdating(false))
+
+)

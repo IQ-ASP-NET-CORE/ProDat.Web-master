@@ -1,0 +1,38 @@
+﻿@model ProDat.Web2.ViewModels.UC2ComponentVM
+
+@{ var mod_h = Model.height * 1; }
+
+@(Html.DevExtreme().DataGrid<ProDat.Web2.Models.MaintPlan>()
+    .ID("MaintPlanDataGridX")
+    .DataSource(d => d.Mvc()
+        .Controller("UC3")
+        //.LoadParams(new { parent = Model.parent })
+        .LoadAction("MaintPlanDataGrid_GetData")
+        .Key("MaintPlanId")
+    )
+    .OnContextMenuPreparing("MaintPlanDataGrid_OnContextMenuPreparing")
+    .RemoteOperations(true)
+    .Columns(
+        columns => {
+            columns.AddFor(m => m.MaintPlanName).SortOrder(SortOrder.Asc);
+            columns.AddFor(m => m.ShortText).Caption("Desc"); //TODO: Remove. Caption Use the Model MaintPlan to dictate caption names. 
+            columns.AddFor(m => m.MaintStrategyId)
+            .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintStrategy_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Text")
+                );
+        })
+    .FilterRow(f => f.Visible(true))
+    .HeaderFilter(f => f.Visible(true))
+    .GroupPanel(p => p.Visible(false))
+    .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+    .AllowColumnResizing(true)
+    .ColumnAutoWidth(true)
+    .Selection(x => x.Mode(SelectionMode.Single))
+    .OnSelectionChanged("MaintPlanDataGrid_SelectionChanged")
+    .Height(mod_h)
+    .Width(Model.width)
+    .ShowBorders(true)
+    .Editing(e => e.AllowAdding(false).AllowDeleting(false).AllowUpdating(false))
+)

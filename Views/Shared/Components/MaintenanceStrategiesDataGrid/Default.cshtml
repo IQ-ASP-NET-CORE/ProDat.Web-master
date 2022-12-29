@@ -1,0 +1,44 @@
+﻿@model ProDat.Web2.ViewModels.UC2ComponentVM
+
+@{ var mod_h = Model.height * 1; }
+
+@(Html.DevExtreme().DataGrid<ProDat.Web2.Models.MaintStrategy>()
+    .ID("MaintenanceStrategiesDataGridX")
+    .DataSource(d => d.Mvc()
+        .Controller("UC3")
+        .LoadAction("MaintenanceStrategiesDataGrid_GetData")
+        .Key("MaintStrategyId")
+    )
+    .OnContextMenuPreparing("MaintenanceStrategiesDataGrid_OnContextMenuPreparing")
+    .RemoteOperations(true)
+    .Columns(
+        columns => {
+            columns.AddFor(m => m.MaintStrategyName).SortOrder(SortOrder.Asc);
+            columns.AddFor(m => m.MaintStrategyDesc);
+        })
+
+
+
+
+
+
+
+    .FilterRow(f => f.Visible(true))
+    .HeaderFilter(f => f.Visible(true))
+    .GroupPanel(p => p.Visible(false))
+    .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+    .Selection(x=> x.Mode(SelectionMode.Single))
+    .OnSelectionChanged("MaintenanceStrategiesDataGrid_SelectionChanged")
+    //.RowDragging(rd => rd
+    //    .Group("shared")
+    //    .Data("MaintenanceItemDataGrid")
+    //    .Option("MaintItemId", @Model)
+    //    .OnDragEnd("MaintItemOnDragEnd")
+    //)
+    .AllowColumnResizing(true)
+    .ColumnAutoWidth(true)
+    .Height(mod_h)
+    .Width(Model.width)
+    .ShowBorders(true)
+    .Editing(e => e.AllowAdding(false).AllowDeleting(false).AllowUpdating(false))
+)

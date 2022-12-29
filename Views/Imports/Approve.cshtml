@@ -1,0 +1,62 @@
+﻿@model ProDat.Web2.Models.ETL.Import
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Approve</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Approve">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ImportId" />
+            <div class="form-group">
+                <label asp-for="ImportStatus" class="control-label"></label>
+                <input asp-for="ImportStatus" class="form-control" readonly="readonly"/>
+                <span asp-validation-for="ImportStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImportTypeId" class="control-label"></label>
+                <select asp-for="ImportTypeId" class="form-control" asp-items="ViewBag.ImportTypeId"  readonly="readonly"></select>
+                <span asp-validation-for="ImportTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Created" class="control-label"></label>
+                <input asp-for="Created" class="form-control" readonly="readonly"/>
+                <span asp-validation-for="Created" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CreatedBy" class="control-label"></label>
+                <input asp-for="CreatedBy" class="form-control" readonly="readonly" />
+                <span asp-validation-for="CreatedBy" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CreatedComment" class="control-label"></label>
+                <input asp-for="CreatedComment" class="form-control" readonly="readonly" />
+                <span asp-validation-for="CreatedComment" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ApprovedComment" class="control-label"></label>
+                <input asp-for="ApprovedComment" class="form-control" />
+                <span asp-validation-for="ApprovedComment" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="text-danger">@Html.Raw(Model.ResponseMessage)</label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Approve" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

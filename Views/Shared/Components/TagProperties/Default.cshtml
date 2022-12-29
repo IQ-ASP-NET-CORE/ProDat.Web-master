@@ -1,0 +1,243 @@
+﻿@using ProDat.Web2.ViewModels;
+@using ProDat.Web2.Models;
+@model ProDat.Web2.ViewModels.TagPropertiesStandardViewModel;
+
+@{  var standard_w = Model.width * 1.0;
+    var standard_h = Model.height * 1.0;
+
+    var sapIcon = "dx-icon-SAP" + Model.Tag.SAPStatusId;
+    var formText = Model.Tag.TagFloc + " : " +  Model.Tag.TagFlocDesc;
+}
+<style>
+    .dx-form-group-caption {
+        background-color: #FFFFFF;
+
+    }
+
+</style>
+<div style="padding-left: 40px; padding-top: 15px; overflow-y: scroll; overflow-x: hidden">
+    <div class="row" style="flex-wrap: nowrap;">
+        <div id="form-container">
+            @(Html.DevExtreme().Form<TagPropertiesStandardViewModel>()
+            .ID("form")
+            .OnFieldDataChanged("TagPropertiesMain_OnChange")
+            .OnContentReady("UpdateCaptionStatus")
+            .FormData(Model)
+            .Height(standard_h)
+            .Width(standard_w)
+            .Items(items => {
+
+                items.AddGroup()
+                    .Caption(@formText)
+
+                    .ColCount(4)
+                    .Items(groupItems =>{
+
+                        // Add single complex object to include icon (basedon SapStatusId) + TagFloc + TagFlocDesc
+                        //groupItems.AddSimpleFor(m => m.Tag.SAPStatusId)
+                        //    .ColSpan(4)
+                        //    .Name("SAPStatusAnchor");
+
+
+                        groupItems.AddGroup()
+                            .Caption("General")
+                            .ColCount(2)
+                            .Items(innerGroupItems =>
+                            {
+                                innerGroupItems.AddSimpleFor(m => m.Tag.SAPStatusId)
+                                    .ColSpan(2)
+                                    .Editor(e => e
+                                        .SelectBox()
+                                        .DisplayExpr("Text")
+                                        .ValueExpr("Value")
+                                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("SAPStatus_Lookup").Key("value"))
+                                    );
+
+                                innerGroupItems.AddSimpleFor(m => m.Tag.TagFloc).ColSpan(2);
+
+                                innerGroupItems.AddSimpleFor(m => m.Tag.TagFlocDesc).ColSpan(2);
+
+                                innerGroupItems.AddSimpleFor(m => m.Tag.TagNumber).ColSpan(1);
+
+                                innerGroupItems.AddSimpleFor(m => m.Tag.TagMaintQuery).ColSpan(1);
+
+                                innerGroupItems.AddSimpleFor(m => m.Tag.CommZoneId)
+                                    .ColSpan(2)
+                                    .Editor(e => e
+                                        .SelectBox()
+                                        .DisplayExpr("Text")
+                                        .ValueExpr("Value")
+                                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("CommZone_Lookup").Key("value"))
+                                    );
+
+                                innerGroupItems.AddSimpleFor(m => m.Tag.ManufacturerId)
+                                    .ColSpan(2)
+                                    .Editor(e => e
+                                        .SelectBox()
+                                            .ValueChangeEvent("ManufacturerId_ValueChangeEvent")
+                                            .DisplayExpr("Text")
+                                            .ValueExpr("Value")
+                                            .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("Manufacturer_Lookup").Key("Value"))
+                                    );
+
+                                innerGroupItems.AddSimpleFor(m => m.Tag.ModelDescription).ColSpan(2);
+
+                                innerGroupItems.AddSimpleFor(m => m.Tag.SerialNumber).ColSpan(2);
+
+                                innerGroupItems.AddSimpleFor(m => m.Tag.TagComment).ColSpan(2);
+                            });
+
+                        groupItems.AddGroup()
+                            .Caption("Structure")
+                            .Items(innerGroupItems =>
+                            {
+                                innerGroupItems.AddSimpleFor(m => m.Tag.MaintStructureIndicatorId)
+                                .ColSpan(2)
+                                .Editor(e => e
+                                    .SelectBox()
+                                        .DisplayExpr("Text")
+                                        .ValueExpr("Value")
+                                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintStructureIndicator_Lookup").Key("value"))
+                                );
+
+                                innerGroupItems.AddSimpleFor(m => m.MaintParent_TagFloc)
+                                .ColSpan(2)
+                                .Editor(e => e
+                                    .TextBox()
+                                    .ReadOnly(true)
+                                );
+                                //innerGroupItems.AddSimpleFor(m => m.Tag.SupFunctLoc).ColSpan(2);
+                            });
+
+                        groupItems.AddGroup()
+                            .Caption("Location")
+                            .Items(innerGroupItems =>
+                            {
+                                // There is no MaintenancePlant associated with a Tag. Potential routes to determine Maintenance Plant are: 
+                                // #1: tag -> Location -> Area -> MaintenancePlant
+                                // #2: tag -> CommZone -> Project -> MaintenancePlant
+                                // #3: tag -> Commsubsystem -> SP -> Project -> MaintenancePlant
+                                // For now, this will be a read only value, retrieved on load. Full solution is create an api to retrieve new MaintPlant after location change, and update value. 
+                                // I'm assuming route #1 above is correct. To be applied within TagPropertiesViewComponent (data retrieval)
+                                innerGroupItems.AddSimpleFor(m => m.PlantSectionId)
+                                .ColSpan(2)
+                                .Editor(e => e
+                                    .SelectBox()
+                                        .DisplayExpr("Text")
+                                        .ValueExpr("Value")
+                                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("PlantSection_Lookup").Key("value"))
+                                );
+
+                                // Per above. for simplicity will retrieve as a read only value, via TagPropertiesViewComponent
+                                // tag -> MaintLocation -> MaintArea -> PlantSection
+                                innerGroupItems.AddSimpleFor(m => m.MaintAreaId)
+                                    .ColSpan(2)
+                                    .Editor(e => e
+                                        .SelectBox()
+                                            .DisplayExpr("Text")
+                                            .ValueExpr("Value")
+                                            .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintArea_Lookup").Key("value"))
+                                    );
+
+
+                                innerGroupItems.AddSimpleFor(m => m.Tag.MaintLocationId)
+                                    .ColSpan(2)
+                                    .Editor(e => e
+                                        .SelectBox()
+                                            .DisplayExpr("Text")
+                                            .ValueExpr("Value")
+                                            .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintLocation_Lookup").Key("value"))
+                                    );
+
+
+                                innerGroupItems.AddSimpleFor(m => m.Tag.MaintCriticalityId)
+                                  .ColSpan(2)
+                                  .Editor(e => e
+                                      .SelectBox()
+                                          .DisplayExpr("Text")
+                                          .ValueExpr("Value")
+                                          .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintCriticality_Lookup").Key("value"))
+                                  );
+
+                                innerGroupItems.AddSimpleFor(m => m.Tag.MEXEquipList).ColSpan(2);
+
+                                innerGroupItems.AddSimpleFor(m => m.Tag.MEXParentEquip).ColSpan(2);
+
+                                innerGroupItems.AddSimpleFor(m => m.Tag.SortFieldId)
+                                    .ColSpan(2)
+                                    .Editor(e => e
+                                        .SelectBox()
+                                            .DisplayExpr("Text")
+                                            .ValueExpr("Value")
+                                            .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("SortField_Lookup").Key("value"))
+                                    );
+
+                            }); // Location
+
+                        groupItems.AddGroup()
+                            .Caption("Organisation")
+                            .Items(innergroupItems =>
+                            {
+                                innergroupItems.AddSimpleFor(m => m.Tag.PlannerPlantdId)
+                                    .ColSpan(2)
+                                    .Editor(e => e
+                                        .SelectBox()
+                                            .DisplayExpr("Text")
+                                            .ValueExpr("Value")
+                                            .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("PlannerPlant_Lookup").Key("value"))
+                                    );
+
+                                innergroupItems.AddSimpleFor(m => m.Tag.MaintPlannerGroupId)
+                                    .ColSpan(2)
+                                    .Editor(e => e
+                                        .SelectBox()
+                                            .DisplayExpr("Text")
+                                            .ValueExpr("Value")
+                                            .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintPlannerGroup_Lookup").Key("value"))
+                                    );
+
+                                innergroupItems.AddSimpleFor(m => m.Tag.MaintWorkCentreId)
+                                    .ColSpan(2)
+                                    .Editor(e => e
+                                        .SelectBox()
+                                            .DisplayExpr("Text")
+                                            .ValueExpr("Value")
+                                            .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintWorkCentre_Lookup").Key("value"))
+                                    );
+
+                                innergroupItems.AddSimpleFor(m => m.Tag.ComnpanyCodeId)
+                                    .ColSpan(2)
+                                    .Editor(e => e
+                                        .SelectBox()
+                                            .DisplayExpr("Text")
+                                            .ValueExpr("Value")
+                                            .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("CompanyCode_Lookup").Key("value"))
+                                    );
+
+
+                                innergroupItems.AddSimpleFor(m => m.Tag.WBSElementId)
+                                    .ColSpan(2)
+                                    .Editor(e => e
+                                        .SelectBox()
+                                            .DisplayExpr("Text")
+                                            .ValueExpr("Value")
+                                            .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("WBSElement_Lookup").Key("value"))
+
+                                    );
+
+                            }); // organisation
+
+                    }); //top group
+
+            }) // Form Items
+            ) <!--dxForm -->
+        </div>
+
+    </div>
+</div>
+
+<input type="hidden" id="TagProperties_TagId" value=@Model.Tag.TagId />
+<input type="hidden" id="TagProperties_bgcolor" value=@Model.bgcolour />
+<input type="hidden" id="TagProperties_TagDeleted" value=@Model.Tag.TagDeleted />
+<input type="hidden" id="TagProperties_TagMaintQuery" value=@Model.Tag.TagMaintQuery />
+<input type="hidden" id="TagProperties_SAPStatusId" value=@Model.Tag.SAPStatusId />

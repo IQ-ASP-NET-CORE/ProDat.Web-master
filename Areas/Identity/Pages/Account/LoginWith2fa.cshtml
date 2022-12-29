@@ -1,0 +1,100 @@
+﻿@page
+@model LoginWith2faModel
+@{
+    ViewData["Title"] = "Two-factor authentication";
+}
+<head>
+<style>
+    .bodyStyle {
+        content: "";
+        background-image: url(/img/LandingPage.png);
+        background-size: cover;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        opacity: 0.25;
+    }
+
+    .loginForm {
+        position: fixed; /* or absolute */
+        top: 30%;
+        left: 35%;
+        padding-top: 00px;
+        color: black;
+        border: 4px solid black;
+        padding: 10px;
+        border-radius: 15px;
+        background-color: #f4f4f4;
+        opacity: 1;
+    }
+
+    .container-fluid{
+        visibility:hidden;
+
+    }
+
+    .hamburger-menu{
+
+        visibility: hidden;
+    }
+
+</style>
+</head>
+
+<body style="overflow:hidden;">
+    
+
+    
+<!-- <div class="bodyStyle">
+        </div>-->
+    
+<div class="loginForm">
+        <div>
+            <img src="~/img/IQLogo.png" class="Login-Logo" />
+        </div>
+        <p></p>
+<h3>@ViewData["Title"]</h3>
+<hr />
+<p>Your login is protected with an authenticator app. Enter your authenticator code below.</p>
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" asp-route-returnUrl="@Model.ReturnUrl">
+            <input asp-for="RememberMe" type="hidden" />
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Input.TwoFactorCode"></label>
+                <input asp-for="Input.TwoFactorCode" class="form-control" autocomplete="off" />
+                <span asp-validation-for="Input.TwoFactorCode" class="text-danger"></span>
+            </div>
+            @*<div class="form-group">
+                <div class="checkbox">
+                    <label asp-for="Input.RememberMachine">
+                        <input asp-for="Input.RememberMachine" />
+                        @Html.DisplayNameFor(m => m.Input.RememberMachine)
+                    </label>
+                </div>
+            </div>*@
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Log in</button>
+            </div>
+        </form>
+    </div>
+</div>
+<p>
+    Don't have access to your authenticator device? You can
+    <a id="recovery-code-login" asp-page="./LoginWithRecoveryCode" asp-route-returnUrl="@Model.ReturnUrl">log in with a recovery code</a>.
+</p>
+</div>
+
+<script>
+
+    document.getElementById("Input_TwoFactorCode").focus();
+
+</script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+    </body>

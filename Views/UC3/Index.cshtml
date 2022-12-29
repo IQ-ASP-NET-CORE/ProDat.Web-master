@@ -1,0 +1,1058 @@
+﻿@model ProDat.Web2.ViewModels.UC3
+
+@using ProDat.Web2.TagLibrary
+
+@{
+    ViewData["Title"] = "Maintenance Plan";
+}
+
+<!-- add components for UC3 here. Control UI using UC3 View Model -->
+<div id="wrapper">
+    <section class="top">
+        <div id="MaintPlanDataGrid" class="block dx-swatch-Datagrid_Green">&nbsp;</div>
+        <div id="MaintenanceItemsDataGridUC3" class="block dx-swatch-Datagrid_Blue">&nbsp;</div>
+    </section>
+    <section class="top">
+        <div id="MaintPlanForm" class="block dx-swatch-Form_Green">&nbsp;</div>
+        <div id="MaintItemForm" class="block dx-swatch-Form_Blue">&nbsp;</div>
+    </section>
+    <section class="top">
+        <div id="FlocListingDataGridUC3" class="block dx-swatch-Datagrid_White">&nbsp;</div>
+        <div id="FlocInMIDataGridUC3" class="block dx-swatch-Datagrid_Blue">&nbsp;</div>
+    </section>
+</div>
+<div id="wrapper_bot">
+    <section class="bot">
+        <div id="TaskListHeader" class="block_bot dx-swatch-Datagrid_Pink">&nbsp;</div>
+        <div id="TaskListOperationsDataGrid" class="block_bot dx-swatch-Datagrid_Pink">&nbsp;</div>
+    </section>
+</div>
+<!--<div id="wrapper_bot">
+    <section class="bot">-->
+@*<div id="TaskListHeader" class="block_bot dx-swatch-Datagrid_Pink bot">&nbsp;</div>*@
+<div id="TaskListHeader" class="block_bot dx-swatch-Datagrid_Pink bot">&nbsp;</div>
+    
+    <section class="bot">
+        <div id="TaskListOperationsDataGrid" class="block_bot dx-swatch-Datagrid_Pink bot">&nbsp;</div>
+    </section>
+
+
+<style>
+    .GridHeader {
+        background-color: #83a38c;
+    }
+
+    .dx-header-row{
+
+        background-color:#83a38c;
+    }
+
+    .dx-command-drag {
+
+        background-color: #83a38c;
+    }
+
+    /*.dx-cell-focus-disabled{
+        background-color: #83a38c;
+    }*/
+
+    .dx-editor-cell .dx-editor-inline-block .dx-datagrid-readonly .dx-cell-focus-disabled{
+        background-color: #f4f4f4;
+    }
+
+    .dx-swatch-Datagrid_Blue .dx-datagrid-rowsview{
+
+        background-color: #f4f4f4;
+    }
+
+    .dx-swatch-Datagrid_Blue .dx-datagrid-rowsview {
+        background-color: #f4f4f4;
+    }
+
+    .dx-datagrid-rowsview.dx-scrollable {
+        background-color:#FFFFFF;
+    }
+
+    .dx-datagrid-header-panel {
+
+        background-color: #f4f4f4;
+    }
+
+    .block_bot {
+        background-color: #f4f4f4;
+
+    }
+
+    .dx-swatch-Datagrid_Pink .dx-toolbar{
+
+        background-color: #f4f4f4;
+    }
+
+    .dx-cell-focus-disabled {
+        background-color: transparent;
+    }
+
+    .dx-datagrid .dx-row-alt > td {
+        background-color: #f4f4f4;
+    }
+
+    .dx-form-group-with-caption{
+
+        background-color: #83a38c;
+    }
+    .MaintPlantForm{
+        overflow:auto;
+
+    }
+
+    .GridHeader {
+        color: #fff;
+    }
+
+    .datagrid-headers .dx-datagrid-table .dx-row /* > td .dx-sort-indicator*/ {
+        color: #fff;
+    }
+
+    .dx-datagrid-nowrap .dx-header-row /* > td > .dx-datagrid-text-content*/ {
+        color: #fff;
+    }
+
+    .dx-form-group-caption {
+        color: #fff;
+    }
+
+    .dx-datagrid .dx-datagrid-rowsview .dx-virtual-row > td:not(.dx-datagrid-group-space)::before {
+        display: block;
+        height: 100%;
+        content: "";
+        background-image: url(data:image/png;base64,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AA5DaVRYdFhNTDpjb20uYWRvYmUueG1wAAAAAAA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/Pgo8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJYTVAgQ29yZSA0LjQuMC1FeGl2MiI+CiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiCiAgICB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIKICAgIHhtbG5zOnN0RXZ0PSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VFdmVudCMiCiAgICB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIKICAgIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIKICAgIHhtbG5zOkdJTVA9Imh0dHA6Ly93d3cuZ2ltcC5vcmcveG1wLyIKICAgIHhtbG5zOnRpZmY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vdGlmZi8xLjAvIgogICAgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIgogICB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkFGMTFENEZCM0Q2NDExRThBRkQwQTU3QzVDMjI0QThDIgogICB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjJmZTRiMzYwLTdiYWQtNDcxNy04ZDI3LTI0MTcxMDU3ZTQ4NCIKICAgeG1wTU06T3JpZ2luYWxEb2N1bWVudElEPSJ4bXAuZGlkOjIzMzU1MGQ4LWY0ZjItNGNjZi04NDgxLTMxOWMwODEzZmJmOCIKICAgZGM6Rm9ybWF0PSJpbWFnZS9wbmciCiAgIEdJTVA6QVBJPSIyLjAiCiAgIEdJTVA6UGxhdGZvcm09IldpbmRvd3MiCiAgIEdJTVA6VGltZVN0YW1wPSIxNjY3ODc3Mjk3MDM3Njk2IgogICBHSU1QOlZlcnNpb249IjIuMTAuMzIiCiAgIHRpZmY6T3JpZW50YXRpb249IjEiCiAgIHhtcDpDcmVhdG9yVG9vbD0iR0lNUCAyLjEwIgogICB4bXA6TWV0YWRhdGFEYXRlPSIyMDIyOjExOjA4VDExOjE0OjU1KzA4OjAwIgogICB4bXA6TW9kaWZ5RGF0ZT0iMjAyMjoxMTowOFQxMToxNDo1NSswODowMCI+CiAgIDx4bXBNTTpIaXN0b3J5PgogICAgPHJkZjpTZXE+CiAgICAgPHJkZjpsaQogICAgICBzdEV2dDphY3Rpb249InNhdmVkIgogICAgICBzdEV2dDpjaGFuZ2VkPSIvIgogICAgICBzdEV2dDppbnN0YW5jZUlEPSJ4bXAuaWlkOjhiODJhYmI5LTcwNTItNGI3MS05ZGE5LTM3YTk0NTgyYmJmNSIKICAgICAgc3RFdnQ6c29mdHdhcmVBZ2VudD0iR2ltcCAyLjEwIChXaW5kb3dzKSIKICAgICAgc3RFdnQ6d2hlbj0iMjAyMi0xMS0wOFQxMToxNDo1NyIvPgogICAgPC9yZGY6U2VxPgogICA8L3htcE1NOkhpc3Rvcnk+CiAgIDx4bXBNTTpEZXJpdmVkRnJvbQogICAgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpBRjExRDRGOTNENjQxMUU4QUZEMEE1N0M1QzIyNEE4QyIKICAgIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QUYxMUQ0RjgzRDY0MTFFOEFGRDBBNTdDNUMyMjRBOEMiLz4KICA8L3JkZjpEZXNjcmlwdGlvbj4KIDwvcmRmOlJERj4KPC94OnhtcG1ldGE+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAKPD94cGFja2V0IGVuZD0idyI/PsMr548AAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfmCwgDDjl9bVAeAAAA6klEQVR42u3cMRKAIBRDQeL974y1NToTZLe3kFf/jAEAAAAAAABAicw5p2d48UGTrHx/ecIuggiCIIIgiCAIIgiCCIIgAAAAAAAAAAAAAAAAAAA81A6YrQ6B7coVriAIIgiCCIIggiCIIAiCIAAAAAAAAAAAAAAAAAAAzWoHzD796eJxNFe4giCIIAgiCIIIgiCCIAiCAAAAAAAAAAAAAAAAAAA0O3LArJkrXEEQRBAEEQRBBEEQQRAEQQAAAAAAAAAAAAAAAAAAmm05YJYkfw3iClcQBBEEQQRBEEEQRBAEQRAAAAAAAOBYNze8FHq9RVIfAAAAAElFTkSuQmCC);
+        background-repeat: no-repeat repeat;
+    }
+
+    .dx-datagrid-headers .dx-datagrid-table .dx-row > td .dx-sort-indicator, .dx-datagrid-headers .dx-datagrid-table .dx-row > td:hover .dx-datagrid-text-content {
+        color: #fff;
+    }
+
+    .dx-datagrid-headers .dx-datagrid-table .dx-row > td .dx-sort {
+        color: #fff;
+    }
+</style>
+<!-- Ajax, field change functions-->
+<script>
+    
+    $(document).ready(function () {
+        // apparently this determines how gridview and form components appear...
+        // I suspect we need to set this within each component view.
+        localStorage.setItem("stylingMode", "outlined");
+
+        // Load the various View Components using wrappers.
+        //MaintenanceStrategiesDataGrid_Reload();
+        MaintPlanDataGrid_Reload();
+        MaintenanceItemsDataGridUC3_Reload();
+        TaskListHeader_Reload();
+        //TaskListHeaderMasterDetail_Reload();
+        FlocListingDataGridUC3_Reload();
+
+        //Form loading
+        //MaintenanceStrategiesForm_Reload();
+        MaintPlanForm_Reload();
+        MaintItemForm_Reload();
+        //TaskListHeaderForm_Reload();
+
+        // set form colours until George creates styles?
+        // still need colours, as swatch only affects the item in question (dxWidget)
+        //MWM messing with colour swatches
+
+        applyColour('#MaintPlanForm', '#FFFFFF');
+        applyColour('#MaintItemForm', '#FFFFFF');
+        applyColour('#wrapper_bot', '#000000');
+        applyColour('#FlocInMIDataGridUC3', '#FFFFFF');
+        applyColour('FlocListingDataGridUC3', '#000000');
+        applyColour('TaskListOperationsDataGrid', '#FCF2FF');
+
+        //applyColour('#MaintPlanForm', '#EEF7E4');
+        //applyColour('#MaintItemForm', '#EDF9FC');
+        //applyColour('#wrapper_bot', '#F7F2FF');
+        //applyColour('#FlocInMIDataGridUC3', '#EDF9FC');
+        //applyColour('FlocListingDataGridUC3', '#EDF9FC');
+        //applyColour('TaskListOperationsDataGrid', '#FCF2FF');
+
+
+        //applyColour('#TaskListHeaderForm', '#fbedff');
+
+        // Event for resize of browser. Reloads window content
+        $(window).resize(function () {
+            location.reload();
+        })
+    });
+
+    function applyColour(divId, color) {
+        $(divId).css('background-color', color);
+    }
+
+    function MaintPlanDataGrid_SelectionChanged(e) {
+        var id = e.selectedRowKeys[0];
+        if (id > 0) {
+            // reload related child content
+            MaintPlanForm_Reload(id);
+
+            // apply filters to colA as required.
+            MaintPlan_SelectFilter(id);
+
+            // reload forms which filters were updated.
+            // can take reloads out, if we can verify currently selected item remains selected.
+            MaintItemForm_Reload();
+            //TaskListHeaderForm_Reload();
+            //added by MWM for background colours.
+            $(divId).css('background-color', "#83a38c");
+        }
+    }
+
+    function MaintenanceItemsDataGridUC3_SelectionChanged(e) {
+        var id = e.selectedRowKeys[0];
+        if (id > 0) {
+            // reload related child content
+            MaintItemForm_Reload(id);
+            FlocInMIDataGridUC3_Reload(id);
+
+            // apply filters to colA as required.
+            MaintenanceItems_SelectFilter(id);
+
+            // reload forms which filters were updated.
+            //TaskListHeaderForm_Reload();
+            //TaskListOperationsDataGrid_Reload();
+        }
+    }
+
+    function TaskListHeader_SelectionChanged(e) {
+        var id = e.selectedRowKeys[0];
+        if (id > 0) {
+            //TaskListHeaderForm_Reload(id);
+            TaskListOperationsDataGrid_Reload(id);
+        }
+    }
+
+    function loadVC(divId, componentName) {
+        //load a component that gets its dimensions directly from its div.
+        var w = $("#" + divId).width();
+        var h = $("#" + divId).height();
+
+        $.ajax({
+            url: "/UC3/" + componentName + "_Reload",
+            data: { Height: parseInt(h), Width: parseInt(w) },
+            success: function (data) {
+                $("#" + divId).html(data);
+            }
+        })
+    }
+
+    function loadVC_withID(divId, componentName, Id) {
+        //load a component that gets its dimensions directly from its div.
+        var w = $("#" + divId).width();
+        var h = $("#" + divId).height();
+
+        $.ajax({
+            url: "/UC3/" + componentName + "_Reload",
+            data: { Height: parseInt(h), Width: parseInt(w), parent: Id },
+            success: function (data) {
+                $("#" + divId).html(data);
+            }
+        })
+    }
+
+    function loadVC2(divId, componentName, sizedDiv) {
+        //load a component that gets its dimensions from its div parent.
+        var w = $("#" + sizedDiv).width();
+        var h = $("#" + sizedDiv).height();
+
+        $.ajax({
+            url: "/UC3/" + componentName + "_Reload",
+            data: { Height: parseInt(h), Width: parseInt(w) },
+            success: function (data) {
+                $("#" + divId).html(data);
+            }
+        })
+    }
+
+    function loadVC3(divId, componentName, tagId) {
+        //load a component that gets its dimensions from its div parent,
+        // Include TagId
+        var w = $("#" + divId).width();
+        var h = $("#" + divId).height();
+
+        $.ajax({
+            url: "/UC3/" + componentName + "_Reload",
+            data: { Height: parseInt(h), Width: parseInt(w), TagId: tagId },
+            success: function (data) {
+                $("#" + divId).html(data);
+            }
+        })
+    }
+
+
+    // ##################################################
+    // wrappers for loading view components from client #
+    // ##################################################
+
+    function MaintPlanDataGrid_Reload() {
+        loadVC("MaintPlanDataGrid", "MaintPlanDataGrid");
+    }
+
+    function MaintPlanForm_Reload(id) {
+        loadVC_withID("MaintPlanForm", "MaintPlanForm", id);
+    }
+
+    function MaintenanceItemsDataGridUC3_Reload(id) {
+        loadVC("MaintenanceItemsDataGridUC3", "MaintenanceItemsDataGridUC3");
+    }
+
+    function MaintItemForm_Reload(id) {
+        loadVC_withID("MaintItemForm", "MaintItemForm", id);
+    }
+
+    function TaskListOperationsDataGrid_Reload(id) {
+        loadVC_withID("TaskListOperationsDataGrid", "TaskListOperationsDataGrid", id);
+    }
+
+    // whoops this is DataGrid..
+    function TaskListHeader_Reload() {
+        loadVC("TaskListHeader", "TaskListHeader");
+    }
+
+    //function TaskListHeaderMasterDetail_Reload(){
+    //    loadVC("TaskListHeaderMasterDetail", "TaskListHeaderMasterDetail");
+    //}
+
+    //function TaskListHeaderForm_Reload(id) {
+    //    loadVC_withID("TaskListHeaderForm", "TaskListHeaderForm", id);
+    //}
+
+    function FlocListingDataGridUC3_Reload() {
+        loadVC("FlocListingDataGridUC3", "FlocListingDataGridUC3");
+    }
+
+    function FlocInMIDataGridUC3_Reload(id) {
+        loadVC_withID("FlocInMIDataGridUC3", "FlocInMIDataGridUC3", id);
+    }
+
+
+
+    // ####################################################
+    // # Form updating using Ajax
+    // ####################################################
+
+    function MaintPlanForm_OnChange(e) {
+        // this hidden input box is injected by view component
+        var id = $('#MaintPlanFormId').val();
+
+        if (e.value < 1 && e.value != null) {
+            var cruds = {};
+            // replace below with ddls in the form.
+            cruds['MaintStrategyId'] = '/MaintStrategies';
+            cruds['MaintSortProcessId'] = '/MaintSortProcesses';
+            cruds['MeasPointId'] = '/MeasPoints';
+            cruds['SchedulingPeriodUom'] = '/SchedulingPeriodUom';
+
+            if (e.dataField in cruds)
+                window.open(cruds[e.dataField]);
+
+            // There is no way to get old value without going to database! Devexpress...
+            MaintPlanForm_Reload(id);
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/UC3/" + "MaintPlanUpdate",
+                data: { sId: id, attributeName: e.dataField, newValue: e.value },
+                dataType: "json",
+
+                success: function () {
+                    console.log("SUCCESS: field db update");
+                },
+
+                error: function () {
+                    console.log("FAIL: field db update");
+                }
+            })
+        }
+    }
+
+    function MaintItemForm_OnContentReady() {
+        // get form component
+        var dxForm = getFormInstance('#MaintItemFormX');
+
+        // get MI Id from form field.
+        MiId = $('#MaintItemFormId').val();
+
+        let editor = dxForm.getEditor("HeaderFlocId");
+        let dataSource = editor.getDataSource();
+        dataSource.filter(["Parent", "=", MiId], "or", ["Value", "<", 0]);
+        dataSource.load();
+    }
+
+    function MaintItemForm_OnChange(e) {
+        // this hidden input box is injected by view component
+        var id = $('#MaintItemFormId').val();
+
+        if (e.value < 1 && e.value != null) {
+            var cruds = {};
+            // replace below with ddls in the form.
+            cruds['MaintPlanId'] = '/MaintPlans';
+            cruds['MaintPlannerGroupId'] = '/MaintPlannerGroups';
+
+            if (e.dataField in cruds)
+                window.open(cruds[e.dataField]);
+
+            // There is no way to get old value without going to database! Devexpress...
+            MaintItemForm_Reload(id);
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/UC3/" + "MaintItemUpdate",
+                data: { sId: id, attributeName: e.dataField, newValue: e.value },
+                dataType: "json",
+
+                success: function () {
+                    console.log("SUCCESS: field db update");
+                },
+
+                error: function () {
+                    console.log("FAIL: field db update");
+                }
+            })
+        }
+
+    }
+
+    function isNegInt(x) {
+        if (!isNaN(x) && parseInt(Number(x)) == x && !isNaN(parseInt(x, 10)))
+            if (x < 0)
+                return true;
+        return false;
+    }
+
+    //function TaskListHeaderForm_OnChange(e) {
+    //    // this hidden input box is injected by view component
+    //    var id = $('#TaskListHeaderFormId').val();
+
+    //    if (e.value < 1 && e.value != null) {
+    //        var cruds = {};
+    //        // replace below with ddls in the form.
+    //        cruds['TaskListGroupId'] = '/TaskListGroups';
+    //        cruds['PerformanceStandardId'] = '/PerformanceStandards';
+    //        cruds['TasklistCatId'] = '/TaskListCats';
+    //        cruds['SysCondId'] = '/SysConds';
+    //        cruds['TaskListClassId'] = '/MaintClasses'; // TODO: Check: Table does not exist in DB using MaintClasses.
+    //        cruds['MaintenancePlantId'] = '/MaintenancePlants';
+    //        cruds['MaintStrategyId'] = '/MaintStrategies';
+    //        cruds['MaintPackageId'] = '/MaintPackages';
+    //        cruds['PmassemblyId'] = '/Pmassemblies';
+    //        cruds['RegulatoryBodyId'] = '/RegulatoryBodies';
+    //        //cruds['MaintStrategyDocId'] = '/MaintItemPlannerGroups';
+    //        cruds['MaintWorkCentreId'] = '/MaintWorkCentres';
+    //        if (e.dataField in cruds)
+    //            window.open(cruds[e.dataField]);
+
+    //        // There is no way to get old value without going to database! Devexpress...
+    //        TaskListHeaderForm_Reload(id);
+    //    }
+    //    else {
+    //        $.ajax({
+    //            type: "POST",
+    //            url: "/UC3/" + "TaskListHeaderUpdate",
+    //            data: { sId: id, attributeName: e.dataField, newValue: e.value },
+    //            dataType: "json",
+
+    //            success: function () {
+    //                console.log("SUCCESS: field db update");
+    //            },
+
+    //            error: function () {
+    //                console.log("FAIL: field db update");
+    //            }
+    //        })
+    //    }
+    //}
+
+    function FlocListingDataGrid_EditorPreparing(e) {
+
+        var fieldname = e.dataField;
+        var datatype = e.parentType;
+        console.log(fieldname + ' ' + datatype);
+
+        if (e.dataField === "MICount") {
+            const defaultValueChangeHandler = e.editorOptions.onValueChanged;
+            e.editorOptions.onValueChanged = function (args) { // Override the default handler
+                // ...
+                // Custom commands go here
+                // ...
+                // If you want to modify the editor value, call the setValue function:
+                // e.setValue(newValue);
+                // Otherwise, call the default handler:
+                defaultValueChangeHandler(args);
+            }
+        }
+
+    }
+
+    function getFormInstance(formId) {
+        return $(formId).dxForm("instance");
+    }
+
+</script>
+
+<!-- DnD Functions -->
+<script>
+
+    function FlocInMIDataGridUC3_OnDragEnd(e) {
+        // If dragged to TagListing, remove the FlocXMaintItem and reload VC.
+
+        if (e.toData == 'FlocListingDataGridUC3') {
+            MIId = $('#MIId').val();
+
+            var items = e.fromComponent.getSelectedRowKeys();
+
+            // if no selection, use the dragged element value instead.
+            if (items.length == 0 && e.itemData.TagId != null) {
+                items.push(e.itemData.TagId)
+            }
+
+            for (i = 0; i < items.length; i++) {
+                TagId = items[i];
+
+                if (TagId != null && MIId != null) {
+                    FlocXMaintItem_Remove(MIId, TagId);
+                }
+            }
+            // wait a sec then reload form.
+            setTimeout(() => { MaintItemForm_Reload(MIId); }, 1000);
+        }
+    }
+
+    function FlocListingDataGridUC3_OnDragEnd(e) {
+        if (e.toData == 'FlocInMIDataGridUC3') {
+            MIId = $('#MIId').val();
+
+            // determine selected items from source
+            var items = e.fromComponent.getSelectedRowKeys();
+
+            // if no selection, use the dragged element value instead.
+            if (items.length == 0 && e.itemData.TagId != null) {
+                items.push(e.itemData.TagId)
+            }
+
+            for (i = 0; i < items.length; i++) {
+                TagId = items[i];
+                if (TagId != null && MIId != null) {
+                    FlocXMaintItem_Insert(MIId, TagId);
+                }
+            }
+            // wait a sec then reload related form.
+            setTimeout(() => { MaintItemForm_Reload(MIId); }, 1000);
+        }
+
+    }
+
+    function FlocXMaintItem_Insert(MIId, TagId) {
+        $.ajax({
+            type: "POST",
+            url: "/UC3/" + "FlocXmaintItem_Insert",
+            data: { MIId: MIId, TagId: TagId },
+            dataType: "json",
+            success: function (data, status, xhr) {
+                console.log("SUCCESS: field db insert");
+                FlocInMIDataGridUC3_Reload(MIId);
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                console.log("FAIL: field db insert", jqXhr, textStatus, errorMessage);
+            }
+        })
+    }
+
+    function FlocXMaintItem_Remove(MIId, TagId) {
+        $.ajax({
+            type: "DELETE",
+            url: "/UC3/" + "FlocXmaintItem_Delete",
+            data: { MIId: MIId, TagId: TagId },
+            dataType: "json",
+            success: function (data, status, xhr) {
+                console.log("SUCCESS: field db delete");
+                FlocInMIDataGridUC3_Reload(MIId);
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                console.log('FAIL: field db delete.');
+            }
+        })
+    }
+
+</script>
+
+<!-- Context Menus for datagrids -->
+<script>
+
+    // also used by TaskListHeaderMasterDetail.
+    function TaskListHeader_OnContextMenuPreparing(e) {
+
+        if (e.row == undefined) {
+            e.items = [{
+                text: "New Item",
+                onItemClick: function () {
+                    var target = "/TaskListHeaders/Create";
+                    window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+                }
+            },
+            {
+                text: "View Register",
+                onItemClick: function () {
+                    var target = "/TLHRegister";
+                    window.open(target, '_blank');
+                }
+            }];
+        }
+        else if (e.row.rowType === "data") {
+            e.items = [{
+                text: "Clone Item",
+                onItemClick: function () {
+                    var clonedItem = $.extend({}, e.row.data);
+
+                    var dataGrid = $("#TaskListHeaderX").dxDataGrid({
+                        // ...
+                    }).dxDataGrid("instance");
+                    var dataSource = dataGrid.getDataSource();
+                    dataSource.store().insert(clonedItem).then(function () {
+                        dataSource.reload();
+                    })
+                }
+            },
+            {
+                text: "New Item",
+                onItemClick: function () {
+                    var target = "/TaskListHeaders/Create";
+                    window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+                }
+            },
+            {
+                text: "View Register",
+                onItemClick: function () {
+                    var target = "/TLHRegister";
+                    window.open(target, '_blank');
+                }
+            }];
+        }
+    }
+
+    // Not used anymore....
+    function TaskListOperations_OnContextMenuPreparing(e) {
+
+        if (e.row == undefined) {
+            e.items = [{
+                text: "New Item",
+                onItemClick: function () {
+                    var target = "/TaskListOperations/Create";
+                    window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+                }
+            },
+            {
+                text: "View Register",
+                onItemClick: function () {
+                    var target = "/TLORegister";
+                    window.open(target, '_blank');
+                }
+            }];
+        }
+        else if (e.row.rowType === "data") {
+            e.items = [{
+                text: "Clone Item",
+                onItemClick: function () {
+                    var target = "/TaskListOperations/Create?CloneId=" + e.row.data.TaskListOperations.TaskListOperationsId;
+                    window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+                }
+            },
+            {
+                text: "New Item",
+                onItemClick: function () {
+                    var target = "/TaskListOperations/Create";
+                    window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+                }
+            },
+            {
+                text: "View Register",
+                onItemClick: function () {
+                    var target = "/TLORegister";
+                    window.open(target, '_blank');
+                }
+            }];
+        }
+    }
+
+    function MaintenanceItemsDataGridUC3_OnContextMenuPreparing(e) {
+
+        if (e.row == undefined) {
+            e.items = [{
+                text: "New Item",
+                onItemClick: function () {
+                    var target = "/MaintItems/Create";
+                    window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+                }
+            },
+            {
+                text: "View Register",
+                onItemClick: function () {
+                    var target = "/MIRegister";
+                    window.open(target, '_blank');
+                }
+            }];
+        }
+        else if (e.row.rowType === "data") {
+            e.items = [{
+                text: "Clone Item",
+                onItemClick: function () {
+                    var target = "/MaintItems/Create?CloneId=" + e.row.data.MaintItemId;
+                    window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+                }
+            },
+            {
+                text: "New Item",
+                onItemClick: function () {
+                    var target = "/MaintItems/Create";
+                    window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+                }
+            },
+            {
+                text: "View Register",
+                onItemClick: function () {
+                    var target = "/MIRegister";
+                    window.open(target, '_blank');
+                }
+            }];
+        }
+    }
+
+    function MaintPlanDataGrid_OnContextMenuPreparing(e) {
+        if (e.row == undefined) {
+            e.items = [{
+                text: "New Item",
+                onItemClick: function () {
+                    var target = "/MaintPlans/Create";
+                    window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+                }
+            },
+            {
+                text: "View Register",
+                onItemClick: function () {
+                    var target = "/MPRegister";
+                    window.open(target, '_blank');
+                }
+            }];
+        }
+        else if (e.row.rowType === "data") {
+            e.items = [{
+                text: "Clone Item",
+                onItemClick: function () {
+                    var target = "/MaintPlans/Create?CloneId=" + e.row.data.MaintPlanId;
+                    window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+                }
+            },
+            {
+                text: "New Item",
+                onItemClick: function () {
+                    var target = "/MaintPlans/Create";
+                    window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+                }
+            },
+            {
+                text: "View Register",
+                onItemClick: function () {
+                    var target = "/MPRegister";
+                    window.open(target, '_blank');
+                }
+            }];
+        }
+    }
+
+</script>
+
+
+
+<!-- Filter datagrid functions -->
+<script>
+
+    function MaintPlan_SelectFilter(mpId) {
+
+        // filter MaintItem
+        var divId = '#MaintenanceItemsDataGridUC3';
+        var filterFieldName = 'MaintPlanId';
+        var dataGridInstance = getDataGrid(divId);
+        dataGridInstance.clearFilter();
+        filter_Datagrid(dataGridInstance, filterFieldName, mpId);
+
+        // filter TaskListHeader
+        //divId = '#TaskListHeader';
+        divId = '#TaskListHeader';
+        filterFieldName = 'MaintPlanId';
+        dataGridInstance = getDataGrid(divId);
+        dataGridInstance.clearFilter();
+        filter_Datagrid(dataGridInstance, filterFieldName, mpId);
+    }
+
+
+    function MaintenanceItems_SelectFilter(miId) {
+
+        // filter TaskListHeader
+        //divId = '#TaskListHeader';
+        divId = '#TaskListHeader';
+        filterFieldName = 'MaintItemId';
+        dataGridInstance = getDataGrid(divId);
+
+        // added remove filter back in. Nico wants filter by selected element only.
+        dataGridInstance.clearFilter();
+        filter_Datagrid(dataGridInstance, filterFieldName, miId);
+        // update TLO
+        TaskListOperationsDataGrid_Reload();
+    }
+
+    function filter_Datagrid(dxInstance, filterFieldName, filterValue) {
+        dxInstance.columnOption(filterFieldName, {
+            selectedFilterOperation: "=",
+            filterValue: filterValue
+        });
+    }
+
+    function getDataGrid(divId) {
+        // Convention: component dxInstance Names are always same as componentName, suffixed with X
+        // this way, we dont create duplicate id's by accident in calling function.
+        divId = divId + 'X';
+        return $(divId).dxDataGrid('instance');
+    }
+
+
+</script>
+
+
+<!-- TLO Register component scripts -->
+<!-- OnCellPrepared functions. Performs SAP validations relevant to MI. -->
+<script>
+
+    // push label into toolbar header.
+    function TaskListOperationsDataGrid_OnToolbarPreparing(e) {
+        e.toolbarOptions.items.unshift({
+            location: "before",
+            template: function () {
+                return $("<div/>")
+                    .append(
+                        $("<span />")
+                            .addClass("dataGrid_Header")
+                            .text("Task List Operations")
+                    );
+            }
+        });
+    }
+
+    // push label into toolbar header.
+    function TaskListHeaderDataGrid_OnToolbarPreparing(e) {
+        e.toolbarOptions.items.unshift({
+            location: "before",
+            template: function () {
+                return $("<div/>")
+                    .append(
+                        $("<span />")
+                            .addClass("dataGrid_Header")
+                            .text("Task List Header")
+                    );
+            }
+        });
+    }
+
+
+    function TLORegister_OnContextMenuPreparing(e) {
+
+        if (e.row == undefined) {
+            e.items = [{
+                text: "New Item",
+                onItemClick: function () {
+                    var target = "/TaskListOperations/Create";
+                    window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+                }
+            }];
+        }
+        else if (e.row.rowType === "data") {
+            e.items = [
+                {
+                    text: "Clone Item",
+                    onItemClick: function () {
+                        var clonedItem = $.extend({}, e.row.data);
+
+                        var dataGrid = $("#TaskListOperationsDataGridX").dxDataGrid({
+                            // ...
+                        }).dxDataGrid("instance");
+                        var dataSource = dataGrid.getDataSource();
+                        dataSource.store().insert(clonedItem).then(function () {
+                            dataSource.reload();
+                        })
+                    }
+                },
+                {
+                    text: "New Item",
+                    onItemClick: function () {
+                        var target = "/TaskListOperations/Create";
+                        window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+                    }
+                }];
+        }
+    }
+
+
+    window.sapatts = {};
+
+    function DataGrid_OnCellPrepared(options) {
+
+        initGlobals();
+
+        if (options.rowType == 'data') {
+
+            // Test SAP requirements
+            if (options.column.dataField in window.sapatts && options.data) {
+                for (var i = 0; i < window.sapatts[options.column.dataField].length; i++) {
+                    if (!isGoodSAP(
+                        window.sapatts[options.column.dataField][i].EntityAttributeRequirementType,
+                        window.sapatts[options.column.dataField][i].EntityAttributeRequirementCondition,
+                        window.sapatts[options.column.dataField][i].EntityAttributeRequirementValue,
+                        options.data[options.column.dataField])) {
+                        options.cellElement.addClass('badSAP');
+                    }
+                }
+            }
+        }
+    }
+
+    function isGoodSAP(TestType, testOperator, testValue, cellValue) {
+        if (TestType == 'AttributeLength' && cellValue != null) {
+            if (eval(cellValue.length + testOperator + testValue))
+                return true;
+            else
+                return false;
+
+        } // add more Test Types after this...
+
+        return true;
+    }
+
+
+    // SAP Validation from Tags.cshtml.
+    // convert integer indexed structure to AttributeName indexed structure to speed up attribute checking.
+    function initGlobals() {
+        if (isObjectEmpty(window.sapatts)) {
+            var sapreq = JSON.parse($('#SapValidationJson').val());
+            for (var i = 0; i < sapreq.length; i++) {
+                window.sapatts[sapreq[i].EntityAttributeName] = sapreq[i].EntityAttributeRequirements;
+            }
+        }
+    }
+
+    function isObjectEmpty(value) {
+        return value && Object.keys(value).length === 0 && value.constructor === Object;
+    }
+
+</script>
+
+
+<!-- Lookup functions, which enable triggering of CRUD Admin windows for MI Star Fields -->
+<script>
+
+    function setCellValue_TaskListHeader(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.TaskListHeaderId = currentRowData.TaskListHeaderId;
+            target = '/TaskListHeaders';
+            window.open(target);
+        }
+        else {
+            newData.TaskListHeaderId = value;
+        }
+    }
+
+    function setCellValue_MaintWorkCentre(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintWorkCentreId = currentRowData.MaintWorkCentreId;
+            target = '/MaintWorkCentres';
+            window.open(target);
+        }
+        else {
+            newData.MaintWorkCentreId = value;
+        }
+    }
+
+
+    function setCellValue_MaintenancePlant(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintenancePlantId = currentRowData.MaintenancePlantId;
+            target = '/MaintenancePlants';
+            window.open(target);
+        }
+        else {
+            newData.MaintenancePlantId = value;
+        }
+    }
+
+
+    function setCellValue_SysCond(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.SysCondId = currentRowData.SysCondId;
+            target = '/SysConds';
+            window.open(target);
+        }
+        else {
+            newData.SysCondId = value;
+        }
+    }
+
+
+    function setCellValue_ControlKey(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.ControlKeyId = currentRowData.ControlKeyId;
+            target = '/ControlKeys';
+            window.open(target);
+        }
+        else {
+            newData.ControlKeyId = value;
+        }
+    }
+
+
+    function setCellValue_RelationshiptoOperation(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.RelationshiptoOperationId = currentRowData.RelationshiptoOperationId;
+            target = '/RelationshiptoOperations';
+            window.open(target);
+        }
+        else {
+            newData.RelationshiptoOperationId = value;
+        }
+    }
+
+
+    function setCellValue_MaintPackage(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintPackageId = currentRowData.MaintPackageId;
+            target = '/MaintPackages';
+            window.open(target);
+        }
+        else {
+            newData.MaintPackageId = value;
+        }
+    }
+
+
+    function setCellValue_Doc(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.DocId = currentRowData.DocId;
+            target = '/Docs';
+            window.open(target);
+        }
+        else {
+            newData.DocId = value;
+        }
+    }
+
+</script>
+

@@ -1,0 +1,60 @@
+﻿@model ProDat.Web2.Models.EngDataCode
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4>EngDataCode</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="EngDataCodeId" />
+            <div class="form-group">
+                <label asp-for="EngDataCodeName" class="control-label"></label>
+                <input asp-for="EngDataCodeName" class="form-control" />
+                <span asp-validation-for="EngDataCodeName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EngDataCodeDesc" class="control-label"></label>
+                <input asp-for="EngDataCodeDesc" class="form-control" />
+                <span asp-validation-for="EngDataCodeDesc" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EngDataCodeNotes" class="control-label"></label>
+                <input asp-for="EngDataCodeNotes" class="form-control" />
+                <span asp-validation-for="EngDataCodeNotes" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="HideFromUI" /> @Html.DisplayNameFor(model => model.HideFromUI)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="EngDataCodeSAPDesc" class="control-label"></label>
+                <input asp-for="EngDataCodeSAPDesc" class="form-control" />
+                <span asp-validation-for="EngDataCodeSAPDesc" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EngDataCodeDDLType" class="control-label"></label>
+                <input asp-for="EngDataCodeDDLType" class="form-control" />
+                <span asp-validation-for="EngDataCodeDDLType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

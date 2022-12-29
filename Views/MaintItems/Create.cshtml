@@ -1,0 +1,146 @@
+﻿@model ProDat.Web2.Models.MaintItem
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4>MaintItem</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="MaintPlanId" class="control-label"></label>
+                <input asp-for="MaintPlanId" class="form-control" />
+                <span asp-validation-for="MaintPlanId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="MaintItemNum" class="control-label"></label>
+                <input asp-for="MaintItemNum" class="form-control" />
+                <span asp-validation-for="MaintItemNum" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintItemShortText" class="control-label"></label>
+                <input asp-for="MaintItemShortText" class="form-control" />
+                <span asp-validation-for="MaintItemShortText" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FMaintItemHeaderFloc" class="control-label"></label>
+                <input asp-for="FMaintItemHeaderFloc" class="form-control" />
+                <span asp-validation-for="FMaintItemHeaderFloc" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintItemHeaderEquipId" class="control-label"></label>
+                <input asp-for="MaintItemHeaderEquipId" class="form-control" />
+                <span asp-validation-for="MaintItemHeaderEquipId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintItemObjectListFloc" class="control-label"></label>
+                <input asp-for="MaintItemObjectListFloc" class="form-control" />
+                <span asp-validation-for="MaintItemObjectListFloc" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintItemObjectListEquip" class="control-label"></label>
+                <input asp-for="MaintItemObjectListEquip" class="form-control" />
+                <span asp-validation-for="MaintItemObjectListEquip" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintItemMainWorkCentre" class="control-label"></label>
+                <input asp-for="MaintItemMainWorkCentre" class="form-control" />
+                <span asp-validation-for="MaintItemMainWorkCentre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintItemMainWorkCentrePlant" class="control-label"></label>
+                <input asp-for="MaintItemMainWorkCentrePlant" class="form-control" />
+                <span asp-validation-for="MaintItemMainWorkCentrePlant" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintItemOrderType" class="control-label"></label>
+                <input asp-for="MaintItemOrderType" class="form-control" />
+                <span asp-validation-for="MaintItemOrderType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintPlannerGroupId" class="control-label"></label>
+                <input asp-for="MaintPlannerGroupId" class="form-control" />
+                <span asp-validation-for="MaintPlannerGroupId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintItemActivityTypeId" class="control-label"></label>
+                <input asp-for="MaintItemActivityTypeId" class="form-control" />
+                <span asp-validation-for="MaintItemActivityTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintItemRevNo" class="control-label"></label>
+                <input asp-for="MaintItemRevNo" class="form-control" />
+                <span asp-validation-for="MaintItemRevNo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintItemUserStatus" class="control-label"></label>
+                <input asp-for="MaintItemUserStatus" class="form-control" />
+                <span asp-validation-for="MaintItemUserStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SysCondId" class="control-label"></label>
+                <input asp-for="SysCondId" class="form-control" />
+                <span asp-validation-for="SysCondId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintItemConsequenceCategory" class="control-label"></label>
+                <input asp-for="MaintItemConsequenceCategory" class="form-control" />
+                <span asp-validation-for="MaintItemConsequenceCategory" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintItemConsequence" class="control-label"></label>
+                <input asp-for="MaintItemConsequence" class="form-control" />
+                <span asp-validation-for="MaintItemConsequence" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintItemLikelihood" class="control-label"></label>
+                <input asp-for="MaintItemLikelihood" class="form-control" />
+                <span asp-validation-for="MaintItemLikelihood" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintItemProposedPriority" class="control-label"></label>
+                <input asp-for="MaintItemProposedPriority" class="form-control" />
+                <span asp-validation-for="MaintItemProposedPriority" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintItemProposedTi" class="control-label"></label>
+                <input asp-for="MaintItemProposedTi" class="form-control" />
+                <span asp-validation-for="MaintItemProposedTi" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintItemLongText" class="control-label"></label>
+                <input asp-for="MaintItemLongText" class="form-control" />
+                <span asp-validation-for="MaintItemLongText" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintItemTasklistExecutionFactor" class="control-label"></label>
+                <input asp-for="MaintItemTasklistExecutionFactor" class="form-control" />
+                <span asp-validation-for="MaintItemTasklistExecutionFactor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintItemDoNotRelImmed" class="control-label"></label>
+                <input asp-for="MaintItemDoNotRelImmed" class="form-control" />
+                <span asp-validation-for="MaintItemDoNotRelImmed" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

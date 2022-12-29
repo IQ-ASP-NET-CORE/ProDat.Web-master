@@ -1,0 +1,258 @@
+﻿@model ProDat.Web2.Models.Tag
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4>Tag</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="TagNumber" class="control-label"></label>
+                <input asp-for="TagNumber" class="form-control" />
+                <span asp-validation-for="TagNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagService" class="control-label"></label>
+                <input asp-for="TagService" class="form-control" />
+                <span asp-validation-for="TagService" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagFloc" class="control-label"></label>
+                <input asp-for="TagFloc" class="form-control" />
+                <span asp-validation-for="TagFloc" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SubSystemId" class="control-label"></label>
+                <select asp-for="SubSystemId" class ="form-control" asp-items="ViewBag.SubSystemId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="EngClassId" class="control-label"></label>
+                <select asp-for="EngClassId" class ="form-control" asp-items="ViewBag.EngClassId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="EngParentId" class="control-label"></label>
+                <select asp-for="EngParentId" class ="form-control" asp-items="ViewBag.EngParentId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintParentId" class="control-label"></label>
+                <select asp-for="MaintParentId" class ="form-control" asp-items="ViewBag.MaintParentId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="EngDiscId" class="control-label"></label>
+                <select asp-for="EngDiscId" class ="form-control" asp-items="ViewBag.EngDiscId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintLocationId" class="control-label"></label>
+                <select asp-for="MaintLocationId" class ="form-control" asp-items="ViewBag.MaintLocationId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="LocationID" class="control-label"></label>
+                <select asp-for="LocationID" class ="form-control" asp-items="ViewBag.LocationId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintTypeId" class="control-label"></label>
+                <select asp-for="MaintTypeId" class ="form-control" asp-items="ViewBag.MaintTypeId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintStatusId" class="control-label"></label>
+                <input asp-for="MaintStatusId" class="form-control" />
+                <span asp-validation-for="MaintStatusId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EngStatusId" class="control-label"></label>
+                <select asp-for="EngStatusId" class ="form-control" asp-items="ViewBag.EngStatusId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintWorkCentreId" class="control-label"></label>
+                <select asp-for="MaintWorkCentreId" class ="form-control" asp-items="ViewBag.MaintWorkCentreId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintEdcCodeId" class="control-label"></label>
+                <select asp-for="MaintEdcCodeId" class ="form-control" asp-items="ViewBag.MaintEdcCodeId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintStructureIndicatorId" class="control-label"></label>
+                <select asp-for="MaintStructureIndicatorId" class ="form-control" asp-items="ViewBag.MaintStructureIndicatorId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="CommissioningSubsystemId" class="control-label"></label>
+                <select asp-for="CommissioningSubsystemId" class ="form-control" asp-items="ViewBag.CommissioningSubsystemId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="CommClassId" class="control-label"></label>
+                <select asp-for="CommClassId" class ="form-control" asp-items="ViewBag.CommClassId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="CommZoneId" class="control-label"></label>
+                <select asp-for="CommZoneId" class ="form-control" asp-items="ViewBag.CommZoneId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintPlannerGroupId" class="control-label"></label>
+                <select asp-for="MaintPlannerGroupId" class ="form-control" asp-items="ViewBag.MaintPlannerGroupId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintenanceplanId" class="control-label"></label>
+                <select asp-for="MaintenanceplanId" class ="form-control" asp-items="ViewBag.MaintenanceplanId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintCriticalityId" class="control-label"></label>
+                <select asp-for="MaintCriticalityId" class ="form-control" asp-items="ViewBag.MaintCriticalityId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="PerformanceStandardId" class="control-label"></label>
+                <select asp-for="PerformanceStandardId" class ="form-control" asp-items="ViewBag.PerformanceStandardId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="KeyDocId" class="control-label"></label>
+                <select asp-for="KeyDocId" class ="form-control" asp-items="ViewBag.KeyDocId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="PoId" class="control-label"></label>
+                <input asp-for="PoId" class="form-control" />
+                <span asp-validation-for="PoId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagSource" class="control-label"></label>
+                <input asp-for="TagSource" class="form-control" />
+                <span asp-validation-for="TagSource" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagFlocDesc" class="control-label"></label>
+                <input asp-for="TagFlocDesc" class="form-control" />
+                <span asp-validation-for="TagFlocDesc" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagComment" class="control-label"></label>
+                <input asp-for="TagComment" class="form-control" />
+                <span asp-validation-for="TagComment" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ModelId" class="control-label"></label>
+                <select asp-for="ModelId" class ="form-control" asp-items="ViewBag.ModelId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="VibId" class="control-label"></label>
+                <select asp-for="VibId" class ="form-control" asp-items="ViewBag.VibId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagVendorTag" class="control-label"></label>
+                <input asp-for="TagVendorTag" class="form-control" />
+                <span asp-validation-for="TagVendorTag" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintObjectTypeId" class="control-label"></label>
+                <select asp-for="MaintObjectTypeId" class ="form-control" asp-items="ViewBag.MaintObjectTypeId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="RbiSilId" class="control-label"></label>
+                <select asp-for="RbiSilId" class ="form-control" asp-items="ViewBag.RbiSilId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="IpfId" class="control-label"></label>
+                <select asp-for="IpfId" class ="form-control" asp-items="ViewBag.IpfId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="RcmId" class="control-label"></label>
+                <select asp-for="RcmId" class ="form-control" asp-items="ViewBag.RcmId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagRawNumber" class="control-label"></label>
+                <input asp-for="TagRawNumber" class="form-control" />
+                <span asp-validation-for="TagRawNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagRawDesc" class="control-label"></label>
+                <input asp-for="TagRawDesc" class="form-control" />
+                <span asp-validation-for="TagRawDesc" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintScePsReviewTeamId" class="control-label"></label>
+                <select asp-for="MaintScePsReviewTeamId" class ="form-control" asp-items="ViewBag.MaintScePsReviewTeamId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintScePsJustification" class="control-label"></label>
+                <input asp-for="MaintScePsJustification" class="form-control" />
+                <span asp-validation-for="MaintScePsJustification" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagMaintCritComments" class="control-label"></label>
+                <input asp-for="TagMaintCritComments" class="form-control" />
+                <span asp-validation-for="TagMaintCritComments" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RbmId" class="control-label"></label>
+                <select asp-for="RbmId" class ="form-control" asp-items="ViewBag.RbmId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="ManufacturerId" class="control-label"></label>
+                <select asp-for="ManufacturerId" class ="form-control" asp-items="ViewBag.ManufacturerId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="ExMethodId" class="control-label"></label>
+                <select asp-for="ExMethodId" class ="form-control" asp-items="ViewBag.ExMethodId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagRbmMethod" class="control-label"></label>
+                <input asp-for="TagRbmMethod" class="form-control" />
+                <span asp-validation-for="TagRbmMethod" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagVib" class="control-label"></label>
+                <input asp-for="TagVib" class="form-control" />
+                <span asp-validation-for="TagVib" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagSrcKeyList" class="control-label"></label>
+                <input asp-for="TagSrcKeyList" class="form-control" />
+                <span asp-validation-for="TagSrcKeyList" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagBomReq" class="control-label"></label>
+                <input asp-for="TagBomReq" class="form-control" />
+                <span asp-validation-for="TagBomReq" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagSpNo" class="control-label"></label>
+                <input asp-for="TagSpNo" class="form-control" />
+                <span asp-validation-for="TagSpNo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintSortProcessId" class="control-label"></label>
+                <select asp-for="MaintSortProcessId" class ="form-control" asp-items="ViewBag.MaintSortProcessId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagCharacteristic" class="control-label"></label>
+                <input asp-for="TagCharacteristic" class="form-control" />
+                <span asp-validation-for="TagCharacteristic" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagCharValue" class="control-label"></label>
+                <input asp-for="TagCharValue" class="form-control" />
+                <span asp-validation-for="TagCharValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TagCharDesc" class="control-label"></label>
+                <input asp-for="TagCharDesc" class="form-control" />
+                <span asp-validation-for="TagCharDesc" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

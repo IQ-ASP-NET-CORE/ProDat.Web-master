@@ -1,0 +1,50 @@
+﻿@model ProDat.Web2.Models.Area
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Area</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.AreaName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.AreaName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.AreaDisc)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.AreaDisc)
+        </dd>
+        @*  These were removed from the schema in version 3
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.EngPlantSectionId)
+        </dd>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Longititude)
+        </dd>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Latitude)
+        </dd>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Elevation)*@
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MaintenancePlant)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MaintenancePlant.MaintenancePlantNum)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.AreaId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

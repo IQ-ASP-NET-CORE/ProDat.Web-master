@@ -1,0 +1,52 @@
+﻿@model ProDat.Web2.Models.ETL.FileUpload
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Upload File and Save In Binary Format in Asp.net Core</title>
+</head>
+<body>
+    <div>
+        @using (Html.BeginForm("Index", "Upload", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {<table>
+                <tr>
+                    <td>File Upload:</td>
+                    <td>
+                        <input type="file" id="File_Upload" name="File" />
+                        <br />
+                    </td>
+                </tr>
+                <tr>
+                    <td>File Name:</td>
+                    <td>
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                        <br />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <br />
+                        <input type="submit" value="Upload" class="btn-default" />
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <br />
+                    </td>
+                </tr>
+                <tr>
+                    @if (!string.IsNullOrEmpty(@ViewBag.Image))
+                    {
+                        <td>Uploaded Image:</td>
+                        <td>
+                            <img src="@ViewBag.Image" width="250px" height="200px" alt="Alternate Text" />
+                        </td>
+                    }
+                </tr>
+            </table>
+        }
+    </div>
+</body>
+</html>

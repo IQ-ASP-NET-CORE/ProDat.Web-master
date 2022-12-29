@@ -1,0 +1,31 @@
+﻿@model ProDat.Web2.Models.RegulatoryBody
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>RegulatoryBody</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.RegulatoryBodyName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.RegulatoryBodyName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.RegulatoryBodyDesc)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.RegulatoryBodyDesc)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.RegulatoryBodyId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

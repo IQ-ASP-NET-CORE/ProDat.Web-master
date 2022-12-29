@@ -1,0 +1,108 @@
+﻿@model IEnumerable<ProDat.Web2.Models.MaintPlan>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintPlanName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ShortText)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Sort)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CycleModFactor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ChangeStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartingInstructions)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CallHorizon)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SchedulingPeriodValue)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SchedulingPeriodUomId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintSortProcess)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintStrategy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MeasPoint)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintPlanName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ShortText)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Sort)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CycleModFactor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ChangeStatus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartingInstructions)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CallHorizon)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SchedulingPeriodValue)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SchedulingPeriodUomId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintSortProcess.MaintSortProcessDesc)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintStrategy.MaintStrategyName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MeasPoint.MeasPointData)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.MaintPlanId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.MaintPlanId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.MaintPlanId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

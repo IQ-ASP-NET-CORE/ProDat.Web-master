@@ -1,0 +1,630 @@
+﻿@model ProDat.Web2.Models.MaintItem
+
+@{
+    ViewData["Title"] = "TLH Register";
+
+    //Dictionary<string, int> colIndex = ViewBag.colIndex;
+    Dictionary<string, ProDat.Web2.ViewModels.ColParams> colIndex = ViewBag.colIndex;
+
+    bool isUser = User.IsInRole("User");
+    bool isAdmin = User.IsInRole("Admin");
+}
+
+<!-- For optional columns. Need to extend ColumnSets to retrieve based on parameter (e.g. Tag, MaintItem, etc). -->
+<div class="options">
+    <div class="option">
+        <form id="Form1" method="post">
+            <table>
+                <tr>
+                    <td>Column Format: </td>
+                    <td>
+                        @(Html.DevExtreme().SelectBox()
+                            .ID("ColumnSetsName")
+                            .Name("ColumnSetsName")
+                            .DataSource( d => d
+                                    .Mvc()
+                                        .Controller("Lookups")
+                                        .LoadAction("ColumnSets_Lookup")
+                                        .LoadParams(new { ColumnSetsEntity = "TaskListHeader"})
+                                        .Key("Text"))
+                            .DisplayExpr("Text")
+                            .ValueExpr("Text")
+                            .Value(ViewBag.columnSetsName)
+                            .OnValueChanged("Option_ColumnSets")
+                        )
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+
+<div id="form" class="dx-swatch-Datagrid_Green" style="overflow-y: hidden; overflow-x: hidden">
+    @(Html.DevExtreme().DataGrid<ProDat.Web2.Models.TaskListHeader>()
+            .ID("TLHRegister")
+            .Height(1150)
+            //.Width()
+            .DataSource( ds => ds.Mvc()
+                .Controller("TLHRegister")
+                .LoadAction("TLHRegister_GetData")
+                .InsertAction("TLHRegister_Insert")
+                .UpdateAction("TLHRegister_Update")
+                .DeleteAction("TLHRegister_Delete")
+                .Key("TaskListHeaderId")
+            )
+            .Editing(editing =>
+            {
+                editing.Mode(GridEditMode.Cell);
+                editing.AllowUpdating(isUser);
+                editing.AllowAdding(isUser);
+                editing.AllowDeleting(isAdmin);
+            })
+            .Selection(s => s.Mode(SelectionMode.Multiple))
+            .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+            .OnExporting("exporting")
+            .RemoteOperations(false)
+            .AllowColumnReordering(true)
+            .RowAlternationEnabled(true)
+            .OnContextMenuPreparing("TLHRegister_OnContextMenuPreparing")
+            .ShowBorders(true)
+            .FilterRow(f => f.Visible(true))
+            .ColumnChooser(c=> c.Enabled(true))
+            .ColumnFixing(c => c.Enabled(true))
+            .ColumnResizingMode(ColumnResizingMode.Widget)
+            .AllowColumnResizing(true)
+            .SearchPanel(s => s
+                .Visible(true)
+                .HighlightCaseSensitive(true)
+             )
+            .GroupPanel(g => g.Visible(true))
+            .Grouping(g => g.AutoExpandAll(false))
+            .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+            .Paging(p=> p.PageSize(20))
+            .OnCellPrepared("DataGrid_OnCellPrepared")
+            .Columns(columns =>
+            {
+
+                columns.AddFor(x => x.TaskListHeaderId)
+                    .AllowEditing(false)
+                    .Visible(colIndex.ContainsKey("TaskListHeaderId"))
+                    .VisibleIndex(colIndex.ContainsKey("TaskListHeaderId") ? colIndex["TaskListHeaderId"].Order : int.MaxValue)
+                    .Width(colIndex.ContainsKey("TaskListHeaderId") ? colIndex["TaskListHeaderId"].Width : 75);
+
+                columns.AddFor(x => x.TaskListGroupId)
+                    .Fixed(true)
+                    .Visible(colIndex.ContainsKey("TaskListGroupId"))
+                    .VisibleIndex(colIndex.ContainsKey("TaskListGroupId") ? colIndex["TaskListGroupId"].Order : int.MaxValue)
+                    .SortOrder(SortOrder.Asc).SortIndex(1)
+                    .Width(colIndex.ContainsKey("TaskListGroupId") ? colIndex["TaskListGroupId"].Width : 75)
+                    .SetCellValue("setCellValue_TaskListGroup")
+                    .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("TaskListGroup_Lookup")
+                        .Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                columns.AddFor(x => x.Counter)
+                    .Fixed(true)
+                    .Visible(colIndex.ContainsKey("Counter"))
+                    .VisibleIndex(colIndex.ContainsKey("Counter") ? colIndex["Counter"].Order : int.MaxValue)
+                    .SortOrder(SortOrder.Asc).SortIndex(1)
+                    .Width(colIndex.ContainsKey("Counter") ? colIndex["Counter"].Width : 75);
+
+                columns.AddFor(x => x.TaskListShortText)
+                    .Visible(colIndex.ContainsKey("TaskListShortText"))
+                    .VisibleIndex(colIndex.ContainsKey("TaskListShortText") ? colIndex["TaskListShortText"].Order : int.MaxValue)
+                    .Width(colIndex.ContainsKey("TaskListShortText") ? colIndex["TaskListShortText"].Width : 75);
+
+                columns.AddFor(x => x.MaintWorkCentreId)
+                    .Visible(colIndex.ContainsKey("MaintWorkCentreId"))
+                    .VisibleIndex(colIndex.ContainsKey("MaintWorkCentreId") ? colIndex["MaintWorkCentreId"].Order : int.MaxValue)
+                    .Width(colIndex.ContainsKey("MaintWorkCentreId") ? colIndex["MaintWorkCentreId"].Width : 75)
+                    .SetCellValue("setCellValue_MaintWorkCentre")
+                    .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintWorkCentre_Lookup")
+                        .Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                columns.AddFor(x => x.MaintenancePlantId)
+                    .Visible(colIndex.ContainsKey("MaintenancePlantId"))
+                    .VisibleIndex(colIndex.ContainsKey("MaintenancePlantId") ? colIndex["MaintenancePlantId"].Order : int.MaxValue)
+                    .Width(colIndex.ContainsKey("MaintenancePlantId") ? colIndex["MaintenancePlantId"].Width : 75)
+                    .SetCellValue("setCellValue_MaintenancePlant")
+                    .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintenancePlant_Lookup")
+                        .Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                columns.AddFor(x => x.SysCondId)
+                    .Visible(colIndex.ContainsKey("SysCondId"))
+                    .VisibleIndex(colIndex.ContainsKey("SysCondId") ? colIndex["SysCondId"].Order : int.MaxValue)
+                    .Width(colIndex.ContainsKey("SysCondId") ? colIndex["SysCondId"].Width : 75)
+                    .SetCellValue("setCellValue_SysCond")
+                    .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("SysCond_Lookup")
+                        .Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                columns.AddFor(x => x.MaintStrategyId)
+                    .Visible(colIndex.ContainsKey("MaintStrategyId"))
+                    .VisibleIndex(colIndex.ContainsKey("MaintStrategyId") ? colIndex["MaintStrategyId"].Order : int.MaxValue)
+                    .Width(colIndex.ContainsKey("MaintStrategyId") ? colIndex["MaintStrategyId"].Width : 75)
+                    .SetCellValue("setCellValue_MaintStrategy")
+                    .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintStrategy_Lookup")
+                        .Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                columns.AddFor(x => x.MaintPackageId)
+                    .Visible(colIndex.ContainsKey("MaintPackageId"))
+                    .VisibleIndex(colIndex.ContainsKey("MaintPackageId") ? colIndex["MaintPackageId"].Order : int.MaxValue)
+                    .Width(colIndex.ContainsKey("MaintPackageId") ? colIndex["MaintPackageId"].Width : 75)
+                    .SetCellValue("setCellValue_MaintPackage")
+                    .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintPackage_Lookup")
+                        .Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                columns.AddFor(x => x.PmassemblyId)
+                    .Visible(colIndex.ContainsKey("PmassemblyId"))
+                    .VisibleIndex(colIndex.ContainsKey("PmassemblyId") ? colIndex["PmassemblyId"].Order : int.MaxValue)
+                    .Width(colIndex.ContainsKey("PmassemblyId") ? colIndex["PmassemblyId"].Width : 75)
+                    .SetCellValue("setCellValue_Pmassembly")
+                    .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("Pmassembly_Lookup")
+                        .Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                columns.AddFor(x => x.TasklistCatId)
+                    .Visible(colIndex.ContainsKey("TasklistCatId"))
+                    .VisibleIndex(colIndex.ContainsKey("TasklistCatId") ? colIndex["TasklistCatId"].Order : int.MaxValue)
+                    .Width(colIndex.ContainsKey("TasklistCatId") ? colIndex["TasklistCatId"].Width : 75)
+                    .SetCellValue("setCellValue_TasklistCat")
+                    .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("TasklistCat_Lookup")
+                        .Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                columns.AddFor(x => x.PerformanceStandardId)
+                    .Visible(colIndex.ContainsKey("PerformanceStandardId"))
+                    .VisibleIndex(colIndex.ContainsKey("PerformanceStandardId") ? colIndex["PerformanceStandardId"].Order : int.MaxValue)
+                    .Width(colIndex.ContainsKey("PerformanceStandardId") ? colIndex["PerformanceStandardId"].Width : 75)
+                    .SetCellValue("setCellValue_PerformanceStandard")
+                    .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("PerformanceStandard_Lookup")
+                        .Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                columns.AddFor(x => x.PerfStdAppDel)
+                    .Visible(colIndex.ContainsKey("PerfStdAppDel"))
+                    .VisibleIndex(colIndex.ContainsKey("PerfStdAppDel") ? colIndex["PerfStdAppDel"].Order : int.MaxValue)
+                    .Width(colIndex.ContainsKey("PerfStdAppDel") ? colIndex["PerfStdAppDel"].Width : 75);
+
+                columns.AddFor(x => x.ScePsReviewId)
+                    .Visible(colIndex.ContainsKey("ScePsReviewId"))
+                    .VisibleIndex(colIndex.ContainsKey("ScePsReviewId") ? colIndex["ScePsReviewId"].Order : int.MaxValue)
+                    .Width(colIndex.ContainsKey("ScePsReviewId") ? colIndex["ScePsReviewId"].Width : 75)
+                    .SetCellValue("setCellValue_ScePsReview")
+                    .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("ScePsReview_Lookup")
+                        .Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                columns.AddFor(x => x.RegulatoryBodyId)
+                    .Visible(colIndex.ContainsKey("RegulatoryBodyId"))
+                    .VisibleIndex(colIndex.ContainsKey("RegulatoryBodyId") ? colIndex["RegulatoryBodyId"].Order : int.MaxValue)
+                    .Width(colIndex.ContainsKey("RegulatoryBodyId") ? colIndex["RegulatoryBodyId"].Width : 75)
+                    .SetCellValue("setCellValue_RegulatoryBody")
+                    .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("RegulatoryBody_Lookup")
+                        .Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                columns.AddFor(x => x.RegBodyAppDel)
+                    .Visible(colIndex.ContainsKey("RegBodyAppDel"))
+                    .VisibleIndex(colIndex.ContainsKey("RegBodyAppDel") ? colIndex["RegBodyAppDel"].Order : int.MaxValue)
+                    .Width(colIndex.ContainsKey("RegBodyAppDel") ? colIndex["RegBodyAppDel"].Width : 75);
+
+                columns.AddFor(x => x.ChangeRequired)
+                    .Visible(colIndex.ContainsKey("ChangeRequired"))
+                    .VisibleIndex(colIndex.ContainsKey("ChangeRequired") ? colIndex["ChangeRequired"].Order : int.MaxValue)
+                    .Width(colIndex.ContainsKey("ChangeRequired") ? colIndex["ChangeRequired"].Width : 75);
+
+                columns.AddFor(x => x.MaintPlannerGroupId)
+                    .Visible(colIndex.ContainsKey("MaintPlannerGroupId"))
+                    .VisibleIndex(colIndex.ContainsKey("MaintPlannerGroupId") ? colIndex["MaintPlannerGroupId"].Order : int.MaxValue)
+                    .Width(colIndex.ContainsKey("MaintPlannerGroupId") ? colIndex["MaintPlannerGroupId"].Width : 75)
+                    .SetCellValue("setCellValue_MaintPlannerGroup")
+                    .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintPlannerGroup_Lookup")
+                        .Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                columns.AddFor(x => x.StatusId)
+                    .Visible(colIndex.ContainsKey("StatusId"))
+                    .VisibleIndex(colIndex.ContainsKey("StatusId") ? colIndex["StatusId"].Order : int.MaxValue)
+                    .Width(colIndex.ContainsKey("StatusId") ? colIndex["StatusId"].Width : 75)
+                    .SetCellValue("setCellValue_Status")
+                    .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("SAPStatus_Lookup")
+                        .Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                columns.AddFor(x => x.TaskListClassId)
+                    .Visible(colIndex.ContainsKey("TaskListClassId"))
+                    .VisibleIndex(colIndex.ContainsKey("TaskListClassId") ? colIndex["TaskListClassId"].Order : int.MaxValue)
+                    .Width(colIndex.ContainsKey("TaskListClassId") ? colIndex["TaskListClassId"].Width : 75)
+                    .SetCellValue("setCellValue_TaskListClass")
+                    .Lookup(lookup => lookup
+                        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintClass_Lookup")
+                        .Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+            })
+        )
+</div>
+
+<!-- UI structure to test SAP Validations -->
+<input type="hidden" id="SapValidationJson" value="@ViewData["SapValidationJson"]" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+
+
+<!-- Trigger events for search UI ddls -->
+<script>
+    // Perform action when fields updated/edited.
+    function Option_ColumnSets(e) {
+        //reload page with ?columnSetsName=e.value;
+        return $("#Form1").submit();
+    }
+
+    // TODO: Test can I delete this?
+    //function selectBox_valueChanged(data) {
+    //    getFormInstance().option("formData", data.value);
+    //}
+
+</script>
+
+<!-- OnCellPrepared functions. Performs SAP validations relevant to MI. -->
+<script>
+
+    function TLHRegister_OnContextMenuPreparing(e) {
+
+        if (e.row == undefined) {
+            e.items = [{
+                text: "New Item",
+                onItemClick: function () {
+                    var target = "/TaskListHeaders/Create";
+                    window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+                }
+            }];
+        }
+        else if (e.row.rowType === "data") {
+            e.items = [
+                {
+                    text: "Clone Item",
+                    onItemClick: function () {
+                        //var clonedItem = $.extend({}, e.row.data, { ID: ++maxID });
+                        var clonedItem = $.extend({}, e.row.data);
+
+                        // no. Handling server side. 
+                        //clonedItem.MaintPlanName = clonedItem.MaintPlanName + '_CLONED';
+
+                        var dataGrid = $("#TLHRegister").dxDataGrid({
+                            // ...
+                        }).dxDataGrid("instance");
+                        var dataSource = dataGrid.getDataSource();
+                        dataSource.store().insert(clonedItem).then(function () {
+                            dataSource.reload();
+                        })
+                    }
+                },
+                {
+                    text: "New Item",
+                    onItemClick: function () {
+                        var target = "/TaskListHeaders/Create";
+                        window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+                    }
+                }];
+        }
+    }
+
+
+    window.sapatts = {};
+
+    function DataGrid_OnCellPrepared(options) {
+
+        initGlobals();
+
+        if (options.rowType == 'data') {
+
+            // Test SAP requirements
+            if (options.column.dataField in window.sapatts && options.data) {
+                for (var i = 0; i < window.sapatts[options.column.dataField].length; i++) {
+                    if (!isGoodSAP(
+                        window.sapatts[options.column.dataField][i].EntityAttributeRequirementType,
+                        window.sapatts[options.column.dataField][i].EntityAttributeRequirementCondition,
+                        window.sapatts[options.column.dataField][i].EntityAttributeRequirementValue,
+                        options.data[options.column.dataField])) {
+                        options.cellElement.addClass('badSAP');
+                    }
+                }
+            }
+        }
+    }
+
+    function isGoodSAP(TestType, testOperator, testValue, cellValue) {
+        if (TestType == 'AttributeLength' && cellValue != null) {
+            if (eval(cellValue.length + testOperator + testValue))
+                return true;
+            else
+                return false;
+
+        } // add more Test Types after this...
+
+        return true;
+    }
+
+
+    // SAP Validation from Tags.cshtml.
+    // convert integer indexed structure to AttributeName indexed structure to speed up attribute checking.
+    function initGlobals() {
+        if (isObjectEmpty(window.sapatts)) {
+            var sapreq = JSON.parse($('#SapValidationJson').val());
+            for (var i = 0; i < sapreq.length; i++) {
+                window.sapatts[sapreq[i].EntityAttributeName] = sapreq[i].EntityAttributeRequirements;
+            }
+        }
+    }
+
+    function isObjectEmpty(value) {
+        return value && Object.keys(value).length === 0 && value.constructor === Object;
+    }
+
+</script>
+
+
+<!-- Lookup functions, which enable triggering of CRUD Admin windows for MI Star Fields -->
+<script>
+    
+    function setCellValue_TaskListGroup(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.TaskListGroupId = currentRowData.TaskListGroupId;
+            target = '/TaskListGroups';
+            window.open(target);
+        }
+        else {
+            newData.TaskListGroupId = value;
+        }
+    }
+
+    function setCellValue_MaintWorkCentre(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintWorkCentreId = currentRowData.MaintWorkCentreId;
+            target = '/MaintWorkCentres';
+            window.open(target);
+        }
+        else {
+            newData.MaintWorkCentreId = value;
+        }
+    }
+
+    
+    function setCellValue_MaintenancePlant(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintenancePlantId = currentRowData.MaintenancePlantId;
+            target = '/MaintenancePlants';
+            window.open(target);
+        }
+        else {
+            newData.MaintenancePlantId = value;
+        }
+    }
+
+    
+    function setCellValue_SysCond(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.SysCondId = currentRowData.SysCondId;
+            target = '/SysConds';
+            window.open(target);
+        }
+        else {
+            newData.SysCondId = value;
+        }
+    }
+
+    function setCellValue_MaintStrategy(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintStrategyId = currentRowData.MaintStrategyId;
+            target = '/MaintStrategies';
+            window.open(target);
+        }
+        else {
+            newData.MaintStrategyId = value;
+        }
+    }
+
+    
+    function setCellValue_MaintPackage(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintPackageId = currentRowData.MaintPackageId;
+            target = '/MaintPackages';
+            window.open(target);
+        }
+        else {
+            newData.MaintPackageId = value;
+        }
+    }
+
+    
+    function setCellValue_Pmassembly(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.PmassemblyId = currentRowData.PmassemblyId;
+            target = '/Pmassemblies';
+            window.open(target);
+        }
+        else {
+            newData.PmassemblyId = value;
+        }
+    }
+
+    
+    function setCellValue_TasklistCat(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.TasklistCatId = currentRowData.TasklistCatId;
+            target = '/TasklistCats';
+            window.open(target);
+        }
+        else {
+            newData.TasklistCatId = value;
+        }
+    }
+
+    
+    function setCellValue_PerformanceStandard(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.PerformanceStandardId = currentRowData.PerformanceStandardId;
+            target = '/PerformanceStandards';
+            window.open(target);
+        }
+        else {
+            newData.PerformanceStandardId = value;
+        }
+    }
+
+    
+    function setCellValue_ScePsReview(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.ScePsReviewId = currentRowData.ScePsReviewId;
+            target = '/ScePsReviews';
+            window.open(target);
+        }
+        else {
+            newData.ScePsReviewId = value;
+        }
+    }
+
+    
+    function setCellValue_RegulatoryBody(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.RegulatoryBodyId = currentRowData.RegulatoryBodyId;
+            target = '/RegulatoryBodies';
+            window.open(target);
+        }
+        else {
+            newData.RegulatoryBodyId = value;
+        }
+    }
+
+    
+    function setCellValue_MaintPlannerGroup(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.MaintPlannerGroupId = currentRowData.MaintPlannerGroupId;
+            target = '/MaintPlannerGroups';
+            window.open(target);
+        }
+        else {
+            newData.MaintPlannerGroupId = value;
+        }
+    }
+
+    
+    function setCellValue_Status(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.StatusId = currentRowData.StatusId;
+            target = '/SAPStatus';
+            window.open(target);
+        }
+        else {
+            newData.StatusId = value;
+        }
+    }
+
+    //TaskListClasses ?????
+    function setCellValue_TaskListClass(newData, value, currentRowData) {
+        if (value < 0) {
+            newData.TaskListClassId = currentRowData.TaskListClassId;
+            target = '/TaskListClass';
+            window.open(target);
+        }
+        else {
+            newData.TaskListClassId = value;
+        }
+    }
+
+</script>
+
+<!-- context menu management -->
+<script>
+
+    //function GridViewContextMenuDefault(e) {
+    //    if (e.row.rowType === "data") {
+    //        e.items = [{
+    //            text: "Show Engineering Data",
+    //            onItemClick: function () {
+    //                var target = "/TagEngDatas/Index/" + e.row.data.MaintPlanId;
+    //                window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+    //            }
+    //        },
+    //        {
+    //            text: "Show Document Relations",
+    //            onItemClick: function () {
+    //                var target = "/TagXdocs/DocByMaintPlanId/" + e.row.data.MaintPlanId;
+    //                window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+    //            }
+    //        }];
+    //    }
+    //}
+
+</script>
+
+<!-- Export to Excel -->
+<script>
+
+    function exporting(e) {
+        var workbook = new ExcelJS.Workbook();
+        var worksheet = workbook.addWorksheet('ProDat MP Register');
+
+        DevExpress.excelExporter.exportDataGrid({
+            component: e.component,
+            worksheet: worksheet,
+            autoFilterEnabled: true
+        }).then(function () {
+            // https://github.com/exceljs/exceljs#writing-xlsx
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'MaintPlan_Register.xlsx');
+            });
+        });
+        e.cancel = true;
+    }
+
+</script>

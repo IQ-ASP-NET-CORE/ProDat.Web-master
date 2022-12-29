@@ -1,0 +1,39 @@
+﻿@model ProDat.Web2.Models.SortField
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4>SortField</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="SortFieldName" class="control-label"></label>
+                <input asp-for="SortFieldName" class="form-control" />
+                <span asp-validation-for="SortFieldName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SortFieldDesc" class="control-label"></label>
+                <input asp-for="SortFieldDesc" class="form-control" />
+                <span asp-validation-for="SortFieldDesc" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

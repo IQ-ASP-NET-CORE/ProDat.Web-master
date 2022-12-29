@@ -1,0 +1,46 @@
+﻿@model ProDat.Web2.ViewModels.UC2ComponentVM
+
+@{ var mod_h = (int)(Model.height * 0.92); }
+
+@(Html.DevExtreme().DataGrid<ProDat.Web2.Models.Tag>()
+    .ID("UnassignedDataGridDx")
+    .DataSource(d => d.Mvc()
+        .Controller("UC2")
+        .LoadAction("Unassigned_GetData")
+        .InsertAction("Unassigned_Insert")
+        .UpdateAction("Unassigned_Update")
+        .DeleteAction("Unassigned_Delete")
+        .Key("TagId")
+    )
+    .OnContextMenuPreparing("GridViewContextMenuDefault")
+    .RemoteOperations(true)
+    .Columns(
+        columns => {
+            columns.AddFor(m => m.TagNumber).SortOrder(SortOrder.Asc);
+            columns.AddFor(m => m.TagService);
+            columns.AddFor(m => m.TagFloc);
+            columns.AddFor(m => m.EngDiscId)
+                .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("EngDisc_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Text")
+                );
+            columns.AddFor(m => m.SubSystem.SubSystemNum);
+        })
+    .FilterRow(f => f.Visible(true))
+    .HeaderFilter(f => f.Visible(true))
+    .GroupPanel(p => p.Visible(false))
+    .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+    .RowDragging(rd => rd
+        .Group("shared")
+        .Data("UnassignedDataGrid")
+        .Option("TagId", @Model)
+        .OnDragEnd("UnassignedOnDragEnd")
+    )
+    .AllowColumnResizing(true)
+    .ColumnAutoWidth(true)
+    .Height(mod_h)
+    .Width(Model.width)
+    .ShowBorders(true)
+    .Editing(e => e.AllowAdding(false).AllowDeleting(false).AllowUpdating(false))
+)

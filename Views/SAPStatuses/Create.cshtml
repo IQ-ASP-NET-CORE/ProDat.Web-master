@@ -1,0 +1,54 @@
+﻿@model ProDat.Web2.Models.SAPStatus
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4>SAPStatus</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="StatusCode" class="control-label"></label>
+                <input asp-for="StatusCode" class="form-control" />
+                <span asp-validation-for="StatusCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ColourCode" class="control-label"></label>
+                <input asp-for="ColourCode" class="form-control" />
+                <span asp-validation-for="ColourCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FontColourCode" class="control-label"></label>
+                <input asp-for="FontColourCode" class="form-control" />
+                <span asp-validation-for="FontColourCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ForSAPExport" class="control-label"></label>
+                <input asp-for="ForSAPExport" class="form-control" />
+                <span asp-validation-for="ForSAPExport" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

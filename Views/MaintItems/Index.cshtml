@@ -1,0 +1,168 @@
+﻿@model IEnumerable<ProDat.Web2.Models.MaintItem>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintPlanId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemNum)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemShortText)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FMaintItemHeaderFloc)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemHeaderEquipId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemObjectListFloc)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemObjectListEquip)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemMainWorkCentre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemMainWorkCentrePlant)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemOrderType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintPlannerGroupId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemActivityTypeId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemRevNo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemUserStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SysCondId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemConsequenceCategory)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemConsequence)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemLikelihood)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemProposedPriority)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemProposedTi)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemLongText)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemTasklistExecutionFactor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaintItemDoNotRelImmed)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintPlanId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemNum)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemShortText)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FMaintItemHeaderFloc)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemHeaderEquipId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemObjectListFloc)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemObjectListEquip)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemMainWorkCentre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemMainWorkCentrePlant)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemOrderType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintPlannerGroupId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemActivityTypeId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemRevNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemUserStatus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SysCondId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemConsequenceCategory)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemConsequence)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemLikelihood)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemProposedPriority)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemProposedTi)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemLongText)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemTasklistExecutionFactor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaintItemDoNotRelImmed)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.MaintItemId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.MaintItemId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.MaintItemId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

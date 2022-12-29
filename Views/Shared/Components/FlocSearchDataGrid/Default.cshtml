@@ -1,0 +1,44 @@
+﻿@model ProDat.Web2.ViewModels.UC2ComponentVM
+@(Html.DevExtreme().DataGrid<ProDat.Web2.ViewModels.FlocSearch>()
+    .ID("FlocSearchDataGrid")
+    .DataSource(d => d.Mvc()
+        .Controller("UC2")
+        .LoadAction("FlocSearchDataGrid_GetData")
+        .Key("TagId")
+    )
+    .ColumnChooser(c => c.Enabled(true))
+    .RemoteOperations(true)
+    .Columns(
+        columns => {
+            columns.AddFor(m => m.TagId).Visible(false);
+
+            columns.AddFor(m => m.TagFloc)
+                .SortOrder(SortOrder.Asc);
+
+            columns.AddFor(m => m.FlocDesc);
+
+            columns.AddFor(m => m.MaintTypeId)
+                 .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintType_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Text")
+                );
+        })
+
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .OnSelectionChanged("FlocSearch_OnSelectionChanged")
+    .FilterRow(f => f.Visible(true))
+    .HeaderFilter(f => f.Visible(true))
+    .GroupPanel(p => p.Visible(false))
+    .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+
+    .AllowColumnResizing(true)
+    .ColumnAutoWidth(true)
+    //.Width(Model.width)
+    .Height(Model.height)
+    .ShowBorders(true)
+    .Editing(e => e.AllowAdding(false).AllowDeleting(false).AllowUpdating(false))
+)
+<div class="alert-warning">
+    <span id="searchcommentary"></span>
+</div>

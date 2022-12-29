@@ -1,0 +1,137 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+    Layout = "";
+}
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ProDat.Web</title>
+    
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="~/css/devextreme/dx.common.css" rel="stylesheet" />
+    <link href="~/css/devextreme/dx.material.UC2_Theme.css" rel="stylesheet" />
+    <link href="~/css/devextreme/dx.generic.Datagrid_Blue.css" rel="stylesheet">
+    <link href="~/css/devextreme/dx.generic.Datagrid_Green.css" rel="stylesheet">
+    <link href="~/css/devextreme/dx.generic.custom-scheme.css" rel="stylesheet">
+
+    <script src="~/js/devextreme/jquery.js"></script>
+    <script src="~/js/devextreme/dx.all.js"></script>
+
+    <script src="~/js/devextreme/aspnet/dx.aspnet.mvc.js"></script>
+    <script src="~/js/devextreme/aspnet/dx.aspnet.data.js"></script>
+    <style>
+        .loginForm {
+            position: fixed; /* or absolute */
+            top: 30%; 
+            left: 40%;
+            padding-top: 00px;
+            color: black;
+            border: 4px solid black;
+            padding:10px;
+            border-radius: 15px;
+            background-color: #f4f4f4;
+            opacity: 1;
+            
+        }
+
+        .body{
+            overflow:hidden;
+      }
+
+        .a:link {
+
+          color:black;
+      }
+
+        .a:visited{
+
+            color: black;
+        }
+
+        #forgot-password {
+        color:black;
+        }
+
+        #new-user{
+
+            color:black;
+        }
+
+        .body{
+
+            overflow:hidden;
+        }
+    </style>
+
+</head>
+<body style="overflow:hidden;">
+    <div class="layout-content">
+<div class="agigCover"></div>
+
+    <!--<div class="padding-div" style="padding-left:50px;">-->
+        
+        
+        <!--<div class="row">-->
+        <div class="loginForm">
+        <div>
+            <img src="~/img/IQLogo.png" class="Login-Logo" />
+        </div>
+            <div>
+                <section>
+                    <form id="account" method="post">
+                        <!--<hr />
+                        <p>&nbsp;</p>
+                    <p>&nbsp;</p> removed as can be done with CSS a bit cleaner MWM-->
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Input.Email"></label>
+                            <input asp-for="Input.Email" class="form-control" />
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Input.Password"></label>
+                            <input asp-for="Input.Password" class="form-control" />
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+                       <!--  <div class="form-group">
+                            <div class="checkbox">
+                                <label asp-for="Input.RememberMe">
+                                    <input asp-for="Input.RememberMe" />
+                                    @Html.DisplayNameFor(m => m.Input.RememberMe)
+                                </label>
+                            </div>
+                         </div>-->
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Log in</button>
+                        </div>
+                        <div class="form-group">
+                            <p>
+                                <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+                            </p>
+                            <p>
+                                <a id="new-user" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Register as a new user</a>
+                            </p>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </div>
+
+<script>
+
+    document.getElementById("Input_Email").focus();
+
+</script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+    </body>
+    </html>

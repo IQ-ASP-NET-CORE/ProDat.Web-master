@@ -1,0 +1,85 @@
+﻿@model ProDat.Web2.ViewModels.MaintenanceItemFormUC3
+
+@{ if (Model != null)
+   {
+        var mod_h = Model.height * 1;
+        var mod_w = Model.width * 0.99;
+        var ms = Model.MaintItem;
+        var id = -1;
+        if (Model.MaintItem != null)
+            id = Model.MaintItem.MaintItemId;
+
+        @(Html.DevExtreme().Form<MaintItem>()
+            .ID("MaintItemFormX")
+            .OnFieldDataChanged("MaintItemForm_OnChange")
+            .OnContentReady("MaintItemForm_OnContentReady")
+            .FormData(ms)
+            .Height(mod_h)
+            .Width(mod_w)
+            .LabelLocation(FormLabelLocation.Left)
+            .Items(items =>
+            {
+                items.AddGroup()
+                    .Caption("Maintenance Item Details")
+                    .ColCount(2)
+                    .Items(groupItems =>
+                    {
+                        groupItems.AddSimpleFor(m => m.MaintItemNum).ColSpan(1); // Item No
+
+                        groupItems.AddSimpleFor(m => m.MaintItemShortText).ColSpan(1);
+
+                        groupItems.AddSimpleFor(m => m.MaintPlanId)
+                            .Editor(e => e
+                                .SelectBox()
+                                .DisplayExpr("Text")
+                                .ValueExpr("Value")
+                                .DataSource(d => d
+                                    .Mvc().Controller("Lookups").LoadAction("MaintPlan_Lookup").Key("Value"))
+                            )
+                            .ColSpan(1); //PlanID
+
+                        groupItems.AddSimpleFor(m => m.HeaderFlocId).ColSpan(1)
+                        .Editor(e => e
+                                .SelectBox()
+                                .DisplayExpr("Text")
+                                .ValueExpr("Value")
+                                .DataSource(d => d
+                                    .Mvc().Controller("Lookups").LoadAction("HeaderFloc_Lookup").Key("Value"))
+                            )
+                            .ColSpan(1); 
+
+
+
+                        //groupItems.AddSimpleFor(m => m.MaintItemHeaderEquipId).ColSpan(1); // No Star?
+
+                        groupItems.AddSimpleFor(m => m.MaintPlannerGroupId)
+                                            .Editor(e => e
+                                                    .SelectBox()
+                                                    .DisplayExpr("Text")
+                                                    .ValueExpr("Value")
+                                                    .DataSource(d => d
+                                                        .Mvc().Controller("Lookups").LoadAction("MaintPlannerGroup_Lookup").Key("Value"))
+                                                )
+                                            .ColSpan(1); // Planner Group
+
+                        //groupItems.AddSimpleFor(m => m.MaintItemObjectListFloc).ColSpan(1); // Obj List funct Loc???
+
+                        //groupItems.AddSimpleFor(m => m.MaintItemObjectListEquip).ColSpan(1); // Obj List Equipment ???
+
+                        groupItems.AddSimpleFor(m => m.SysCondId).ColSpan(1); // SystemCondition exists, not set as FK?
+
+                        groupItems.AddSimpleFor(m => m.MaintItemActivityTypeId).ColSpan(1); // ??
+
+                        groupItems.AddSimpleFor(m => m.MaintItemLongText).ColSpan(1);
+
+                        groupItems.AddSimpleFor(m => m.MaintItemMainWorkCentre).ColSpan(1);
+
+                        groupItems.AddSimpleFor(m => m.MaintItemMainWorkCentrePlant).ColSpan(1);
+
+                    }
+                );
+            })
+        )
+        <input type="hidden" id="MaintItemFormId" value="@id" />
+   }
+}

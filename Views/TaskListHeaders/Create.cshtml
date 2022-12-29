@@ -1,0 +1,109 @@
+﻿@model ProDat.Web2.Models.TaskListHeader
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4>TaskListHeader</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @*<div class="form-group">
+                <label asp-for="TaskListHeaderId" class="control-label"></label>
+                <input asp-for="TaskListHeaderId" class="form-control" />
+                <span asp-validation-for="TaskListHeaderId" class="text-danger"></span>
+            </div>*@
+            <div class="form-group">
+                <label asp-for="TaskListGroupId" class="control-label"></label>
+                <select asp-for="TaskListGroupId" class ="form-control" asp-items="ViewBag.TaskListGroupId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Counter" class="control-label"></label>
+                <input asp-for="Counter" class="form-control" />
+                <span asp-validation-for="Counter" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskListShortText" class="control-label"></label>
+                <input asp-for="TaskListShortText" class="form-control" />
+                <span asp-validation-for="TaskListShortText" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintWorkCentreId" class="control-label"></label>
+                <select asp-for="MaintWorkCentreId" class ="form-control" asp-items="ViewBag.MaintWorkCentreId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintenancePlantId" class="control-label"></label>
+                <select asp-for="MaintenancePlantId" class ="form-control" asp-items="ViewBag.MaintenancePlantId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="SysCondId" class="control-label"></label>
+                <select asp-for="SysCondId" class ="form-control" asp-items="ViewBag.SysCondId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintStrategyId" class="control-label"></label>
+                <select asp-for="MaintStrategyId" class ="form-control" asp-items="ViewBag.MaintStrategyId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaintPackageId" class="control-label"></label>
+                <select asp-for="MaintPackageId" class ="form-control" asp-items="ViewBag.MaintPackageId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="PmassemblyId" class="control-label"></label>
+                <select asp-for="PmassemblyId" class ="form-control" asp-items="ViewBag.PmassemblyId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="TasklistCatId" class="control-label"></label>
+                <select asp-for="TasklistCatId" class ="form-control" asp-items="ViewBag.TasklistCatId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="PerformanceStandardId" class="control-label"></label>
+                <select asp-for="PerformanceStandardId" class ="form-control" asp-items="ViewBag.PerformanceStandardId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="PerfStdAppDel" class="control-label"></label>
+                <input asp-for="PerfStdAppDel" class="form-control" />
+                <span asp-validation-for="PerfStdAppDel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ScePsReviewId" class="control-label"></label>
+                <input asp-for="ScePsReviewId" class="form-control" />
+                <span asp-validation-for="ScePsReviewId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RegulatoryBodyId" class="control-label"></label>
+                <select asp-for="RegulatoryBodyId" class ="form-control" asp-items="ViewBag.RegulatoryBodyId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="RegBodyAppDel" class="control-label"></label>
+                <input asp-for="RegBodyAppDel" class="form-control" />
+                <span asp-validation-for="RegBodyAppDel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ChangeRequired" class="control-label"></label>
+                <input asp-for="ChangeRequired" class="form-control" />
+                <span asp-validation-for="ChangeRequired" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskListClassId" class="control-label"></label>
+                <input asp-for="TaskListClassId" class="form-control" />
+                <span asp-validation-for="TaskListClassId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

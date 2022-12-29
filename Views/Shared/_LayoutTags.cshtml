@@ -1,0 +1,605 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ProDat.Web</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/tags.css" />
+
+    <script src="~/js/devextreme/jquery.js"></script>
+
+</head>
+<body class="dx-viewport">
+
+    <div class="container-fluid">
+        <table id="layoutHeader" width="100%">
+            <tr>
+                <td class="MainLinks" width="100px">
+                    <a asp-area="" asp-controller="UC1" asp-action="Index">Tag Register</a>
+                </td>
+                <td class="MainLinks" width="200px">
+                    <a asp-area="" asp-controller="UC2" asp-action="Index">Maintenance Hierarchy</a>
+                </td>
+                <td class="MainLinks" width="200px">
+                    <a asp-area="" asp-controller="UC3" asp-action="Index">Maintenance Plan</a>
+                </td>
+                <td class="MainLinks" width="100px">
+                    <a asp-area="" asp-controller="Imports" asp-action="Index">Import Data</a>
+                </td>
+
+                <partial name="_LoginPartial" />
+
+                <td align="right">
+                    <img src="/img/iq.png" />
+                </td>
+            </tr>
+
+        </table>
+    </div>
+    <!-- HEADER #######################-->
+    <!--<header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">-->
+    <!-- <a class="navbar-brand" asp-area="" asp-controller="EngDiscs" asp-action="Index">EngDisc</a> -->
+    <!--<button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <partial name="_LoginPartial" />
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </nav>
+    </header>-->
+
+    <!-- INJECTED VIEW-->
+    <div id="overridebootstrap">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+
+    <!-- Commented out below scripts per DevExtreme installation requirements. -->
+    @*<script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>*@
+
+
+    <!-- AJAX updating ################-->
+    <script type="text/javascript">
+
+        $("#tags :input").focusin(function () {
+            $(this).data('val', $(this).val());
+            //console.log('focusIn event: ' + $(this).attr("id") );
+        });
+
+        $("#tags :input").change(function () {
+            var oldValue = $(this).data('val');
+            var curValue = $(this).val();
+            var sid = $(this).closest("tr").find("#item_TagId").val();
+            var attributeName = $(this).attr("id");
+
+            if (attributeName.startsWith('item_')) {
+                attributeName = attributeName.substr(5);
+            }
+
+            if (oldValue != curValue) {
+                // -2: Add New Item.
+                if (curValue == -2) {
+                    // open crud add page for the entity.
+                    // example ddl name: TagDiscId
+                    var target = "/" + attributeName.slice(0, -2) + "s/Create";
+                    window.open(target, "", "resizable=yes, width=800, Height=700, left=100, top=10");
+                    //reset value to original.
+                    $(this).val(oldValue)
+                }
+                else {
+                    updateField(sid, attributeName, curValue, oldValue, $(this));
+                    TestSapValidation();
+                }
+            }
+            else {
+                $(this).css("background-color", "");
+            }
+        });
+
+        function updateField(Sid, AttributeName, NewValue, OldValue, ObjInput) {
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("AjaxFieldUpdate")",
+                data: { sid: Sid, attributeName: AttributeName, newValue: NewValue },
+                dataType: "json",
+                success: function () {
+                    ObjInput.css("background-color", "");
+                },
+                error: function () {
+                    console.log("error");
+                    ObjInput.val(OldValue);
+                    ObjInput.css("background-color", "#FADADD");
+                }
+            });
+        }
+
+    </script>
+
+    <!-- Table col resizing ###########-->
+    <script>
+            // table resizing
+            var tables = document.getElementsByClassName('resizable');
+            for (var i = 0; i < tables.length; i++) {
+                resizableGrid(tables[i]);
+            }
+
+            function resizableGrid(table) {
+                var row = table.getElementsByTagName('tr')[0],
+                    cols = row ? row.children : undefined;
+                if (!cols) return;
+
+                //need to change hidden to tr level as to not break sticky.
+                //table.style.overflow = 'hidden';
+
+                var tableHeight = table.offsetHeight;
+
+                for (var i = 0; i < cols.length; i++) {
+                    if (cols[i].className == 'hide')
+                        continue;
+
+                    var div = createDiv(tableHeight);
+                    cols[i].appendChild(div);
+                    cols[i].style.position = 'relative';
+                    setListeners(div);
+                }
+
+                function setListeners(div) {
+                    //var pageX, curCol, nxtCol, curColWidth, nxtColWidth, tableWidth;
+                    var pageX, curCol, curColWidth, tableWidth;
+
+                    // create collection of all items within column.
+                    // resize everything in it to enable
+                    var colCollection = "";
+
+                    div.addEventListener('mousedown', function (e) {
+
+                        tableWidth = document.getElementById('tags').offsetWidth;
+                        curCol = e.target.parentElement;
+                        nxtCol = curCol.nextElementSibling;
+                        pageX = e.pageX;
+
+                        var padding = paddingDiff(curCol);
+
+                        curColWidth = curCol.offsetWidth - padding;
+                    });
+
+                    div.addEventListener('mouseover', function (e) {
+                        e.target.style.borderRight = '2px solid #0000ff';
+                    })
+
+                    div.addEventListener('mouseout', function (e) {
+                        e.target.style.borderRight = '';
+                    })
+
+                    document.addEventListener('mousemove', function (e) {
+                        if (curCol) {
+                            var diffX = e.pageX - pageX;
+                            var val = curColWidth + diffX;
+
+                            // resize table column
+                            curCol.style.width = val + 'px';
+                            //curCol.width = val + 'px';
+
+                            // resize contained control (either input or ddl...)
+                            $("input[name=" + curCol.firstElementChild.name + "]").each(function () {
+                                //console.log($(this));
+                                $(this).width(curColWidth + diffX);
+                            });
+                            $("select[name=" + curCol.firstElementChild.name + "]").each(function () {
+                                $(this).width(curColWidth + diffX);
+                            });
+
+                            // resize table size to match increase/decrease.
+                            document.getElementById('tags').style.width = tableWidth + diffX + "px"
+                        }
+                    });
+
+                    // resize content now that table cols have all changed.
+                    document.addEventListener('mouseup', function (e) {
+
+                        if (curCol != null ) {
+                            console.log("running updateViewColumns");
+                            console.log(curCol.firstElementChild.name + ", " + curCol.style.width);
+                            updateViewColumnsUser(curCol.firstElementChild.name, curCol.style.width);
+                        }
+
+                        curCol = undefined;
+                        nxtCol = undefined;
+                        pageX = undefined;
+                        nxtColWidth = undefined;
+                        curColWidth = undefined;
+                    });
+                }
+
+                function createDiv(height) {
+                    var div = document.createElement('div');
+                    div.style.top = 0;
+                    div.style.right = 0;
+                    div.style.width = '5px';
+                    div.style.position = 'absolute';
+                    div.style.cursor = 'col-resize';
+                    div.style.userSelect = 'none';
+                    div.style.height = height + 'px';
+                    return div;
+                }
+
+                function paddingDiff(col) {
+
+                    if (getStyleVal(col, 'box-sizing') == 'border-box') {
+                        return 0;
+                    }
+                    var padLeft = getStyleVal(col, 'padding-left');
+                    var padRight = getStyleVal(col, 'padding-right');
+                    return (parseInt(padLeft) + parseInt(padRight));
+
+                }
+
+                function getStyleVal(elm, css) {
+                    return (window.getComputedStyle(elm, null).getPropertyValue(css))
+                }
+            };
+
+            function updateViewColumnsUser(AttributeName, ColumnWidth) {
+                // get current viewId
+                var ViewId = document.getElementById("ViewRecords").value;
+                // strip px from width
+                ColumnWidth = ColumnWidth.slice(0, -2);
+
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("AjaxFieldViewWidth")",
+                    data: { viewId: ViewId, attributeName: AttributeName, columnWidth: ColumnWidth },
+                    dataType: "json",
+                    success: function () {
+                        //ObjInput.css("background-color", "");
+                        console.log("AjaxFieldViewWidth Success");
+                    },
+                    error: function () {
+                        console.log("AjaxFieldViewWidth error");
+                        //ObjInput.val(OldValue);
+                        //ObjInput.css("background-color", "#FADADD");
+                    }
+                });
+            }
+
+    </script>
+
+
+    <!-- SELECT Shortening ############ -->
+    <!-- highlight fields deleted, maintQuery -->
+    <script>
+        // set data fields on page load.
+        $(document).ready(function () {
+
+            TestSapValidation();
+            TagMaintQueryStatus();
+            TagDeleted();
+            //console.log("doc ready area called.");
+
+            // update search DDl's.
+            // same as recordDDl,
+            // but need to run once on load to populate text values.
+            $("#tags .searchDDl").each(function () {
+                var selectedOption = $(this).find('option:selected');
+
+                // use id to determine json source.
+                var id = $(this).attr('name');
+                id = id.slice(0, -2) + "ListJson";
+                var strDDl = $('#' + id).val();
+                var ddl = JSON.parse(strDDl);
+
+                var selectedOptionID = selectedOption.val();
+                if (selectedOptionID > 0) {
+                    $(selectedOption).remove();
+                }
+
+                // create options, update data('long') and data('short')
+                for (var i = 0; i < ddl.length; i++) {
+
+                    // create option and update values.
+                    // wrapping opt in $() to use jqyery functionality
+                    var opt = document.createElement('option');
+                    $(opt).data('short', ddl[i].shortText);
+                    $(opt).data('long', ddl[i].text);
+                    opt.appendChild(document.createTextNode(ddl[i].text));
+                    opt.value = ddl[i].id;
+
+                    if (opt.value == selectedOptionID) {
+                        opt.selected = true;
+                    }
+                    // insert option to ddl.
+                    $(this).append(opt);
+                }
+
+                // console.log("shorten select options...");
+                // for each option within select, update to show long form on entry
+                $(this).find("option").each(function () {
+                    $(this).text($(this).data('short'));
+                });
+            })
+
+            // page records & ViewFilter
+            $("#PageRecords,#ViewRecords").each(function () {
+                var selectedOption = $(this).find('option:selected');
+
+                // use id to determine json source.
+                var id = $(this).attr('name');
+                id = id.slice(0, -2) + "ListJson";
+                var strDDl = $('#' + id).val();
+                var ddl = JSON.parse(strDDl);
+
+                var selectedOptionID = selectedOption.val();
+                if (selectedOptionID > 0) {
+                    $(selectedOption).remove();
+                }
+
+                // create options, update data('long') and data('short')
+                for (var i = 0; i < ddl.length; i++) {
+
+                    // create option and update values.
+                    // wrapping opt in $() to use jqyery functionality
+                    var opt = document.createElement('option');
+                    $(opt).data('short', ddl[i].shortText);
+                    $(opt).data('long', ddl[i].text);
+                    opt.appendChild(document.createTextNode(ddl[i].text));
+                    opt.value = ddl[i].id;
+
+                    if (opt.value == selectedOptionID) {
+                        opt.selected = true;
+                    }
+                    // insert option to ddl.
+                    $(this).append(opt);
+                }
+
+                // console.log("shorten select options...");
+                // for each option within select, update to show long form on entry
+                $(this).find("option").each(function () {
+                    $(this).text($(this).data('short'));
+                });
+            })
+
+        });
+
+        // call filter button on changed values:
+        $("#PageRecords").change(function () {
+            $("#Filter").click();
+        })
+
+        $("#ViewRecords").change(function () {
+            $("#Filter").click();
+        })
+
+        $("#ExportAllColumnsId").change(function () {
+            $("#Filter").click();
+        })
+
+        $("#tags .recordDDl").focus(function () {
+            var inserted = false;
+            var selectedOption = $(this).find('option:selected');
+
+            // selected option returns text on initial use. '' for not set, else text value. e.g. 'ALBC'.
+            // after initial use, will be id set in value. e.g. -1 , 1, 23 etc.
+            console.log("selectedOption: " + selectedOption[0].value);
+
+            if (!jQuery.hasData(selectedOption[0])) {
+                inserted = true;
+                // use id to determine json source.
+                var id = $(this).attr('id');
+                id = id.slice(0, -2) + "ListJson";
+                var strDDl = $('#' + id).val();
+                var ddl = JSON.parse(strDDl);
+
+                var selectedOptionID = selectedOption.val();
+                $(selectedOption).remove();
+
+                // create options, update data('long') and data('short')
+                for (var i = 0; i < ddl.length; i++) {
+
+                    // create option and update values.
+                    // wrapping opt in $() to use jquery functionality
+                    var opt = document.createElement('option');
+                    $(opt).data('short', ddl[i].shortText);
+                    $(opt).data('long', ddl[i].text);
+                    opt.appendChild(document.createTextNode(ddl[i].text));
+                    opt.value = ddl[i].id;
+
+                    // test if current item is to be selected.
+                    if (ddl[i].shortText == selectedOptionID) {
+                        opt.selected = true;
+                    }
+                    // insert option to ddl.
+                    $(this).append(opt);
+                }
+            }
+
+            if (!inserted) {
+                // for each option within select, update to show long form on entry to ddl.
+                $(this).find("option").each(function () {
+                    $(this).text($(this).data('long'));
+                });
+            }
+        })
+
+        $("#tags .searchDDl").focus(function () {
+            //console.log("lengthen select options...");
+            // for each option within select, update to show long form on entry
+            $(this).find("option").each(function () {
+                $(this).text($(this).data('long'));
+            });
+        })
+
+
+        $("#tags .recordDDl,.searchDDl").blur(function () {
+            //console.log("shorten select options on blur...");
+            // for each option within select, update to show short form on entry
+            $(this).find("option").each(function () {
+                $(this).text($(this).data('short'));
+            });
+        })
+
+
+
+        function TagMaintQueryStatus() {
+            //iterate over TagMaintQuery
+            $("[id=item_TagMaintQuery]").each(function () {
+                cellValue = $(this).val();
+                if (cellValue == "True") {
+                    var row = $(this).closest("tr");
+                    //row.css("background-color", 'gold');
+                    row.addClass("activeQueryRecord");
+                }
+            });
+        }
+        function TagDeleted() {
+            //iterate over TagMaintQuery
+            $("[id=item_TagDeleted]").each(function () {
+                cellValue = $(this).val();
+                if (cellValue == "True") {
+                    var row = $(this).closest("tr");
+                    //row.css("background-color", "lightgray");
+                    row.addClass("deletedRecord");
+                }
+            });
+        }
+
+    </script>
+
+
+    <!-- SAP Status-->
+    <script>
+
+        //convert SAPValidationJson content into tests.
+        // record to test: 'item_' + EntityAttributeName. e.g. id=item_TagFlocDesc
+        // EntityAttributeRequirementType = 'AttributeLength'|'NotNull'
+        // EntityAttributeRequirementCondition = >|<|>=|<=|...
+        // EntityAttributeRequirementValue = 40 (i.e. int value)
+        function TestSapValidation() {
+            var sapreqdata = $('#SapValidationJson').val();
+            var sapreq = JSON.parse(sapreqdata);
+            // for each attribute:
+            for (var i = 0; i < sapreq.length; i++) {
+                var attReq = sapreq[i].EntityAttributeRequirements;
+                for (var j = 0; j < attReq.length; j++) {
+                    highlightSAP('item_' + sapreq[i].EntityAttributeName, attReq[j].EntityAttributeRequirementType, attReq[j].EntityAttributeRequirementCondition, attReq[j].EntityAttributeRequirementValue)
+                }
+            }
+        }
+
+        function highlightSAP(AttributeName, TestType, testOperator, testValue) {
+
+            console.log(AttributeName);
+            console.log(TestType);
+
+            //iterate over instances of attribute field
+            $('[id=' + AttributeName + ']').each(function () {
+                cellValue = $(this).val();
+                if (TestType == 'AttributeLength') {
+                    if (!eval(cellValue.length + testOperator + testValue)) {
+                        $(this).addClass("badSAP");
+                    }
+                    else {
+                        $(this).removeClass("badSAP");
+                    }
+                }
+                // add other types here (e.g. not null? TBA.)
+            });
+        }
+
+    </script>
+
+    <!-- Context Menu ################# -->
+    <script>
+        $(document).ready(function () {
+
+            // disable right click and show custom context menu
+
+            $("[id*=item_TagNumber]").bind('contextmenu', function (e) {
+                var id = $(this).closest("tr").find("#item_TagId").val();
+                $("#txt_id").val(id);
+
+                var top = e.pageY + 5;
+                var left = e.pageX;
+
+                // Show contextmenu
+                $(".context-menu").toggle(100).css({
+                    top: top + "px",
+                    left: left + "px"
+                });
+
+                // disable default context menu
+                return false;
+            });
+
+            // Hide context menu
+            $(document).bind('contextmenu click', function () {
+                $(".context-menu").hide();
+                $("#txt_id").val("");
+            });
+
+            // disable context-menu from custom menu
+            $('.context-menu').bind('contextmenu', function () {
+                return false;
+            });
+
+            // Clicked context-menu item
+            $('.context-menu li').click(function () {
+                var className = $(this).find("span:nth-child(1)").attr("class");
+                var tagId = $('#txt_id').val();
+
+                $(".context-menu").hide();
+
+                var target = className + tagId;
+                //alert(target);
+                window.open(target, "", "resizable=yes, width=800, Height=700, left=100, top=10");
+            });
+
+        });
+    </script>
+
+    <!-- scroll button-->
+    <script>
+        mybutton = document.getElementById("ScrollBtn");
+        myContainer = document.getElementById("tag_register");
+
+        myContainer.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            console.log("asdf");
+            if (myContainer.scrollTop > 20) {
+                console.log("gt 20");
+                mybutton.style.display = "block";
+            } else {
+                console.log("lt 20");
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            //document.body.scrollTop = 0; // For Safari
+            myContainer.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+        }
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,1217 @@
+﻿@model ProDat.Web2.ViewModels.UC2
+
+@using ProDat.Web2.TagLibrary
+
+@{
+
+    ViewData["Title"] = "Maintenance Hierarchy";
+
+    // TODO:
+    // Identify what roles may edit content.
+    // then, implement sDisabled to make interface read only.
+    // Also apply controller side!
+    // 1. render content as readonly (VC functionality, not here.)
+    // 2. Update DnD scripts to do nothing if isReadOnly.
+    string sDisabled = "disabled";
+    if (User.IsInRole("User"))
+    {
+        //isReadOnly = false;
+        sDisabled = "";
+    }
+}
+
+<!-- add components for UC2 here. Control UI using UC2 View Model -->
+<button id="showHideSearch" class="btn btn-secondary btn-sm" type="button" onclick="toggleTreeSearch()" aria-expanded="false" aria-controls="collapseExample">Search</button>
+<style>
+    .H4 {
+
+        color: #fff;
+    }
+
+</style>
+<div class="uc2_content">
+    <div class="uc2_main">
+        <div id="uc2_leftpane" class="uc2_leftPane">
+            <!-- note collapse is added to hide Search module on init -->
+            <div id="FlocSearchDataGridDiv" class="uc2_leftPane_top collapse">
+                @*@await Component.InvokeAsync("FlocSearchDataGrid", new { height = Model.MaintTree_H, width = Model.MaintTree_W })*@
+            </div>
+            <div id="maintTreeDiv" class="uc2_leftPane_bot">
+                @*@await Component.InvokeAsync("MaintTree", new { height = Model.MaintTree_H, width = Model.MaintTree_W })*@
+            </div>
+        </div>
+        <div class="uc2_rightPane">
+            <div class="uc2_sub_one" id="TagProperties" style="background-color:#FFFFFF;">
+                @*@await Component.InvokeAsync("TagProperties", new { height = Model.TagProperties_H, width = Model.TagProperties_W style="background-color: #FFF;" })*@
+            </div>
+            <div class="uc2_sub_two" id="uc2_sub_two">
+                <div class="dx-swatch-Datagrid_Blue" style="background-color: #83a38c;">
+                    <div>
+                        <h4 style="display: inline-block; color: #fff;">&nbsp; PMA/Unassigned Tags &nbsp;</h4>
+                        <div id="VCSelector"></div><h4>&nbsp;</h4>
+                        <div id="ViewComponents" style="color: #fff;">
+                            @*@await Component.InvokeAsync("MaintenanceItemsDataGrid", new { height = Model.UnassignedTags_H, width = Model.UnassignedTags_W })*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="uc2_sub_three" id="uc2_sub_three">
+                <div id="NonMaintainedDataGrid" class="dx-swatch-Datagrid_Green" style="background-color: #83a38c; color: #fff;">
+
+                    @*@await Component.InvokeAsync("NonMaintainedDataGrid", new { height = Model.NonMaintained_H, width = Model.NonMaintained_W })*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- used by FlocSearchTreeView_OnContentReady -->
+    <input type="hidden" id="treeViewSearchQueue" value="" />
+
+
+<!-- Show/Hide search tree div -->
+<script>
+
+    function toggleTreeSearch() {
+        var myElement = $("#FlocSearchDataGridDiv")
+        myElement.toggleClass("collapse");
+
+        // update button text
+        if (hasClass(myElement, "collapse") ) {
+            var myBtn = $("#showHideSearch");
+            myBtn[0].innerText = "Search";
+        }
+        else {
+            var myBtn = $("#showHideSearch");
+            myBtn[0].innerText = "Hide Search";
+        }
+    }
+
+    function hasClass(element, className) {
+        return (' ' + element[0].className + ' ').indexOf(' ' + className + ' ') > -1;
+    }
+
+</script>
+
+    <!-- General scripting -->
+    <script>
+
+    $(document).ready(function (){
+
+        //testNullAjaxSet(); // sets root nodes Model to null.
+
+        // supposedly this sets style of widgets. not seeing a change...
+        localStorage.setItem("stylingMode", "outlined");
+
+        // start with index #1 (zero based) item selected.
+        initVCSelector(1);
+
+        // Collapse functionality of form groupings in TagProperties Form
+        var btn = document.getElementsByClassName("CollapseBtn");
+        for (var i = 0; i < btn.length; i++) {
+            btn[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        }
+
+        // Initial View Components loaded:
+        loadVC("FlocSearchDataGridDiv", "FlocSearchDataGrid");
+        loadVC("maintTreeDiv", "MaintTree");
+        //loadVC("maintTreeDiv", "MaintTreeDemand");
+        loadVC("TagProperties", "TagProperties");
+        loadVC2("ViewComponents", "UnassignedDataGrid", "uc2_sub_three");
+        loadVC2("NonMaintainedDataGrid", "NonMaintainedDataGrid", "uc2_sub_two");
+
+        // Reload components on resize of window;
+        $(window).resize(function () {
+            location.reload();
+        })
+    });
+
+    function UpdateCaptionStatus(e)
+    {
+        // No DEX method to do this. using DOM/Pure JS.
+        // On content ready, apply icon based on SAPStatusId
+        sapId = $('#TagProperties_SAPStatusId').val();
+        let myForm = document.getElementById("form")
+        let caption = myForm.getElementsByClassName("dx-form-group-caption")[0];
+        newHtml = '<div><img src="./img/Status'+sapId+'A.ico" height="20" />' + caption.innerHTML + '</div>';
+        caption.innerHTML = newHtml;
+
+    }
+
+    function initVCSelector(selectedItem) {
+        var options = [
+            { "Name": 'PM Assemblies', "Value": "PMAssembliesDataGrid" },
+            // removed MI from options.
+            //{ "Name": 'Maintenance Items', "Value": "MaintItemDataGrid" },
+            { "Name": 'Unassigned Tags', "Value": "UnassignedDataGrid" }
+        ];
+
+        $("#VCSelector").dxSelectBox({
+            items: options,
+            valueExpr: "Value",
+            displayExpr: "Name",
+            value: options[selectedItem].Value,
+            style: "color: #fff;",
+            onValueChanged: function (data) {
+                loadVC2("ViewComponents", data.value, "uc2_sub_three");
+            }
+        });
+    }
+
+
+    function getModelData() {
+        $.ajax({
+            url: "/Lookups/GetModelData",
+            success: function (data) {
+                Window.models = data;
+            }
+        })
+    }
+
+    // Wrappers for ajax calls.
+    function loadVC(divId, componentName) {
+        //load a component that gets its dimensions directly from its div.
+        var w = $("#" + divId).width();
+        var h = $("#" + divId).height();
+
+        $.ajax({
+            url: "/UC2/" + "Reload" + componentName,
+            data: { Height: parseInt(h), Width: parseInt(w)},
+            success: function (data) {
+                $("#" + divId).html(data);
+            }
+        })
+    }
+
+    function loadVC2(divId, componentName, sizedDiv) {
+        //load a component that gets its dimensions from its div parent.
+        var w = $("#" + sizedDiv).width();
+        var h = $("#" + sizedDiv).height();
+
+        $.ajax({
+            url: "/UC2/" + "Reload" + componentName,
+            data: { Height: parseInt(h), Width: parseInt(w) },
+            success: function (data) {
+                $("#" + divId).html(data);
+            }
+        })
+    }
+
+    function loadVC3(divId, componentName, tagId) {
+        //load a component that gets its dimensions from its div parent.
+        // Include TagId
+        var w = $("#" + divId).width();
+        var h = $("#" + divId).height();
+
+        $.ajax({
+            url: "/UC2/" + "Reload" + componentName,
+            data: { Height: parseInt(h), Width: parseInt(w), TagId: tagId },
+            success: function (data) {
+                $("#" + divId).html(data);
+            }
+        })
+    }
+
+    function UnassignedDataGrid_Reload()
+    {
+        loadVC2("ViewComponents", "UnassignedDataGrid", "uc2_sub_three");
+    }
+
+    function NonMaintainedDataGrid_Reload()
+    {
+        loadVC2("NonMaintainedDataGrid", "NonMaintainedDataGrid", "uc2_sub_two");
+    }
+
+    function TagProperties_Reload(TagId = 1561)
+    {
+        // race condition between this and an ajax update, reload is faster than update.
+        setTimeout(() => loadVC3("TagProperties", "TagProperties", TagId), 200);
+    }
+
+    // ###############
+    // DnD functions #
+    // ###############
+    function moveGridNodeToTreeNode(fromNodeItemData, toNode)
+    {
+        // Will only allow drop of single item in grid to INSIDE a treeNode.
+        // function shared by other grid views.
+        var toTreeView = $('#treeViewMaintItems').dxTreeView('instance');
+
+        var nodeType = fromNodeItemData.nodeType;
+        var fromId = fromNodeItemData.dbId;
+        var maintParentId = toNode.key;
+
+        // Update DB activities
+        if (nodeType == 'M')
+        {
+            console.log('isM');
+            UpdateNodeParent(fromId, maintParentId, 'MaintTree');
+        }
+        else if (nodeType == 'MI')
+        {
+            console.log('isMI');
+            UpdateMI(fromId, null, maintParentId, 'MaintTree');
+        }
+        else if (nodeType == 'PMA')
+        {
+            console.log('isPMA');
+            UpdatePMA(fromId, null, maintParentId, 'MaintTree');
+        }
+
+        // Update TreeView
+        var toItems = toTreeView.option('items');
+        //toNode.itemData.Items.splice(toItems.length, 0, fromNodeItemData);
+        toItems.splice(toItems.length, 0, fromNodeItemData)
+
+    }
+
+    // MaintenanceItem DataGrid
+    function MaintItemOnDragEnd(e)
+    {
+        console.log("MaintainanceItemonDragEnd called");
+
+        // act on DnD for drag to MaintTree only.
+        if (e.toData == 'MaintTree') {
+            var toTreeView = $('#treeViewMaintItems').dxTreeView('instance');
+            var toNode = findNode(toTreeView, calculateToIndex(e));
+
+            // Legal moves only. Destination node must be M or P, no Sibling drop either.
+            if (e.dropInsideItem && (toNode.itemData.nodeType == "M" || toNode.itemData.nodeType == "P")) {
+                // Map ItemData of GridView item, to TreeView item
+                var fromNode = convertMaintItemNodeToTreeNode(e.itemData);
+                fromNode.ParentId = toNode.key;
+                fromNode.Id = fromNode.ParentId + ':' + fromNode.dbId;
+
+                // Move into TreeView.
+                var toItems = toTreeView.option('items');
+                moveGridNodeToTreeNode(fromNode, toNode);
+
+                //Refresh view(toTreeview.option())
+                toTreeView.option("items", toItems);
+
+                // Refresh MI Gridview (Not required, static.)
+
+            }
+        }
+    }
+
+    function convertMaintItemNodeToTreeNode(itemData)
+    {
+        var newNode = new Object();
+        newNode.Id = itemData.MaintItemId;
+        newNode.dbId = itemData.MaintItemId;
+        newNode.IsDeleted = false;
+        newNode.IsDirectory = false;
+        newNode.IsExpanded = true;
+        newNode.Items = null;
+        newNode.Name = itemData.MaintItemNum + ': ' + itemData.MaintItemShortText;
+        newNode.nodeType = 'MI';
+        newNode.MaintClassId = null;
+        newNode.MaintStatus = null;
+
+        return newNode;
+    }
+
+    // PMA Javascript
+    function PMAOnDragEnd(e)
+    {
+        console.log("PMAonDragEnd called");
+
+        // act on DnD for drag to MaintTree only.
+        if (e.toData == 'MaintTree') {
+            var toTreeView = $('#treeViewMaintItems').dxTreeView('instance');
+            var toNode = findNode(toTreeView, calculateToIndex(e));
+
+            // Legal moves only. Destination node must be M or P, no Sibling drop either.
+            if (e.dropInsideItem && (toNode.itemData.nodeType == "M" || toNode.itemData.nodeType == "P")) {
+                // Map ItemData of GridView item, to TreeView item
+                var fromNode = convertPMANodeToTreeNode(e.itemData);
+                fromNode.ParentId = toNode.key;
+                fromNode.Id = fromNode.ParentId + ':' + fromNode.dbId;
+
+                // Move into TreeView.
+                var toItems = toTreeView.option('items');
+                moveGridNodeToTreeNode(fromNode, toNode);
+
+                //Refresh view(toTreeview.option())
+                toTreeView.option("items", toItems);
+
+                // Refresh PMA Gridview (Not required, static.)
+                //PMADataGrid_Reload();
+
+            }
+        }
+    }
+
+    function convertPMANodeToTreeNode(itemData) {
+        var newNode = new Object();
+        newNode.Id = itemData.PmassemblyId;
+        newNode.dbId = itemData.PmassemblyId;
+        newNode.IsDeleted = false;
+        newNode.IsDirectory = false;
+        newNode.IsExpanded = true;
+        newNode.Items = null;
+        newNode.Name = itemData.PmassemblyName + ': ' + itemData.ShortText;
+        newNode.nodeType = 'PMA';
+        newNode.MaintClassId = null;
+        newNode.MaintStatus = null;
+
+        return newNode;
+    }
+
+    // Non Maintained DataGrid
+    function NonMaintOnDragEnd(e) {
+        console.log("NonMaintOnDragEnd called");
+
+        // DnD from Non-Maintained to MaintTree
+        if (e.toData == 'MaintTree') {
+            var toTreeView = $('#treeViewMaintItems').dxTreeView('instance');
+            var toNode = findNode(toTreeView, calculateToIndex(e));
+
+            // DataGrid entity attributes
+            var tempObj = e.itemData;
+
+            // Map ItemData of GridView item, to TreeView item
+            var fromNode = convertMaintNodeToTreeNode(e.itemData);
+            fromNode.ParentId = toNode.key;
+
+            // move into TreeView. Refresh view (toTreeview.option() )
+            var toItems = toTreeView.option('items');
+            moveGridNodeToTreeNode(fromNode, toNode);
+            toTreeView.option("items", toItems);
+
+            // Refresh NonMaintainedGridView
+            NonMaintainedDataGrid_Reload();
+        }
+
+        // DnD from Non-Maintained to Unassigned
+        if (e.toData == 'UnassignedDataGrid') {
+            //update nodes status to 'M' ('R' for drag to Non-Maintained)
+            Update_Tag_MaintTypeName(e.itemData.TagId, 'M');
+            Unset_Tag_maintParent(e.itemData.TagId);
+            // Refresh both widgets?? see if required.
+            UnassignedDataGrid_Reload();
+            NonMaintainedDataGrid_Reload();
+        }
+    }
+
+    function GridViewContextMenuDefault(e) {
+        if (e.row.rowType === "data")
+        {
+            e.items = [{
+                text: "Engineering data",
+                onItemClick: function () {
+                    var target = "/TagEngDatas/Index/" + e.row.data.TagId;
+                    window.open(target, '', "directories=no, titlebar=no, toolbar=no,location=no, status=no, menubar=no, resizable=yes, width=800, Height=700, left=100, top=10");
+                }
+            },
+            {
+                text: "Documents",
+                onItemClick: function () {
+                    var target = "/TagXdocs/DocByTagId/" + e.row.data.TagId;
+                    window.open(target, '', "directories=no, titlebar=no, toolbar=no,location=no, status=no, menubar=no, resizable=yes, width=800, Height=700, left=100, top=10");
+                }
+            }];
+        }
+    }
+
+    function convertMaintNodeToTreeNode(itemData) {
+        var newNode = new Object();
+        newNode.Id = itemData.TagId;
+        newNode.dbId = itemData.TagId;
+        newNode.IsDeleted = false;
+        newNode.IsDirectory = true; // so content can be added to this node.
+        newNode.IsExpanded = true;
+        newNode.Items = null;
+        newNode.Name = itemData.TagFloc + ': ' + itemData.TagFlocDesc;
+        newNode.nodeType = 'M';
+        newNode.MaintClassId = 1;
+        newNode.MaintStatus = null;
+
+        return newNode;
+    }
+
+    // Unassigned Javascript
+    function UnassignedOnDragEnd(e)
+    {
+        // act on DnD for drag to MaintTree only.
+        if (e.toData == 'MaintTree') {
+            var toTreeView = $('#treeViewMaintItems').dxTreeView('instance');
+            var toNode = findNode(toTreeView, calculateToIndex(e));
+
+            // DataGrid entity attributes
+            var tempObj = e.itemData;
+
+            // Map ItemData of GridView item, to TreeView item
+            var fromNode = convertUnassignedNodeToTreeNode(e.itemData);
+            fromNode.ParentId = toNode.key;
+
+            // move into TreeView. Refresh view (toTreeview.option() )
+            var toItems = toTreeView.option('items');
+            moveGridNodeToTreeNode(fromNode, toNode);
+            toTreeView.option("items", toItems);
+
+            // Refresh NonMaintainedGridView
+            UnassignedDataGrid_Reload();
+        }
+
+        // DnD from Unassigned to Non-Maintained
+        if (e.toData == 'NonMaintainedDataGrid') {
+            //update nodes status to 'R'
+            Update_Tag_MaintTypeName(e.itemData.TagId, 'R');
+            // Refresh both widgets?? see if required.
+            UnassignedDataGrid_Reload();
+            NonMaintainedDataGrid_Reload();
+        }
+    }
+
+    function convertUnassignedNodeToTreeNode(itemData)
+    {
+        var newNode = new Object();
+        newNode.Id = itemData.TagId;
+        newNode.dbId = itemData.TagId;
+        newNode.IsDeleted = false;
+        newNode.IsDirectory = true; // so content can be added to this node.
+        newNode.IsExpanded = true;
+        newNode.Items = null;
+        newNode.Name = itemData.TagFloc + ': ' + itemData.TagFlocDesc;
+        newNode.nodeType = itemData.MaintTypeName == null ? 'M' : itemData.MaintTypeName;
+        newNode.MaintClassId = itemData.MaintTypeId; // need this?
+        newNode.MaintStatus = null; //Need this?
+
+        return newNode;
+    }
+
+    // xxxxxxxxxxxxxxxx
+    // MaintTree
+
+    function MaintTreeOnDragChange(e)
+    {
+        if (e.fromComponent === e.toComponent)
+        {
+            var $nodes = e.element.find(".dx-treeview-node");
+
+            // Prevent circular references
+            var isDragIntoChild = $nodes.eq(e.fromIndex).find($nodes.eq(e.toIndex)).length > 0;
+            if (isDragIntoChild)
+            {
+                e.cancel = true;
+            }
+        }
+    }
+
+    function MaintTreeOnDragEnd(e)
+    {
+        // do nothing if it hasn't moved.
+        if (e.fromComponent === e.toComponent && e.fromIndex === e.toIndex)
+        {
+            console.log('Not moved.');
+            return;
+        }
+
+        var fromTreeView = getTreeView();
+        var fromNode = findNode(fromTreeView, e.fromIndex);
+        var fromItems = fromTreeView.option('items');
+
+        // Move out of TreeView to another Component.
+        // Allow permitted moves only.
+        if (e.toData == 'NonMaintainedDataGrid' || e.toData == 'PMAssembliesDataGrid' || e.toData == 'MaintenanceItemDataGrid' || e.toData == 'UnassignedDataGrid')
+        {
+            // test for invalid removals.
+            if (fromNode.itemData.nodeType == 'M' && (e.toData != 'UnassignedDataGrid' && e.toData != 'NonMaintainedDataGrid') ) {
+                console.log("Move maintenance item to Unnassigned or Non Maintained to remove from Hierarchy");
+                return;
+            }
+            if (fromNode.itemData.nodeType == 'N' || fromNode.itemData.nodeType == 'P') {
+                console.log("Cannot delete Navigational or Package structure.");
+                return;
+            }
+            if (fromNode.itemData.nodeType == 'PMA' && e.toData != 'PMAssembliesDataGrid') {
+                console.log("Drag to PMA grid to remove a PMA");
+                return;
+            }
+            if (fromNode.itemData.nodeType == 'MI' && e.toData != 'MaintenanceItemDataGrid') {
+                console.log("Drag to MI grid to remove an MI");
+                return;
+            }
+
+            // prompt user. advise this item has children; do you want to remove them all? Y|N
+            var ok = true;
+            if (fromNode.children.length > 0)
+            {
+                var msg1 = 'Warning. This Node has ' + fromNode.children.length;
+                var msg2 = fromNode.children.length == 1 ? ' child. ' : ' children. ';
+                msg = msg1 + msg2 + 'Do you want to continue? This Tag and its descendants will have their MaintParent Hierarchy reset.';
+                ok = window.confirm(msg);
+            }
+            if (ok)
+            {
+                // Update DB
+                //var fromId = fromNode.key;
+                var fromId = fromNode.itemData.dbId;
+                var parentId = fromNode.itemData.ParentId;
+
+                // ## this is only for Hierarchical structure ##
+                //var fromNodeContainingArray = getNodeContainingArray(fromNode, fromItems);
+                //var fromIndex = findIndex(fromNodeContainingArray, fromNode.itemData.Id);
+
+                // ## This is for simple structure ##
+                var fromIndex = findIndex(fromItems, fromNode.itemData.Id);
+
+
+                var fromType = fromNode.itemData.nodeType;
+                if (fromType == 'M')
+                    UpdateNodeParent(fromId, null, e.toData);
+                else if (fromType == 'MI')
+                    UpdateMI(fromId, parentId, null, e.toData);
+                else if (fromType == 'PMA')
+                    UpdatePMA(fromId, parentId, null, e.toData);
+
+                // Remove node from tree
+                // ## this is for Hierarhical structure
+                // fromNodeContainingArray.splice(fromIndex, 1);
+                // ## this is for Hierarhical structure
+                fromItems.splice(fromIndex, 1);
+
+                // Refreshes tree after splice
+                fromTreeView.option("items", fromItems);
+
+                // refresh related components
+                if(e.toData == 'NonMaintainedDataGrid')
+                    NonMaintainedDataGrid_Reload();
+                if (e.toData == 'UnassignedDataGrid')
+                    UnassignedDataGrid_Reload();
+            }
+        }
+
+        // Move within TreeView
+        if (e.toData == 'MaintTree')
+        {
+            //var toTreeView = getTreeView(e.toData);
+            var toTreeView = getTreeView();
+            var toNode = findNode(toTreeView, calculateToIndex(e));
+
+            // Illegal actions. Exit if encountered:
+            if (toNode != null) {
+                if ((fromNode.itemData.nodeType == "PMA" || fromNode.itemData.nodeType == "MI") && (toNode.itemData.nodeType != "M" && toNode.itemData.nodeType != "P"))
+                    return;
+
+                if (fromNode.itemData.nodeType == "N" && toNode.itemData.nodeType != "N")
+                    return;
+
+                if ((fromNode.itemData.nodeType == "M" || fromNode.itemData.nodeType == "P") && (toNode.itemData.nodeType == "MI" || toNode.itemData.nodeType == "PMA"))
+                    return;
+            }
+
+            var fromTopVisibleNode = getTopVisibleNode(fromTreeView);
+            var toTopVisibleNode = getTopVisibleNode(toTreeView);
+            var toItems = toTreeView.option('items');
+
+            moveNode(fromNode, toNode, fromItems, toItems, e.dropInsideItem, e.toData);
+
+            // Refresh Treeview to reflect changes
+            fromTreeView.option("items", fromItems);
+            toTreeView.option("items", toItems);
+
+            // keep the starting node in view.
+            fromTreeView.scrollToItem(fromTopVisibleNode);
+            toTreeView.scrollToItem(toTopVisibleNode);
+        }
+    }
+
+    function MaintTree_OnClick(e)
+    {
+        dxTreeView = getTreeView()
+
+        dxTreeView.selectItem(e.itemData.id);
+
+        if (e.itemData.nodeType == "M" || e.itemData.nodeType == "P" || e.itemData.nodeType == "N")
+        {
+            TagProperties_Reload(e.itemData.Id);
+        }
+    }
+    function getTreeView()
+    {
+        return $('#treeViewMaintItems').dxTreeView('instance')
+    }
+
+    // TreeView Context Menu
+    function onTreeViewItemContextMenu(e) {
+        // javascript magic; this variable will be available to subsequent functions
+        // as var is not used when defining the variable.
+        selectedTreeItem = e.itemData;
+
+        // build control around types of context to display... just shows all for now.
+        var isNavigational = false;
+        var contextMenu = $('#contexmenu').dxContextMenu('instance');
+        contextMenu.option('items[0].visible', !isNavigational);
+        contextMenu.option('items[1].visible', !isNavigational);
+        contextMenu.option('items[2].visible', !isNavigational);
+
+    }
+
+    function onContextMenuItemClick(e) {
+        var target = '';
+        switch (e.itemData.id) {
+            case 'TagDetail':
+                {
+                    target = "/TagEngDatas/Index/" + selectedTreeItem.dbId;
+                    break;
+                }
+            case 'TagDoc':
+                {
+                    target = "/TagXdocs/DocByTagId/" + selectedTreeItem.dbId;
+                    break;
+                }
+            case 'EngData':
+                {
+                    target = "/UC2/EngAttributesByClassification/" + selectedTreeItem.dbId;
+                    break;
+                }
+        }
+        if (target != '') {
+            window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+        }
+    }
+
+    // ###########################
+    // DOM controls for TreeView #
+    // ###########################
+    function calculateToIndex(e)
+    {
+        if (e.fromComponent != e.toComponent || e.dropInsideItem)
+        {
+            return e.toIndex;
+        }
+
+        return e.fromIndex >= e.toIndex ? e.toIndex : e.toIndex + 1;
+    }
+    function findNode(treeView, index)
+    {
+        var nodeElement = treeView.element().find('.dx-treeview-node')[index];
+        if (nodeElement)
+        {
+            return findNodeById(treeView.getNodes(), nodeElement.getAttribute('data-item-id'));
+        }
+        return null;
+    }
+    function findNodeById(nodes, id)
+    {
+        for (var i = 0; i < nodes.length; i++)
+        {
+            if (nodes[i].itemData.Id == id)
+            {
+                return nodes[i];
+            }
+            if (nodes[i].children)
+            {
+                var node = findNodeById(nodes[i].children, id);
+                if (node != null)
+                {
+                    return node;
+                }
+            }
+        }
+        return null;
+    }
+    function moveNode(fromNode, toNode, fromItems, toItems, isDropInsideItem, destinationComponent)
+    {
+        var fromNodeContainingArray = getNodeContainingArray(fromNode, fromItems);
+        var fromIndex = findIndex(fromNodeContainingArray, fromNode.itemData.Id);
+        var fromType = fromNode.itemData.nodeType;
+        var parentId = fromNode.itemData.ParentId;
+        //var fromId = fromNode.key;
+        var fromId = fromNode.itemData.dbId;
+        var toNodeContainingArray = getNodeContainingArray(toNode, toItems);
+        // can leave this as toNode.key within tree is always a Tag, not MI/PMA.
+        var maintParentId = toNode.key;
+
+        // get siblings parentId if required.
+        if (!isDropInsideItem && toNodeContainingArray.length > 0 && toNodeContainingArray[0].hasOwnProperty('ParentId'))
+        {
+            maintParentId = toNodeContainingArray[0].ParentId;;
+        }
+
+        // Ajax - Update DB
+        if (fromType == 'M')
+        {
+            UpdateNodeParent(fromId, maintParentId, destinationComponent);
+        }
+        else if (fromType == 'MI')
+        {
+            UpdateMI(fromId, parentId, maintParentId, destinationComponent);
+        }
+        else if (fromType == 'PMA')
+        {
+            UpdatePMA(fromId, parentId, maintParentId, destinationComponent);
+        }
+
+        // Update TreeView
+        if (isDropInsideItem)
+        {
+            fromNodeContainingArray.splice(fromIndex, 1);
+            toNode.itemData.Items.splice(toNode.itemData.Items.length, 0, fromNode.itemData);
+        }
+        else // move dragged node as sibling
+        {
+            var toIndex = toNode === null
+                ? toItems.length
+                : findIndex(toNodeContainingArray, toNode.itemData.Id);
+
+            fromNodeContainingArray.splice(fromIndex, 1);
+            toNodeContainingArray.splice(toIndex, 0, fromNode.itemData);
+        }
+    }
+    function getNodeContainingArray(node, rootArray)
+    {
+        return node === null || node.parent === null
+            ? rootArray
+            : node.parent.itemData.Items;
+    }
+    function findIndex(array, id)
+    {
+        var idsArray = array.map(function (elem) { return elem.Id; });
+        return idsArray.indexOf(id);
+    }
+    function getTopVisibleNode(component)
+    {
+        var treeViewElement = component.element().get(0);
+        var treeViewTopPosition = treeViewElement.getBoundingClientRect().top;
+        var nodes = treeViewElement.querySelectorAll(".dx-treeview-node");
+
+        for (var i = 0; i < nodes.length; i++)
+        {
+            var nodeTopPosition = nodes[i].getBoundingClientRect().top;
+            if (nodeTopPosition >= treeViewTopPosition)
+            {
+                return nodes[i];
+            }
+        }
+
+        return null;
+    }
+
+    // ###############
+    // Ajax Controls #
+    // ###############
+    function UpdateNodeParent(TagId, MaintParentId, DestinationComponent)
+    {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("AjaxMaintParentUpdate")",
+            data: { tagId: TagId, maintParentId: MaintParentId, destinationComponent: DestinationComponent },
+            dataType: "json",
+            success: function () {
+                console.log("OK:  UpdateNodeParent(" + TagId + ", " + MaintParentId + ", " + DestinationComponent + ");");
+            },
+            error: function () {
+                console.log("ERR: UpdateNodeParent(" + TagId + ", " + MaintParentId + ", " + DestinationComponent + ");");
+            }
+        });
+    }
+    function UpdatePMA(PmAId, OldParent, NewParent, DestinationComponent)
+    {
+        // add, delete based on supplied values
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("AjaxMaintTreePMAUpdate")",
+            data: { pmAId: PmAId, oldParent: OldParent, newParent: NewParent, destinationComponent: DestinationComponent },
+            dataType: "json",
+            success: function () {
+                console.log("OK:  UpdatePMA");
+            },
+            error: function (message) {
+                console.log("ERR:  UpdatePMA" + message);
+            }
+        });
+    }
+    function UpdateMI(MiId, OldParent, NewParent, DestinationComponent) {
+        // add, delete based on supplied values
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("AjaxMaintTreeMIUpdate")",
+            data: { miId: MiId, oldParent: OldParent, newParent: NewParent, destinationComponent: DestinationComponent  },
+            dataType: "json",
+            success: function () {
+                console.log("OK:  UpdateMI");
+            },
+            error: function () {
+                console.log("ERR:  UpdateMI");
+            }
+        });
+    }
+    function Unset_Tag_maintParent(TagId) {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("Ajax_unset_Tag_maintParent")",
+            data: { TagId: TagId},
+            dataType: "json",
+            success: function () {
+                console.log("OK:  Removed MaintParentId");
+            },
+            error: function () {
+                console.log("ERR:  Ajax_unset_Tag_maintParent Failed");
+            }
+        });
+    }
+    function Update_Tag_MaintTypeName(TagId, Status) {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("Ajax_set_Tag_maintTypeName")",
+            data: { TagId: TagId, MaintTypeName: Status},
+            dataType: "json",
+            success: function () {
+                console.log("OK:  Updated Tag MaintTypeStatus");
+            },
+            error: function () {
+                console.log("ERR:  Update_Tag_MaintTypeName Failed");
+            }
+        });
+    }
+
+    // Debugging
+    function logObj(myObject)
+    {
+        for (var name in myObject)
+        {
+                console.log(name +': '+ myObject[name]);
+        }
+    }
+
+
+    // Tag Properties
+    function testDDL(result)
+    {
+        if (result.length == 0)
+        {
+            // set Value field to be editable.
+            console.log("TODO: set value field to be editable.");
+        }
+    }
+
+    function TagPropertiesOnContentReady()
+    {
+        console.log("contentReady");
+        // need to update colour of form... moved to FormLoad??
+    }
+
+
+    function OnTagPropertiesFormLoad(e) {
+        var dxForm = getFormInstance();
+        var SAPId = dxForm.getEditor('Tag.SAPStatusId').option('value');
+        var css_class = 'dx-treeview-SAPStatus-' + SAPId;
+        dxForm.itemOption('TagProperties.SAPStatusAnchor', 'cssClass', css_class);
+        AddCollapseFunctionality(e);
+    }
+
+    function getFormInstance() {
+        return $("#form").dxForm("instance");
+    }
+
+
+    function tabs_itemClick(e) {
+        console.log('why do I exist?');
+    }
+
+    function selectBox_valueChanged(e) {
+        console.log('why do I exist?');
+    }
+
+    // Test for javascript object intantiation. Robust version of if(obj IsNull)...
+    function isObjectEmpty(value) {
+        return value && Object.keys(value).length === 0 && value.constructor === Object;
+    }
+
+    function TagPropertiesMain_OnChange(e) {
+        console.log("TagPropertiesMain_OnChange");
+        var TagId = $('#TagProperties_TagId').val();
+
+        // Test for Admin add new droppown element request.
+        if (e.value < 1 && e.value != null) {
+            var cruds = {};
+            cruds['Tag.LocationId'] = '/Locations';
+            cruds['Tag.SAPStatusId'] = '/SapStatus';
+            cruds['Tag.CommZoneId'] = '/CommZones';
+            cruds['Tag.ManufacturerId'] = '/Manufacturers';
+            //cruds['Tag.ModelId'] = '/Models';
+            cruds['PlantSectionId'] = '/PlantSections';
+            cruds['MaintAreaId'] = '/MaintAreas';
+            cruds['MaintLocationId'] = '/MaintLocations';
+            cruds['Tag.MaintCriticalityId'] = '/MaintCriticalities';
+            cruds['Tag.SortFieldId'] = '/MaintSortProcesses';
+            cruds['Tag.PlannerPlantdId'] = '/PlannerPlants';
+            cruds['Tag.MaintPlannerGroupId'] = '/MaintPlannerGroups';
+            cruds['Tag.MaintWorkCentreId'] = '/MaintWorkCentres';
+            cruds['Tag.ComnpanyCodeId'] = '/CompanyCodes';
+            cruds['Tag.WBSElementId'] = '/WBSElements';
+            cruds['Tag.MaintStructureIndicatorId'] = '/MaintStructureIndicators';
+
+            if (cruds[e.dataField])
+                window.open(cruds[e.dataField]);
+
+            // There is no way to get old value without going to database! Devexpress...
+            TagProperties_Reload(TagId);
+        }
+        else if (e.dataField == "PlantSectionId") {
+            let editor = e.component.getEditor("MaintAreaId");
+            let dataSource = editor.getDataSource();
+            dataSource.filter(["Parent", "=", e.value], "or", ["Value", "<", 0]);
+            dataSource.load();
+            // Clear related fields: Tag.MaintArea Tag.MaintLocationId
+            e.component.updateData("Tag.MaintAreaId", null);
+            e.component.updateData("Tag.MaintLocationId", null);
+        }
+        else if (e.dataField == "MaintAreaId") {
+            let editor = e.component.getEditor("Tag.MaintLocationId");
+            let dataSource = editor.getDataSource();
+            dataSource.filter(["Parent", "=", e.value], "or", ["Value", "<", 0]);
+            dataSource.load();
+            // Clear related fields: Tag.MaintLocationId
+            e.component.updateData("Tag.MaintLocationId", null);
+        }
+
+        // removed ddl ModelId. will now be free text.
+        //if (e.dataField == "Tag.ManufacturerId") {
+        //    let editor = e.component.getEditor("Tag.ModelId");
+        //    let dataSource = editor.getDataSource();
+        //    dataSource.filter(["Parent", "=", e.value], "or", ["Value", "<", 0]);
+        //    dataSource.load();
+        //    // Clear related fields: Tag.ModelId
+        //    e.component.updateData("Tag.ModelId", null);
+        //}
+
+        // update DB
+        if (!isNegInt(e.value) && e.dataField != "PlantSectionId" && e.dataField != "MaintAreaId") {
+            attName = e.dataField;
+            // Update database values
+            $.ajax({
+                type: "POST",
+                url: "/Tags/" + "AjaxFieldUpdate",
+                data: { sId: TagId, attributeName: e.dataField, newValue: e.value },
+                dataType: "json",
+
+                success: function () {
+                    console.log("SUCCESS: field db update");
+                },
+                error: function () {
+                    //console.log("ERROR: UpdateNodeParent(" + TagId + ", " + MaintParentId + ", " + DestinationComponent + ");");
+                    console.log("FAIL: field db update");
+                }
+            })
+
+            if (attName == 'Tag.MaintLocationId')
+                TagProperties_Reload(TagId);
+        }
+    }
+
+
+    function testNullAjaxSet() {
+
+        $.ajax({
+            type: "POST",
+            url: "/Tags/" + "AjaxFieldUpdate",
+            data: { sId: 1628, attributeName: 'Tag.ModelId', newValue: null },
+            dataType: "json",
+
+            success: function () {
+                console.log("SUCCESS: field db update");
+            },
+            error: function () {
+                //console.log("ERROR: UpdateNodeParent(" + TagId + ", " + MaintParentId + ", " + DestinationComponent + ");");
+                console.log("FAIL: field db update");
+            }
+        })
+
+    }
+
+    // test for negative integers. Complicated because, well, Javascript and cant have it erroring out.
+    function isNegInt(x) {
+        if (!isNaN(x) && parseInt(Number(x)) == x && !isNaN(parseInt(x, 10)))
+            if(x < 0)
+                return true;
+        return false;
+    }
+
+    function AddCollapseFunctionality(e) {
+        console.log("collapse...")
+        $(".dx-form-group-caption")
+            .each(function () {
+                $(this)
+                    .prepend(
+                        $('<div />')
+                            .css({
+                                "margin-right": "1rem",
+                            })
+                            .dxButton({
+                                "icon": "minus",
+                                "onClick": function (e) {
+                                    let hidden = e.component.option('icon') == 'plus';
+                                    let $caption = e.element.closest('.dx-form-group-caption');
+                                    let $content = $caption.siblings(".dx-form-group-content");
+
+                                    $content.toggle();
+
+                                    e.component.option(
+                                        'icon',
+                                        hidden ? 'minus' : 'plus'
+                                    );
+                                }
+                            })
+                    );
+
+            });
+    }
+
+
+
+        </script>
+
+        <!-- FLOCSearch-->
+        <script>
+
+            function FlocSearch_OnSelectionChanged(e) {
+                // find first selected item
+                var tagId = e.selectedRowKeys[0];
+                var maintType = e.selectedRowsData[0].MaintTypeId;
+
+                // todo: determine Non Mainttained not by ID, but by text value (R).
+                if (maintType == 4) {
+                    $("#searchcommentary").html("Non-Maintainable content is not in Maintenance Hierarchy.");
+                }
+                else {
+                    $("#searchcommentary").html("");
+                }
+
+                if (tagId != null && maintType != 4) {
+                    getFlocPath(tagId);
+                }
+            }
+
+            function getFlocPath(tagId) {
+                $.ajax({
+                    url: "/UC2/GetFlocMaintPath",
+                    data: { TagId: tagId },
+                    success: function (data) {
+                        console.log('ok: ' + data);
+                        gotoSearchedItem(data);
+                    },
+                    error: function (data) {
+                        console.log('bad: ' + data.responseText);
+                    }
+                });
+            }
+
+            function gotoSearchedItem(path) {
+
+                if (path != null) {
+                    var arrQueue = path.split("/");
+                    var futureQueue = path.split("/");
+                    var thisTree = $('#treeViewMaintItems').dxTreeView('instance');
+                    var depth = arrQueue.length;
+
+                    // find 1st unloaded node
+                    for (i = 0; i < arrQueue.length; i++) {
+                        if (!thisTree.selectItem(arrQueue[i])) {
+                            // store unfound part of path for OnContentReady.
+                            for (j = 0; j < i; j++) {
+                                futureQueue.shift();
+                            }
+
+                            path = futureQueue.join("/");
+                            $('#treeViewSearchQueue').val(path);
+                            depth = i;
+                            break;
+                        }
+                    }
+
+                    // expand loaded nodes and 1st unloaded node
+                    for (i = 0; i < depth; i++) {
+                        thisTree.expandItem(arrQueue[i]);
+                        thisTree.selectItem(arrQueue[i]);
+                        if (i == depth - 1) {
+                            TagProperties_Reload(arrQueue[i]);
+                            thisTree.scrollToItem(arrQueue[i]);
+                        }
+                    }
+                }
+            }
+
+        </script>
+
+
+
+
+        <!-- TreeViewDemand Functions -->
+        <script>
+            function treeView_createChildren(parent) {
+                var parentId = parent ? parent.itemData.Id : "";
+
+                return $.ajax({
+                    url: "/UC2/GetMaintTreeDemand",
+                    dataType: "json",
+                    data: { parentId: parentId }
+                });
+            }
+
+            function MaintTreeDemand_OnContentReady(e) {
+
+                // check if request to load searched item is in progress
+                var queue = $('#treeViewSearchQueue').val();
+                if (queue.length > 0) {
+
+                    var thisTree = $('#treeViewMaintItems').dxTreeView('instance');
+                    var arrQueue = queue.split("/");
+
+                    if (arrQueue.length > 1) {
+                        thisTree.expandItem(arrQueue[0]);
+                    }
+                    else {
+                        // highlight node, scroll to it, reload B1
+                        thisTree.selectItem(arrQueue[0]);
+                        TagProperties_Reload(arrQueue[0]);
+                        thisTree.scrollToItem(arrQueue[0]);
+                    }
+
+                    // pop 1st item, update treeViewSearchQueue
+                    arrQueue.shift();
+                    if (arrQueue.length == 0) {
+                        $('#treeViewSearchQueue').val("");
+                    }
+                    else {
+                        queue = arrQueue.join("/");
+                        $('#treeViewSearchQueue').val(queue);
+                    }
+                }
+            }
+
+        </script>
+
+        <!-- setting maintTreeNode class and text -->
+        <script>
+            function MaintTreeNodeTemplate(itemData, itemIndex, itemElement) {
+                var iconClass = '';
+                if (itemData.nodeType == 'N') {
+                    iconClass = 'dx-icon dx-icon-activefolder';
+                }
+                else if (itemData.nodeType == 'PMA') {
+                    iconClass = 'dx-icon dx-icon-PMA';
+                }
+                else {
+                    iconClass = 'dx-icon dx-icon-SAP' + itemData.SAPStatusId;
+                }
+                var myDiv = $("<div>");
+                myDiv.append($("<i>").addClass(iconClass));
+                myDiv.append($("<span>").text(itemData.Name));
+                itemElement.append(myDiv);
+            }
+        </script>

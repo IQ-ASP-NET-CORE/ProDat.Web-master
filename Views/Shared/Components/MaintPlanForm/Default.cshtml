@@ -1,0 +1,95 @@
+﻿@model ProDat.Web2.ViewModels.MaintenancePlanFormUC3
+
+@{ if (Model != null)
+   {
+        var mod_h = Model.height * 1;
+        var mod_w = Model.width * 0.99;
+        var ms = Model.MaintPlan;
+        var id = -1;
+        if (Model.MaintPlan != null)
+            id = Model.MaintPlan.MaintPlanId;
+
+        @(Html.DevExtreme().Form<MaintPlan>()
+            .ID("MaintPlanFormX")
+            .OnFieldDataChanged("MaintPlanForm_OnChange")
+            .FormData(ms)
+            .Height(mod_h)
+            .Width(mod_w)
+            .LabelLocation(FormLabelLocation.Left)
+            .Items(items =>
+            {
+                items.AddGroup()
+                .Caption("Maintenance Plan Details")
+                .ColCount(2)
+                .Items(groupItems =>
+                {
+
+                    groupItems.AddSimpleFor(m => m.MaintPlanName).ColSpan(1);
+
+                    groupItems.AddSimpleFor(m => m.ShortText).ColSpan(1);
+
+                    groupItems.AddSimpleFor(m => m.CycleModFactor).ColSpan(1);
+
+                    groupItems.AddSimpleFor(m => m.MaintStrategyId)
+                        .Editor(e => e
+                            .SelectBox()
+                            .DisplayExpr("Text")
+                            .ValueExpr("Value")
+                            .DataSource(d => d
+                                .Mvc().Controller("Lookups").LoadAction("MaintStrategy_Lookup").Key("Value"))
+                        )
+                    .ColSpan(1);
+
+                    groupItems.AddSimpleFor(m => m.MeasPointId)
+                    .Editor(e => e
+                        .SelectBox()
+                        .DisplayExpr("Text")
+                        .ValueExpr("Value")
+                        .DataSource(d => d
+                            .Mvc().Controller("Lookups").LoadAction("MeasPoint_Lookup").Key("Value"))
+                    )
+                    .ColSpan(1);
+
+                    groupItems.AddSimpleFor(m => m.MaintSortProcessId)
+                        .Editor(e => e
+                            .SelectBox()
+                            .DisplayExpr("Text")
+                            .ValueExpr("Value")
+                            .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintSortProcess_Lookup").Key("Value"))
+                        )
+                .ColSpan(1);
+
+                    groupItems.AddSimpleFor(m => m.CallHorizon).ColSpan(1);
+
+                    groupItems.AddSimpleFor(m => m.StartDate)
+                    .Editor(x => x
+                    .DateBox()
+                    .DisplayFormat("dd MMM yyyy")
+                    )
+                    .ColSpan(1);
+
+                    groupItems.AddSimpleFor(m => m.SchedulingPeriodValue).ColSpan(1);
+
+                    groupItems.AddSimpleFor(m => m.SchedulingPeriodUomId)
+                        .Editor(e => e
+                            .SelectBox()
+                            .DisplayExpr("Text")
+                            .ValueExpr("Value")
+                            .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("SchedulingPeriodUom_Lookup").Key("Value"))
+                        )
+                        .ColSpan(1);
+
+                    //groupItems.AddSimpleFor(m => m.StartDate)
+                    //    .Editor(x=> x
+                    //        .DateBox()
+                    //        .DisplayFormat("dd MMM yyyy")
+                    //    )
+                    //    .ColSpan(1);
+
+                });
+            })
+        )
+        <input type="hidden" id="MaintPlanFormId" value="@id" />
+   }
+}
+

@@ -1,0 +1,30 @@
+﻿@model ProDat.Web2.ViewModels.MaintenanceStrategiesFormUC3
+
+@{  var mod_h = Model.height * 1;
+    var mod_w = Model.width * 0.99;
+    var ms = Model.MaintStrategy;
+    var id = -1;
+    if (ms != null)
+        id = ms.MaintStrategyId;
+}
+
+@(Html.DevExtreme().Form<MaintStrategy>()
+    .ID("MaintenanceStrategiesFormX")
+    .OnFieldDataChanged("MaintenanceStrategiesForm_OnChange")
+    .FormData(ms)
+    .Height(mod_h)
+    .Width(mod_w)
+    //.OnContentReady("MaintenanceStrategiesForm_Loaded")
+    .LabelLocation(FormLabelLocation.Left)
+    .Items(items => {
+        items.AddGroup()
+            .Caption("Maintenance Strategy Details")
+            .ColCount(2)
+            .Items(groupItems =>{
+                groupItems.AddSimpleFor(m => m.MaintStrategyName).ColSpan(1);
+                groupItems.AddSimpleFor(m => m.MaintStrategyDesc).ColSpan(1);
+            });
+    })
+)
+
+<input type="hidden" id="MaintenanceStrategiesFormId" value="@id" />

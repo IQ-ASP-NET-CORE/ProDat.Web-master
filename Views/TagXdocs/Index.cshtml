@@ -1,0 +1,109 @@
+﻿@model IEnumerable<ProDat.Web2.Models.TagXdoc>
+
+@{
+    ViewData["Title"] = "TagxDoc Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var pagedList = (PaginatedList<ProDat.Web2.Models.TagXdoc>)Model;
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.DateCreated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.XComment)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Doc)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tag)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateCreated)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.XComment)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Doc.DocNum)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tag.TagNumber)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<!-- PAGINATION -->
+@{
+    var prevDisabled = !pagedList.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !pagedList.HasNextPage ? "disabled" : "";
+}
+<table>
+    <tr>
+        <td>
+            <a asp-action="Index"
+               asp-route-sortOrder="@ViewData["CurrentSort"]"
+               asp-route-pageNumber=1
+               asp-route-currentFilter="@ViewData["CurrentSearchModelJson"]"
+               class="btn btn-default @prevDisabled">
+                <<
+            </a>
+        </td>
+        <td>
+            <a asp-action="Index"
+               asp-route-sortOrder="@ViewData["CurrentSort"]"
+               asp-route-pageNumber="@(pagedList.PageIndex - 1)"
+               asp-route-currentFilter="@ViewData["CurrentSearchModelJson"]"
+               class="btn btn-default @prevDisabled">
+                <
+            </a>
+        </td>
+        <td>
+            Page @(pagedList.PageIndex) of @(pagedList.TotalPages)
+        </td>
+        <td>
+            <a asp-action="Index"
+               asp-route-sortOrder="@ViewData["CurrentSort"]"
+               asp-route-pageNumber="@(pagedList.PageIndex + 1)"
+               asp-route-currentFilter="@ViewData["CurrentSearchModelJson"]"
+               class="btn btn-default @nextDisabled">
+                >
+            </a>
+        </td>
+        <td>
+            <a asp-action="Index"
+               asp-route-sortOrder="@ViewData["CurrentSort"]"
+               asp-route-pageNumber="@(pagedList.TotalPages)"
+               asp-route-currentFilter="@ViewData["CurrentSearchModelJson"]"
+               class="btn btn-default @nextDisabled">
+                >>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="5" style="text-align:center">@(pagedList.TotalRecords) Records</td>
+    </tr>
+</table>

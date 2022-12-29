@@ -1,0 +1,144 @@
+﻿@model ProDat.Web2.ViewModels.TaskListHeaderFormUC3
+
+@{ if (Model != null)
+   {
+        var mod_h = Model.height * 1;
+        var mod_w = Model.width * 0.99;
+        var ms = Model.TaskListHeader;
+        var id = -1;
+        if (Model.TaskListHeader != null)
+            id = Model.TaskListHeader.TaskListHeaderId;
+
+        @(Html.DevExtreme().Form<TaskListHeader>()
+            .ID("TaskListHeaderFormX")
+            .OnFieldDataChanged("TaskListHeaderForm_OnChange")
+            .FormData(ms)
+            .Height(mod_h)
+            .Width(mod_w)
+            .LabelLocation(FormLabelLocation.Left)
+            .Items(items =>
+            {
+                items.AddGroup()
+                    .Caption("Task List Details")
+                    .ColCount(2)
+                    .Items(groupItems =>
+                    {
+
+                        groupItems.AddSimpleFor(m => m.TaskListGroupId)
+                                .Editor(e => e
+                                    .SelectBox()
+                                    .DisplayExpr("Text")
+                                    .ValueExpr("Value")
+                                    .DataSource(d => d
+                                        .Mvc().Controller("Lookups").LoadAction("TaskListGroup_Lookup").Key("Value"))
+                                )
+                                .ColSpan(1);
+
+                        groupItems.AddSimpleFor(m => m.MaintStrategyId)
+                                        .Editor(e => e
+                                            .SelectBox()
+                                            .DisplayExpr("Text")
+                                            .ValueExpr("Value")
+                                            .DataSource(d => d
+                                                .Mvc().Controller("Lookups").LoadAction("MaintStrategy_Lookup").Key("Value"))
+                                        )
+                                        .ColSpan(1); // Strategy???
+
+                        groupItems.AddSimpleFor(m => m.Counter)
+                                        .Editor(x => x
+                                            .NumberBox()
+                                            .Format("00")  // Number box dosent support numbers beginning with zero... Will leave like this for now.
+                                        )
+                                        .ColSpan(1);
+
+                        groupItems.AddSimpleFor(m => m.MaintPackageId).ColSpan(1); // MaintPackage or MPID?
+
+                        groupItems.AddSimpleFor(m => m.PerformanceStandardId)
+                                        .Editor(e => e
+                                            .SelectBox()
+                                            .DisplayExpr("Text")
+                                            .ValueExpr("Value")
+                                            .DataSource(d => d
+                                                .Mvc().Controller("Lookups").LoadAction("PerformanceStandard_Lookup").Key("Value"))
+                                        )
+                                        .ColSpan(1); // or PS??
+
+                        groupItems.AddSimpleFor(m => m.PmassemblyId)
+                                        .Editor(e => e
+                                                .SelectBox()
+                                                .DisplayExpr("Text")
+                                                .ValueExpr("Value")
+                                                .DataSource(d => d
+                                                    .Mvc().Controller("Lookups").LoadAction("PMAssembly_Lookup").Key("Value"))
+                                        )
+                                        .ColSpan(1); // or PS???
+
+                        groupItems.AddSimpleFor(m => m.TasklistCatId)
+                                        .Editor(e => e
+                                                .SelectBox()
+                                                .DisplayExpr("Text")
+                                                .ValueExpr("Value")
+                                                .DataSource(d => d
+                                                    .Mvc().Controller("Lookups").LoadAction("TaskListCat_Lookup").Key("Value"))
+                                        )
+                                        .ColSpan(1); // or Cat??
+
+                        groupItems.AddSimpleFor(m => m.MaintStrategy.DocId)
+                                        .Editor(e => e
+                                                .SelectBox()
+                                                .DisplayExpr("Text")
+                                                .ValueExpr("Value")
+                                                .ReadOnly(true)
+                                                .DataSource(d => d
+                                                    .Mvc().Controller("Lookups").LoadAction("Doc_Lookup").Key("Value"))
+                                        )
+                                        
+                                        .ColSpan(1); // ??? strategy doc number?
+
+                        groupItems.AddSimpleFor(m => m.SysCondId)
+                                        .Editor(e => e
+                                                .SelectBox()
+                                                .DisplayExpr("Text")
+                                                .ValueExpr("Value")
+                                                .DataSource(d => d
+                                                    .Mvc().Controller("Lookups").LoadAction("SysCond_Lookup").Key("Value"))
+                                        )
+                                        .ColSpan(2); // ? Lookup?
+
+                        groupItems.AddSimpleFor(m => m.TaskListShortText).ColSpan(2);
+
+                        groupItems.AddSimpleFor(m => m.TaskListClassId)
+                            .Editor(e => e
+                                    .SelectBox()
+                                    .DisplayExpr("Text")
+                                    .ValueExpr("Value")
+                                    .DataSource(d => d
+                                        .Mvc().Controller("Lookups").LoadAction("MaintClass_Lookup").Key("Value"))
+                            )
+                            .ColSpan(1);  // ?? guessing, MaintClass?
+
+                        groupItems.AddSimpleFor(m => m.MaintWorkCentreId)
+                                        .Editor(e => e
+                                                .SelectBox()
+                                                .DisplayExpr("Text")
+                                                .ValueExpr("Value")
+                                                .DataSource(d => d
+                                                    .Mvc().Controller("Lookups").LoadAction("MaintWorkCentre_Lookup").Key("Value"))
+                                        )
+                                        .ColSpan(1); // WorkCentre
+
+                        groupItems.AddSimpleFor(m => m.MaintenancePlantId)
+                                        .Editor(e => e
+                                                .SelectBox()
+                                                .DisplayExpr("Text")
+                                                .ValueExpr("Value")
+                                                .DataSource(d => d
+                                                    .Mvc().Controller("Lookups").LoadAction("MaintenancePlant_Lookup").Key("Value"))
+                                        )
+                                        .ColSpan(1);
+                    });
+            })
+        )
+        <input type="hidden" id="TaskListHeaderFormId" value="@id" />
+   }
+}

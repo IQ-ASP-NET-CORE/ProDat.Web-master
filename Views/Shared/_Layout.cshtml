@@ -1,0 +1,281 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ProDat.Web2.Areas.Identity.Data
+
+@inject SignInManager<ProDatWeb2User> SignInManager
+@inject UserManager<ProDatWeb2User> UserManager
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @ViewData["GlobalProjectDescription"]</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />  
+    <!--<link href="~/css/devextreme/dx.generic.custom-scheme.css" rel="stylesheet">-->
+    <link href="~/css/devextreme/dx.common.css" rel="stylesheet" />
+    <link href="~/css/devextreme/dx.material.UC2_Theme.css" rel="stylesheet" />
+    <!--<link href="~/css/devextreme/dx.generic.Datagrid_Blue.css" rel="stylesheet">
+    <link href="~/css/devextreme/dx.generic.Datagrid_Green.css" rel="stylesheet">
+    <link href="~/css/devextreme/dx.generic.Datagrid_Pink.css" rel="stylesheet">
+    <link href="~/css/devextreme/dx.generic.Datagrid_White.css" rel="stylesheet">
+    <link href="~/css/devextreme/dx.generic.Form_Blue.css" rel="stylesheet">
+    <link href="~/css/devextreme/dx.generic.Form_Green.css" rel="stylesheet">
+    <link href="~/css/devextreme/dx.generic.Form_Pink.css" rel="stylesheet">
+    <link href="~/css/devextreme/dx.generic.Form_White.css" rel="stylesheet">-->
+    <link href="~/css/devextreme/dx.material.iq-G-scheme.css" rel="stylesheet">
+
+    <script src="~/js/devextreme/jquery.js"></script>
+    <script src="~/js/devextreme/dx.all.js"></script>
+    <script src="~/js/devextreme/aspnet/dx.aspnet.mvc.js"></script>
+    <script src="~/js/devextreme/aspnet/dx.aspnet.data.js"></script>
+    
+
+    @if (this.Context.Request.Path.Value.Contains("/Identity"))
+    {
+        <style>
+    
+        .dx-row dx-datagrid-filter-row {
+            background-color: #f2f2f2;
+        }
+
+        .bodyStyle {
+            content: "";
+            background-image: url(/img/LandingPage.png);
+            background-size: cover;
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            bottom: 0px;
+            left: 0px;
+            opacity: 0.25;
+        }
+
+        .loginForm {
+            position: fixed; /* or absolute */
+            top: 30%;
+            left: 35%;
+            padding-top: 00px;
+            color: black;
+            border: 4px solid black;
+            padding: 10px;
+            border-radius: 15px;
+            background-color: #f4f4f4;
+            opacity: 0.7;
+        }
+
+        .container-fluid {
+            /* visibility: hidden; */
+        }
+
+        .options{
+
+            padding-top:20px;
+        }
+
+        #body {
+            overflow: hidden;
+        }
+        
+        
+        </style>
+    }
+    <style>
+        .options {
+            padding-top: 20px;
+        }
+
+        #body {
+            overflow: hidden;
+        }
+
+        #menu__toggle {
+            opacity: 0;
+            z-index:5;
+        }
+
+        #menu__toggle:checked + .menu__btn > span {
+                transform: rotate(45deg);
+        }
+
+        #menu__toggle:checked + .menu__btn > span::before {
+                    top: 0;
+                    transform: rotate(0deg);
+        }
+
+        #menu__toggle:checked + .menu__btn > span::after {
+                    top: 0;
+                    transform: rotate(90deg);
+        }
+
+        #menu__toggle:checked ~ .menu__box {
+                left: 0 !important;
+        }
+
+        .menu__btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 26px;
+            height: 26px;
+            cursor: pointer;
+            z-index: 5;
+        }
+
+        .menu__btn > span,
+        .menu__btn > span::before,
+        .menu__btn > span::after {
+                display: block;
+                position: absolute;
+                width: 100%;
+                height: 2px;
+                background-color: #616161;
+                transition-duration: .25s;
+                z-index: 5;
+        }
+
+        .menu__btn > span::before {
+                    content: '';
+                    top: -8px;
+                    z-index: 5;
+        }
+
+        .menu__btn > span::after {
+                    content: '';
+                    top: 8px;
+                    z-index: 5;
+        }
+
+        .menu__box {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 300px;
+            height: 100%;
+            margin: 0;
+            padding: 80px 0;
+            list-style: none;
+            background-color: #ECEFF1;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, .4);
+            transition-duration: .25s;
+            z-index:3;
+        }
+
+        .menu__item {
+            display: block;
+            padding: 12px 24px;
+            color: #333;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition-duration: .25s;
+            z-index:5;
+        }
+
+        .menu__item:hover {
+                background-color: #CFD8DC;
+        }
+        .IQLogo{
+
+                position:absolute;
+                top:0px;
+                right:0px;
+                padding:5px;
+        }
+    </style>
+    
+
+    <script>
+        function hideMenu() {
+            if (document.getElementById("menu__toggle").checked = true) {
+                document.getElementById("menu__toggle").checked = false;
+                document.getElementById("menuHider").style.visibility = "hidden";
+            }
+        }
+
+        function showMenu() {
+            if (document.getElementById("menu__toggle").checked = true) {
+                document.getElementById("menuHider").style.visibility = "visible";
+            }
+        }
+    </script>
+
+
+</head>
+<body class="dx-viewport">
+    <div class="hamburger-menu">
+        <input id="menu__toggle" type="checkbox" onclick="showMenu();"/>
+        <label class="menu__btn" for="menu__toggle">
+            <span></span>
+        </label>
+        <div onmouseout="hideMenu();" id="menuHider" style="visibility:hidden; position:absolute; top: 0px; left: 270px; z-index:15; width: 50px; height: 100%;"><input id="checkMenu" type="checkbox" style="visibility:hidden;" /></div>
+
+        <ul class="menu__box">
+            <li style="z-index: 10;"><a asp-area="" asp-controller="UC1" asp-action="Index" target="_blank" class="menu__item" onclick="hideMenu();">Tag Register</a></li>
+            <li><a asp-area="" asp-controller="UC2" asp-action="Index" target="_blank" class="menu__item" onclick="hideMenu();">Tag Hierarchy</a></li>
+            <li><a asp-area="" asp-controller="UC3" asp-action="Index" target="_blank" class="menu__item" onclick="hideMenu();">Maintenance Plan</a></li>
+            <li><a asp-area="" asp-controller="Imports" asp-action="Index" target="_blank" class="menu__item" onclick="hideMenu();">Import Data</a></li>
+            <li><a asp-area="" asp-controller="Reports" asp-action="Index" target="_blank" class="menu__item" onclick="hideMenu();">Reports</a></li>
+            <li> <a id="manage" asp-area="Identity" asp-page="/Account/Manage/Index" target="_blank" title="Manage" class="menu__item" onclick="hideMenu();">Manage User<br />@UserManager.GetUserName(User)</a></li>
+            <li>
+                <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("", "", new { area = "" })">
+                    <button id="logout" type="submit" class="menu__item" style="text-align: center; border-radius: 50px; position: absolute; left:25%; -ms-transform: translateX(-50%);">Logout</button>
+                </form>
+            </li>
+        </ul>
+        <div class="IQLogoWrapper"><div class="IQLogo"><a href="http://www.iq-im.com" target="_blank"><img src="/img/iq.png" border="0" /></a></div><div class="ProjectImage"><img src="/img/clientProjectLogo.png" /></div></div>
+    </div>
+    @*<div class="container-fluid">
+        <table id="layoutHeader" width="100%">
+            <tr>
+                <td class="MainLinks">
+                    @ViewData["GlobalProjectDescription"]
+                </td>
+                <td class="MainLinks" width="125px">
+                    <a asp-area="" asp-controller="UC1" asp-action="Index" target="_blank">Tag Register</a>
+                </td>
+                <td class="MainLinks" width="140px">
+                    <a asp-area="" asp-controller="UC2" asp-action="Index" target="_blank">Tag Hierarchy</a>
+                </td>
+                <td class="MainLinks" width="165px">
+                    <a asp-area="" asp-controller="UC3" asp-action="Index" target="_blank">Maintenance Plan</a>
+                </td>
+                <td class="MainLinks" width="130px">
+                    <a asp-area="" asp-controller="Imports" asp-action="Index" target="_blank">Import Data</a>
+                </td>
+                <td class="MainLinks" width="120px">
+                    <a asp-area="" asp-controller="Reports" asp-action="Index" target="_blank">Reports</a>
+                </td>
+                <td align="right">
+                    <partial name="_LoginPartial" />
+                </td>
+                <td align="right">
+                    <img src="/img/iq.png" />
+                </td>
+            </tr>
+
+        </table>
+    </div>*@
+    
+    <!-- INJECTED VIEW-->
+    @if (this.Context.Request.Path.Value.Contains("/Identity"))
+    {
+        <div class="bodyStyle"></div>
+        <div class="loginForm">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    } else{
+        <div class="bodyStyle"></div>
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    }
+   @RenderSection("Scripts", required: false)
+    
+</body>
+</html>

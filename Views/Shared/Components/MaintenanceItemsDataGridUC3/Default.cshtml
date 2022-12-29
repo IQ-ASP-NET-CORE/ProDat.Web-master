@@ -1,0 +1,37 @@
+﻿@model ProDat.Web2.ViewModels.UC2ComponentVM
+@{ var mod_h = Model.height * 1; }
+@(Html.DevExtreme().DataGrid<ProDat.Web2.Models.MaintItem>()
+    .ID("MaintenanceItemsDataGridUC3X")
+    .DataSource(d => d.Mvc()
+        .Controller("UC3")
+        //.LoadParams(new { parent = Model.parent })
+        .LoadAction("MaintenanceItemsDataGridUC3_GetData")
+        .Key("MaintItemId")
+    )
+    .OnContextMenuPreparing("MaintenanceItemsDataGridUC3_OnContextMenuPreparing")
+    .RemoteOperations(true)
+    .Columns(
+        columns =>
+        {
+            columns.AddFor(m => m.MaintItemNum).SortOrder(SortOrder.Asc);
+            columns.AddFor(m => m.MaintItemShortText);
+            columns.AddFor(m => m.MaintPlanId)
+                .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintPlan_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Text")
+                );
+        })
+    .FilterRow(f => f.Visible(true))
+    .HeaderFilter(f => f.Visible(true))
+    .GroupPanel(p => p.Visible(false))
+    .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+    .Selection(x=> x.Mode(SelectionMode.Single))
+    .OnSelectionChanged("MaintenanceItemsDataGridUC3_SelectionChanged")
+    .AllowColumnResizing(true)
+    .ColumnAutoWidth(true)
+    .Height(mod_h)
+    .Width(Model.width)
+    .ShowBorders(true)
+    .Editing(e => e.AllowAdding(false).AllowDeleting(false).AllowUpdating(false))
+)

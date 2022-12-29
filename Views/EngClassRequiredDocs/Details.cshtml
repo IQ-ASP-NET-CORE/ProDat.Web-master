@@ -1,0 +1,29 @@
+﻿@model ProDat.Web2.Models.EngClassRequiredDocs
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>EngClassRequiredDocs</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EngClassId)
+        </dt>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DocTypeId)
+        </dt>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.BCC)
+        </dt>
+
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.EngClassId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

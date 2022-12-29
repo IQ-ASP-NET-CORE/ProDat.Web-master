@@ -1,0 +1,386 @@
+﻿@{
+    //Layout = null;
+}
+
+    @using (Html.BeginForm())
+    {
+
+        using (Html.DevExtreme().ValidationGroup())
+        {
+            @(
+            Html.DevExtreme().Form<ProDat.Web2.ViewModels.UC1_TagsVM>()
+            .ShowValidationSummary(true)
+            .ID("Form")
+            .ColCount(Mode.Auto)
+            .Items(items =>
+            {
+                items.AddSimpleFor(m => m.TagId);
+
+                items.AddSimpleFor(m => m.TagNumber);
+
+                items.AddSimpleFor(m => m.TagService);
+
+                items.AddSimpleFor(m => m.TagFloc);
+
+                items.AddSimpleFor(m => m.SubSystemId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("SubSystemLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.EngClassId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("EngClassLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.EngParentId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("TagLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.EngDiscId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("EngDiscLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.MaintLocationId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("MaintLocationLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.LocationId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("LocationLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.MaintTypeId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("MaintTypeLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.MaintStatusId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("MaintStatusLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.EngStatusId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("EngStatusLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.MaintWorkCentreId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("MaintWorkCentreLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.MaintEdcCodeId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("MaintEdcCodeLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.MaintStructureIndicatorId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("MaintStructureIndicatorLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.CommissioningSubsystemId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("CommSubSystemLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.CommClassId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("CommClassLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.CommZoneId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("CommZoneLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.MaintPlannerGroupId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("MaintPlannerGroupLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.MaintenanceplanId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("MaintPlanLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.MaintCriticalityId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("MaintCriticalityLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.PerformanceStandardId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("PerformanceStandardLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.KeyDocId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("DocLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.PoId);
+
+                items.AddSimpleFor(m => m.TagSource);
+
+                items.AddSimpleFor(m => m.TagDeleted);
+
+                items.AddSimpleFor(m => m.RTF);
+
+                items.AddSimpleFor(m => m.TagFlocDesc);
+
+                items.AddSimpleFor(m => m.FlocTypeId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("FlocTypesLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.TagMaintQuery);
+
+                items.AddSimpleFor(m => m.TagComment);
+
+                items.AddSimpleFor(m => m.ModelId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("ModelsLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.VibId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("VibLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.Tagnoneng);
+
+                items.AddSimpleFor(m => m.TagVendorTag);
+
+                items.AddSimpleFor(m => m.MaintObjectTypeId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("MaintObjectTypeLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.RbiSilId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("RbiSilLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.IpfId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("IpfLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.RcmId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("RcmLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.TagRawNumber);
+
+                items.AddSimpleFor(m => m.TagRawDesc);
+
+                items.AddSimpleFor(m => m.MaintScePsReviewTeamId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("MaintScePsReviewTeamLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.MaintScePsJustification);
+
+                items.AddSimpleFor(m => m.TagMaintCritComments);
+
+                items.AddSimpleFor(m => m.RbmId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("RbmLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.ManufacturerId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("ManufacturerLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.ExMethodId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("ExMethodLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.TagRbmMethod);
+
+                items.AddSimpleFor(m => m.TagVib);
+
+                items.AddSimpleFor(m => m.TagSrcKeyList);
+
+                items.AddSimpleFor(m => m.TagBomReq);
+
+                items.AddSimpleFor(m => m.TagSpNo);
+
+                items.AddSimpleFor(m => m.MaintSortProcessId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("MaintSortProcessLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.TagCharacteristic);
+
+                items.AddSimpleFor(m => m.TagCharValue);
+
+                items.AddSimpleFor(m => m.TagCharDesc);
+
+                items.AddSimpleFor(m => m.SAPStatusId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("SAPStatusLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.SerialNumber);
+
+                items.AddSimpleFor(m => m.MEXEquipList);
+
+                items.AddSimpleFor(m => m.MEXParentEquip);
+
+                items.AddSimpleFor(m => m.SupFunctLoc);
+
+                items.AddSimpleFor(m => m.SortFieldId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("SortFieldLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.PlannerPlantdId);
+
+                items.AddSimpleFor(m => m.ComnpanyCodeId);
+
+                items.AddSimpleFor(m => m.WBSElementId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("WBSElementLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.PbsId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("PbsLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddSimpleFor(m => m.EnvZoneId)
+                    .Editor(e => e
+                        .Lookup()
+                        .DataSource(ds => ds.WebApi().Controller("UC1_TEMP").LoadAction("EnvZoneLookup").Key("Value"))
+                        .ValueExpr("Value")
+                        .DisplayExpr("Text")
+                    );
+
+                items.AddButton()
+                    .HorizontalAlignment(HorizontalAlignment.Left)
+                    .ButtonOptions(b => b.Text("Register")
+                        .Type(ButtonType.Success)
+                        .UseSubmitBehavior(true)
+                    );
+            })
+            .FormData(Model)
+           )
+        }
+    }
+
