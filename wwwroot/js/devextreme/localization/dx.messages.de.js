@@ -1,26 +1,24 @@
 /*!
 * DevExtreme (dx.messages.de.js)
-* Version: 20.2.3
-* Build date: Tue Oct 20 2020
+* Version: 22.1.5
+* Build date: Fri Sep 02 2022
 *
-* Copyright (c) 2012 - 2020 Developer Express Inc. ALL RIGHTS RESERVED
+* Copyright (c) 2012 - 2022 Developer Express Inc. ALL RIGHTS RESERVED
 * Read about DevExtreme licensing here: https://js.devexpress.com/Licensing/
 */
 "use strict";
 
 ! function(root, factory) {
     if ("function" === typeof define && define.amd) {
-        define(function(require) {
+        define((function(require) {
             factory(require("devextreme/localization"))
-        })
+        }))
+    } else if ("object" === typeof module && module.exports) {
+        factory(require("devextreme/localization"))
     } else {
-        if ("object" === typeof module && module.exports) {
-            factory(require("devextreme/localization"))
-        } else {
-            factory(DevExpress.localization)
-        }
+        factory(DevExpress.localization)
     }
-}(this, function(localization) {
+}(0, (function(localization) {
     localization.loadMessages({
         de: {
             Yes: "Ja",
@@ -54,7 +52,7 @@
             "validation-email": "Die Email-Adresse ist ung\xfcltig",
             "validation-email-formatted": "{0} ist ung\xfcltig",
             "validation-mask": "Der Wert ist ung\xfcltig",
-            "dxLookup-searchPlaceholder": "Minimale Anzahl Zeichen: {0}",
+            "dxLookup-searchPlaceholder": "Mindestl\xe4nge {0} Zeichen",
             "dxList-pullingDownText": "Zum Aktualisieren nach unten ziehen",
             "dxList-pulledDownText": "Zum Aktualisieren loslassen",
             "dxList-refreshingText": "Aktualisiere...",
@@ -79,9 +77,9 @@
             "dxFileUploader-Gb": "Gb",
             "dxFileUploader-upload": "Hochladen",
             "dxFileUploader-uploaded": "Hochgeladen",
-            "dxFileUploader-readyToUpload": "Bereit zum hochladen",
+            "dxFileUploader-readyToUpload": "Bereit zum Hochladen",
             "dxFileUploader-uploadAbortedMessage": "Upload abgebrochen",
-            "dxFileUploader-uploadFailedMessage": "Fehler beim hochladen",
+            "dxFileUploader-uploadFailedMessage": "Fehler beim Hochladen",
             "dxFileUploader-invalidFileExtension": "Unzul\xe4ssiger Dateityp",
             "dxFileUploader-invalidMaxFileSize": "Datei ist zu gro\xdf",
             "dxFileUploader-invalidMinFileSize": "Datei ist zu klein",
@@ -152,11 +150,13 @@
             "dxDataGrid-exporting": "Exportieren ...",
             "dxDataGrid-excelFormat": "Excel-Datei",
             "dxDataGrid-selectedRows": "Ausgew\xe4hlte Zeilen",
-            "dxDataGrid-exportAll": "Alle Daten exportieren",
-            "dxDataGrid-exportSelectedRows": "Ausgew\xe4hlte Zeilen exportieren",
+            "dxDataGrid-exportAll": "Alle Daten exportieren nach {0}",
+            "dxDataGrid-exportSelectedRows": "Ausgew\xe4hlte Zeilen exportieren nach {0}",
             "dxDataGrid-headerFilterEmptyValue": "(Leerwerte)",
             "dxDataGrid-headerFilterOK": "OK",
             "dxDataGrid-headerFilterCancel": "Abbrechen",
+            "dxDataGrid-ariaAdaptiveCollapse": "Zus\xe4tzliche Spalten verstecken",
+            "dxDataGrid-ariaAdaptiveExpand": "Zus\xe4tzliche Spalten anzeigen",
             "dxDataGrid-ariaColumn": "Spalte",
             "dxDataGrid-ariaValue": "Wert",
             "dxDataGrid-ariaFilterCell": "Filterzelle",
@@ -166,15 +166,21 @@
             "dxDataGrid-ariaSearchInGrid": "Suchen in der Datentabelle",
             "dxDataGrid-ariaSelectAll": "Alle ausw\xe4hlen",
             "dxDataGrid-ariaSelectRow": "Zeile ausw\xe4hlen",
+            "dxDataGrid-ariaToolbar": "Symbolleiste der Datentabelle",
             "dxDataGrid-filterBuilderPopupTitle": "Filter-Generator",
             "dxDataGrid-filterPanelCreateFilter": "Filter erzeugen",
             "dxDataGrid-filterPanelClearFilter": "Zur\xfccksetzen",
             "dxDataGrid-filterPanelFilterEnabledHint": "Filter aktivieren",
             "dxTreeList-ariaTreeList": "Strukturliste",
+            "dxTreeList-ariaSearchInGrid": "Suchen in der Strukturliste",
+            "dxTreeList-ariaToolbar": "Symbolleiste der Strukturliste",
             "dxTreeList-editingAddRowToNode": "Hinzuf\xfcgen",
             "dxPager-infoText": "Seite {0} von {1} ({2} Elemente)",
             "dxPager-pagesCountText": "von",
             "dxPager-pageSizesAllText": "Alle",
+            "dxPager-page": "Seite {0}",
+            "dxPager-prevPage": "Vorherige Seite",
+            "dxPager-nextPage": "N\xe4chste Seite",
             "dxPivotGrid-grandTotal": "Gesamt",
             "dxPivotGrid-total": "{0} Gesamt",
             "dxPivotGrid-fieldChooserTitle": "Feldauswahl",
@@ -230,8 +236,8 @@
             "dxScheduler-recurrenceRepeatOnDate": "am Datum",
             "dxScheduler-recurrenceRepeatCount": "Ereignisse",
             "dxScheduler-allDay": "Ganzt\xe4gig",
-            "dxScheduler-confirmRecurrenceEditMessage": "M\xf6chten Sie nur diesen Termin bearbeiten, oder die gesamte Serie?",
-            "dxScheduler-confirmRecurrenceDeleteMessage": "M\xf6chten Sie nur diesen Termin l\xf6schen, oder die gesamte Serie?",
+            "dxScheduler-confirmRecurrenceEditMessage": "M\xf6chten Sie nur diesen Termin bearbeiten oder die gesamte Serie?",
+            "dxScheduler-confirmRecurrenceDeleteMessage": "M\xf6chten Sie nur diesen Termin l\xf6schen oder die gesamte Serie?",
             "dxScheduler-confirmRecurrenceEditSeries": "Serie bearbeiten",
             "dxScheduler-confirmRecurrenceDeleteSeries": "Serie l\xf6schen",
             "dxScheduler-confirmRecurrenceEditOccurrence": "Termin bearbeiten",
@@ -287,8 +293,77 @@
             "dxHtmlEditor-dialogInsertTableRowsField": "Zeilen",
             "dxHtmlEditor-dialogInsertTableColumnsField": "Spalten",
             "dxHtmlEditor-dialogInsertTableCaption": "Tabelle einf\xfcgen",
+            "dxHtmlEditor-dialogUpdateImageCaption": "Bild Aktualisieren",
+            "dxHtmlEditor-dialogImageUpdateButton": "Aktualisieren",
+            "dxHtmlEditor-dialogImageAddButton": "Hinzuf\xfcgen",
+            "dxHtmlEditor-dialogImageSpecifyUrl": "Aus dem Web",
+            "dxHtmlEditor-dialogImageSelectFile": "Von diesem Ger\xe4t",
+            "dxHtmlEditor-dialogImageKeepAspectRatio": "Seitenverh\xe4ltnis beibehalten",
+            "dxHtmlEditor-dialogImageEncodeToBase64": "Als Base64 kodieren",
             "dxHtmlEditor-heading": "\xdcberschrift",
             "dxHtmlEditor-normalText": "Normaler Text",
+            "dxHtmlEditor-background": "Hintergrundfarbe",
+            "dxHtmlEditor-bold": "Fett",
+            "dxHtmlEditor-color": "Schriftfarbe",
+            "dxHtmlEditor-font": "Schriftart",
+            "dxHtmlEditor-italic": "Kursiv",
+            "dxHtmlEditor-link": "Link hinzuf\xfcgen",
+            "dxHtmlEditor-image": "Bild hinzuf\xfcgen",
+            "dxHtmlEditor-size": "Schriftgr\xf6\xdfe",
+            "dxHtmlEditor-strike": "Durchgestrichen",
+            "dxHtmlEditor-subscript": "Tiefgestellt",
+            "dxHtmlEditor-superscript": "Hochgestellt",
+            "dxHtmlEditor-underline": "Unterstrichen",
+            "dxHtmlEditor-blockquote": "Blockzitat",
+            "dxHtmlEditor-header": "Kopfzeile",
+            "dxHtmlEditor-increaseIndent": "Einzug vergr\xf6\xdfern",
+            "dxHtmlEditor-decreaseIndent": "Einzug verkleinern",
+            "dxHtmlEditor-orderedList": "Sortierte Liste",
+            "dxHtmlEditor-bulletList": "Aufz\xe4hlung",
+            "dxHtmlEditor-alignLeft": "Linksb\xfcndig",
+            "dxHtmlEditor-alignCenter": "Zentriert",
+            "dxHtmlEditor-alignRight": "Rechtsb\xfcndig",
+            "dxHtmlEditor-alignJustify": "Blocksatz",
+            "dxHtmlEditor-codeBlock": "Codeblock",
+            "dxHtmlEditor-variable": "Variable hinzuf\xfcgen",
+            "dxHtmlEditor-undo": "R\xfcckg\xe4ngig",
+            "dxHtmlEditor-redo": "Wiederholen",
+            "dxHtmlEditor-clear": "Formate l\xf6schen",
+            "dxHtmlEditor-insertTable": "Tabelle einf\xfcgen",
+            "dxHtmlEditor-insertHeaderRow": "Kopfzeile einf\xfcgen",
+            "dxHtmlEditor-insertRowAbove": "Spalte oberhalb einf\xfcgen",
+            "dxHtmlEditor-insertRowBelow": "Spalte unterhalb einf\xfcgen",
+            "dxHtmlEditor-insertColumnLeft": "Spalte links einf\xfcgen",
+            "dxHtmlEditor-insertColumnRight": "Spalte rechts einf\xfcgen",
+            "dxHtmlEditor-deleteColumn": "Spalte l\xf6schen",
+            "dxHtmlEditor-deleteRow": "Zeile l\xf6schen",
+            "dxHtmlEditor-deleteTable": "Tabelle l\xf6schen",
+            "dxHtmlEditor-cellProperties": "Zelleneigenschaften",
+            "dxHtmlEditor-tableProperties": "Tabelleneigenschaften",
+            "dxHtmlEditor-insert": "Einf\xfcgen",
+            "dxHtmlEditor-delete": "L\xf6schen",
+            "dxHtmlEditor-border": "Rahmen",
+            "dxHtmlEditor-style": "Stil",
+            "dxHtmlEditor-width": "Breite",
+            "dxHtmlEditor-height": "H\xf6he",
+            "dxHtmlEditor-borderColor": "Farbe",
+            "dxHtmlEditor-tableBackground": "Hintergrund",
+            "dxHtmlEditor-dimensions": "Abmessungen",
+            "dxHtmlEditor-alignment": "Ausrichtung",
+            "dxHtmlEditor-horizontal": "Horizontal",
+            "dxHtmlEditor-vertical": "Vertikal",
+            "dxHtmlEditor-paddingVertical": "Vertikaler Abstand",
+            "dxHtmlEditor-paddingHorizontal": "Horizontaler Abstand",
+            "dxHtmlEditor-pixels": "Pixel",
+            "dxHtmlEditor-list": "Liste",
+            "dxHtmlEditor-ordered": "Sortiert",
+            "dxHtmlEditor-bullet": "Aufz\xe4hlung",
+            "dxHtmlEditor-align": "Ausrichten",
+            "dxHtmlEditor-center": "Zentrieren",
+            "dxHtmlEditor-left": "Links",
+            "dxHtmlEditor-right": "Rechts",
+            "dxHtmlEditor-indent": "Einzug",
+            "dxHtmlEditor-justify": "Blocksatz",
             "dxFileManager-newDirectoryName": "Ohne Titel",
             "dxFileManager-rootDirectoryName": "Dateien",
             "dxFileManager-errorNoAccess": "Zugriff verweigert. Die Operation kann nicht durchgef\xfchrt werden.",
@@ -362,6 +437,8 @@
             "dxFileManager-editingUploadSingleItemErrorMessage": "Element wurde nicht hochgeladen",
             "dxFileManager-editingUploadMultipleItemsErrorMessage": "{0} Elemente wurden nicht hochgeladen",
             "dxFileManager-editingUploadCanceledMessage": "Abgebrochen",
+            "dxFileManager-editingDownloadSingleItemErrorMessage": "Datei wurde nicht heruntergeladen",
+            "dxFileManager-editingDownloadMultipleItemsErrorMessage": "{0} Dateien wurden nicht heruntergeladen",
             "dxFileManager-listDetailsColumnCaptionName": "Name",
             "dxFileManager-listDetailsColumnCaptionDateModified": "Zuletzt ge\xe4ndert am",
             "dxFileManager-listDetailsColumnCaptionFileSize": "Dateigr\xf6\xdfe",
@@ -526,6 +603,10 @@
             "dxGantt-dialogCancelOperationMessage": "Vorgang abbrechen",
             "dxGantt-dialogDeleteDependencyMessage": "Abh\xe4ngigkeit l\xf6schen",
             "dxGantt-dialogMoveTaskAndKeepDependencyMessage": "Aufgabe verschieben und Abh\xe4ngigkeit beibehalten",
+            "dxGantt-dialogConstraintCriticalViolationSeveralTasksMessage": "Die Aufgabe, die Sie zu verschieben versuchen, ist mit anderen Aufgaben durch Abh\xe4ngigkeitsbeziehungen verbunden. Die \xc4nderung verst\xf6\xdft daher gegen Abh\xe4ngigkeitsregeln. Wie m\xf6chten Sie fortfahren?",
+            "dxGantt-dialogConstraintViolationSeveralTasksMessage": "Die Aufgabe, die Sie zu verschieben versuchen, ist mit anderen Aufgaben durch Abh\xe4ngigkeitsbeziehungen verbunden. Wie m\xf6chten Sie fortfahren?",
+            "dxGantt-dialogDeleteDependenciesMessage": "Abh\xe4ngigkeitsbeziehungen entfernen",
+            "dxGantt-dialogMoveTaskAndKeepDependenciesMessage": "Die Aufgabe verschieben und die Abh\xe4ngigkeitsbeziehungen beibehalten.",
             "dxGantt-undo": "R\xfcckg\xe4ngig",
             "dxGantt-redo": "Wiederherstellen",
             "dxGantt-expandAll": "Alle erweitern",
@@ -534,7 +615,15 @@
             "dxGantt-deleteSelectedTask": "Ausgew\xe4hlte Aufgabe l\xf6schen",
             "dxGantt-zoomIn": "Vergr\xf6\xdfern",
             "dxGantt-zoomOut": "Verkleinern",
-            "dxGantt-fullScreen": "Vollbildmodus"
+            "dxGantt-fullScreen": "Vollbildmodus",
+            "dxGantt-quarter": "Q{0}",
+            "dxGantt-sortingAscendingText": "Aufsteigend sortieren",
+            "dxGantt-sortingDescendingText": "Absteigend sortieren",
+            "dxGantt-sortingClearText": "Sortierung aufheben",
+            "dxGantt-showResources": "Ressourcen Anzeigen",
+            "dxGantt-showDependencies": "Abh\xe4ngigkeiten Anzeigen",
+            "dxGantt-dialogStartDateValidation": "Startdatum muss sp\xe4ter sein als {0}",
+            "dxGantt-dialogEndDateValidation": "Enddatum muss sp\xe4ter sein als {0}"
         }
     })
-});
+}));
