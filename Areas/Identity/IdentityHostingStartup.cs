@@ -27,6 +27,16 @@ namespace ProDat.Web2.Areas.Identity
                     options.UseSqlServer(
                         context.Configuration.GetConnectionString("IdentityContextConnection")));
 
+                services.AddSession(options =>
+                {
+                    options.IdleTimeout = TimeSpan.FromMinutes(60);
+                    options.Cookie.MaxAge = TimeSpan.FromHours(3);
+                    options.Cookie.Name = "PDSessionCookie";
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.IsEssential = true;
+                    options.Cookie.Expiration = TimeSpan.FromHours(3);
+                });
+
                 services.AddDefaultIdentity<ProDatWeb2User>(options => options.SignIn.RequireConfirmedAccount = true)
                     // added roles (new)
                     .AddRoles<IdentityRole>()
@@ -45,6 +55,16 @@ namespace ProDat.Web2.Areas.Identity
                     options.Password.RequireLowercase = true;
                     options.Password.RequireUppercase = true;
                     options.Password.RequiredUniqueChars = 4;
+                });
+
+                services.ConfigureApplicationCookie(options =>
+                {
+                    options.Cookie.MaxAge = TimeSpan.FromHours(3);
+                    options.Cookie.Name = "PDAppCookie";
+                    options.Cookie.HttpOnly = true;
+                    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Identity/Account/Login");
+                    options.SlidingExpiration = true;
+
                 });
 
                 // set fallback authorisation
