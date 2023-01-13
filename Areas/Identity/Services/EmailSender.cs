@@ -62,10 +62,12 @@ namespace ProDat.Web2.Areas.Identity.Services
             msg.Body = message;
 
             // port? 25 (default), ssl: 465 (default) 587 Microsoft specific port for SMTP
-            SmtpClient client = new SmtpClient("smtp.office365.com", 587)
+            //SmtpClient client = new SmtpClient("smtp.office365.com", 587)
+            //SmtpClient client = new SmtpClient("iqim-com0e.mail.protection.outlook.com", 587)
+            SmtpClient client = new SmtpClient("iqim-com0e.mail.protection.outlook.com", 25)
             {
                 //Credentials = new NetworkCredential("prodat", apiKey),
-                Credentials = new NetworkCredential("prodat@iq-im.com", "j3^3Y#@!8DcDZm^^bl02xvCm0"),
+                //Credentials = new NetworkCredential("prodat@iq-im.com", "j3^3Y#@!8DcDZm^^bl02xvCm0"),
                 //Credentials = new NetworkCredential("matthew.mckenna", "Testing1599"),
                 EnableSsl = true
             };
