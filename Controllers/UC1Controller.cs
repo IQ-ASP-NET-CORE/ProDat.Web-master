@@ -49,6 +49,7 @@ namespace ProDat.Web2.Controllers
             var claimTwoFactorEnabled =
                User.Claims.FirstOrDefault(t => t.Type == "amr");
 
+
             if (claimTwoFactorEnabled != null && "mfa".Equals(claimTwoFactorEnabled.Value))
             {
                 // continue
