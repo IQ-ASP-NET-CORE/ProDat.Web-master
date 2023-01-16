@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ProDat.Web2.Controllers
 {
-    // used by UC1, 2 & 3 to retrieve lookup data. 
+    // used by UC1, 2 & 3 to retrieve lookup data.
     public class LookupsController : Controller
     {
         private readonly TagContext _context;
@@ -167,7 +167,7 @@ namespace ProDat.Web2.Controllers
             return DataSourceLoader.Load(retVal, loadOptions);
         }
 
-        
+
         [HttpGet]
         public object TaskListGroup_Lookup(DataSourceLoadOptions loadOptions)
         {
@@ -296,7 +296,7 @@ namespace ProDat.Web2.Controllers
                 var retVal = lookup.Distinct();
                 return DataSourceLoader.Load(retVal, loadOptions);
             }
-            
+
         }
 
         [HttpGet]
@@ -491,7 +491,7 @@ namespace ProDat.Web2.Controllers
         [HttpGet]
         public object ManModel_Lookup(DataSourceLoadOptions loadOptions)
         {
-            
+
             var lookup = _context.Models
                         .Include(x=> x.Manufacturer)
                         .OrderBy(x=> x.Manufacturer.ManufacturerName)
@@ -499,14 +499,14 @@ namespace ProDat.Web2.Controllers
                          .Select(x => new {
                             Value = x.ModelId,
                              Parent = x.ManufacturerId ?? default,
-                             Text = x.Manufacturer.ManufacturerName + ": " + x.ModelName,   
+                             Text = x.Manufacturer.ManufacturerName + ": " + x.ModelName,
                             Short = x.ModelName
                         });
 
             var retVal = lookup.ToList();
             if (User.IsInRole("Admin"))
                 retVal.Insert(0, new { Value = -1, Parent=0, Text = "(Manage Listing)", Short = "." });
-                
+
 
             return DataSourceLoader.Load(retVal, loadOptions);
         }
