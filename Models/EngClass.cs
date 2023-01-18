@@ -19,8 +19,8 @@ namespace ProDat.Web2.Models
         public string EngClassDesc { get; set; }
 
 
-
-        public SuperClass FKsuperClassId { get; set; }
+        public int FKsuperClassId { get; set; }
+        public virtual SuperClass SuperClass { get; set; }
 
         public virtual EngClassRequiredDocs EngClassRequiredDocs { get; set; }
 

@@ -22,7 +22,7 @@ namespace ProDat.Web2.Models
         public string Superclassdescription { get; set; }
 
 
-
+        public ICollection<EngClass> EngClasses { get; set; }
 
     }
 }

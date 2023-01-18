@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProDat.Web2.Models;
 using ProDat.Web2.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
 
 namespace ProDat.Web2.Controllers
 {
@@ -298,6 +299,48 @@ namespace ProDat.Web2.Controllers
             }
 
         }
+
+        [HttpGet]
+        public object SuperClass_Lookup(DataSourceLoadOptions loadOptions, string ColumnSetsEntity)
+        {
+            var lookup = _context.SuperClass
+                .OrderBy(x => x.SuperclassName)
+                .Select(x => new
+                {
+                    Value = 0,
+                    Text = x.Superclassdescription,
+                    Short = x.SuperclassName
+                });
+
+            var retVal = lookup.ToList();
+            if (User.IsInRole("Admin"))
+                retVal.Insert(0, new { Value = -1, Text = "(Manage Listing)", Short = "." });
+
+            return DataSourceLoader.Load(retVal, loadOptions);
+
+        }
+
+        public object TEST_Lookup(DataSourceLoadOptions loadOptions)
+        {
+
+            var lookup = from i in _context.EngClass
+                         orderby i.EngClassName
+                         select new
+                         {
+                             Value = i.EngClassId,
+                             Text = i.EngClassDesc == null ? i.EngClassName : i.EngClassName + ": " + i.EngClassDesc,
+                             Parent = i.FKsuperClassId,
+                             Short = i.EngClassName,
+                         };
+
+            var retVal = lookup.ToList();
+            if (User.IsInRole("Admin"))
+                retVal.Insert(0, new { Value = -1, Text = "(Manage Listing)", Parent = 0, Short = "." });
+
+            return DataSourceLoader.Load(retVal, loadOptions);
+        }
+
+
 
         [HttpGet]
         public object MaintParent_Lookup(DataSourceLoadOptions loadOptions)
