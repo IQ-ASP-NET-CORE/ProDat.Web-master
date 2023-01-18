@@ -301,7 +301,7 @@ namespace ProDat.Web2.Controllers
         }
 
         [HttpGet]
-        public object SuperClass_Lookup(DataSourceLoadOptions loadOptions, string ColumnSetsEntity)
+        public object SuperClass_Lookup(DataSourceLoadOptions loadOptions)
         {
             var lookup = _context.SuperClass
                 .OrderBy(x => x.SuperclassName)
@@ -319,11 +319,12 @@ namespace ProDat.Web2.Controllers
             return DataSourceLoader.Load(retVal, loadOptions);
 
         }
-
-        public object TEST_Lookup(DataSourceLoadOptions loadOptions)
+        [HttpGet]
+        public object EngClassBySuperClass_Lookup(DataSourceLoadOptions loadOptions, int superClassId)
         {
 
             var lookup = from i in _context.EngClass
+                         .Where (i => i.FKsuperClassId == superClassId)
                          orderby i.EngClassName
                          select new
                          {
