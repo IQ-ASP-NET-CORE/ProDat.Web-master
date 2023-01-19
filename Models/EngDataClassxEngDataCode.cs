@@ -12,9 +12,8 @@ namespace ProDat.Web2.Models
         public int EngClassId { get; set; }
         public int EngDataCodeId { get; set; }
 
+        public int BccCodeId { get; set; }
 
-
-        public int FKBccCodeId { get; set; }
         public virtual BccCode BccCode { get; set; }
 
         public virtual EngClass EngClass { get; set; }

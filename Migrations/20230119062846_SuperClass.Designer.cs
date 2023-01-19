@@ -10,8 +10,8 @@ using ProDat.Web2.Data;
 namespace ProDat.Web2.Migrations
 {
     [DbContext(typeof(TagContext))]
-    [Migration("20230118071910_BccCode")]
-    partial class BccCode
+    [Migration("20230119062846_SuperClass")]
+    partial class SuperClass
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -603,10 +603,7 @@ namespace ProDat.Web2.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
-                    b.Property<int>("FKsuperClassId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SuperclassID")
+                    b.Property<int>("SuperClassID")
                         .HasColumnType("int");
 
                     b.HasKey("EngClassId");
@@ -615,7 +612,7 @@ namespace ProDat.Web2.Migrations
                         .IsUnique()
                         .HasName("U_EngClass");
 
-                    b.HasIndex("SuperclassID");
+                    b.HasIndex("SuperClassID");
 
                     b.ToTable("EngClass");
                 });
@@ -670,16 +667,13 @@ namespace ProDat.Web2.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("BccCodeId")
+                    b.Property<int>("BccCodeId")
                         .HasColumnType("int");
 
                     b.Property<int>("EngClassId")
                         .HasColumnType("int");
 
                     b.Property<int>("EngDataCodeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FKBccCodeId")
                         .HasColumnType("int");
 
                     b.HasKey("EngDataClassxEngDataCodeId");
@@ -3813,8 +3807,10 @@ namespace ProDat.Web2.Migrations
             modelBuilder.Entity("ProDat.Web2.Models.EngClass", b =>
                 {
                     b.HasOne("ProDat.Web2.Models.SuperClass", "SuperClass")
-                        .WithMany("EngClasses")
-                        .HasForeignKey("SuperclassID");
+                        .WithMany()
+                        .HasForeignKey("SuperClassID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ProDat.Web2.Models.EngClassRequiredDocs", b =>
@@ -3836,7 +3832,9 @@ namespace ProDat.Web2.Migrations
                 {
                     b.HasOne("ProDat.Web2.Models.BccCode", "BccCode")
                         .WithMany("EngDataClasses")
-                        .HasForeignKey("BccCodeId");
+                        .HasForeignKey("BccCodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ProDat.Web2.Models.EngClass", "EngClass")
                         .WithMany("EngDataClassxEngDataCodes")

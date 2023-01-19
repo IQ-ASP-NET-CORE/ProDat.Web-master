@@ -12,7 +12,7 @@ namespace ProDat.Web2.Models
         //{
         //    RequiredDocs = new HashSet<EngClassRequiredDocs>();
         //}
-        public int EngClassRequiredDocsId { get; set; } 
+        public int EngClassRequiredDocsId { get; set; }
         public int EngClassId { get; set; }
         public int DocTypeId { get; set; }
         public int BCC { get; set; }

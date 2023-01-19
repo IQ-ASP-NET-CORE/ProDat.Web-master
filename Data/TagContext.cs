@@ -28,6 +28,9 @@ namespace ProDat.Web2.Data
         public virtual DbSet<TagViewColumns> TagViewColumns { get; set; }
         public virtual DbSet<TagViewColumnsUser> TagViewColumnsUser { get; set; }
 
+        public virtual DbSet<BccCode>  BccCode { get; set; }
+
+
         public virtual DbSet<SAPExportDetail> SAPExportDetail { get; set; }
 
         public virtual DbSet<UC2ViewColumns> UC2ViewColumns { get; set; }

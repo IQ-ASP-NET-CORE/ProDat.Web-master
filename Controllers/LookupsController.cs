@@ -299,7 +299,7 @@ namespace ProDat.Web2.Controllers
             }
 
         }
-
+        //Just selected all the values in the superclass and picks the description
         [HttpGet]
         public object SuperClass_Lookup(DataSourceLoadOptions loadOptions)
         {
@@ -319,20 +319,24 @@ namespace ProDat.Web2.Controllers
             return DataSourceLoader.Load(retVal, loadOptions);
 
         }
+
+        //Ues the Id of the superclass to call the engclasses values
         [HttpGet]
         public object EngClassBySuperClass_Lookup(DataSourceLoadOptions loadOptions, int superClassId)
         {
 
             var lookup = from i in _context.EngClass
-                         .Where (i => i.FKsuperClassId == superClassId)
-                         orderby i.EngClassName
+                        .Where (i => i.SuperClassID == superClassId)
+                         orderby i.EngClassId
                          select new
                          {
                              Value = i.EngClassId,
                              Text = i.EngClassDesc == null ? i.EngClassName : i.EngClassName + ": " + i.EngClassDesc,
-                             Parent = i.FKsuperClassId,
+                             Parent = i.SuperClassID,
                              Short = i.EngClassName,
                          };
+
+
 
             var retVal = lookup.ToList();
             if (User.IsInRole("Admin"))
@@ -341,6 +345,32 @@ namespace ProDat.Web2.Controllers
             return DataSourceLoader.Load(retVal, loadOptions);
         }
 
+        //Getting information from all the tables and just shows its as a clump of text
+        [HttpGet]
+        public object test_Lookup(DataSourceLoadOptions loadOptions, int superClassId)
+        {
+
+            var lookup = from i in _context.EngClass
+                         join e in _context.EngDataClassxEngDataCode on i.EngClassId equals e.EngClassId
+                         join t in _context.BccCode on e.BccCodeId equals t.BccCodeId
+                         join y in _context.EngDataCode on e.EngDataCodeId equals y.EngDataCodeId
+                         where i.SuperClassID == superClassId
+                         select new
+                         {
+                             Value = i.EngClassId,
+                             Text = i.EngClassDesc == null ? i.EngClassName : i.EngClassName + i.EngClassDesc + t.BccCodeId + y.EngDataCodeName + y.EngDataCodeDesc + y.EngDataCodeNotes + y.EngDataCodeSAPDesc + y.EngDataCodeDDLType,
+                             Parent = i.SuperClassID,
+                             Short = i.EngClassName
+                         };
+
+
+         var retVal = lookup.ToList();
+
+            if (User.IsInRole("Admin"))
+                retVal.Insert(0, new { Value = -1, Text = "(Manage Listing)", Parent = 0, Short = "." });
+
+            return DataSourceLoader.Load(retVal, loadOptions);
+        }
 
 
         [HttpGet]

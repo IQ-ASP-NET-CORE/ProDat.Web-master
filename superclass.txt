@@ -1,4 +1,16 @@
-﻿ALTER TABLE [EngClass] ADD [FKsuperClassIdSuperclassID] int NULL;
+﻿ALTER TABLE [EngDataClassxEngDataCode] ADD [BccCodeId] int NOT NULL DEFAULT 0;
+
+GO
+
+ALTER TABLE [EngClass] ADD [SuperClassID] int NOT NULL DEFAULT 0;
+
+GO
+
+CREATE TABLE [BccCode] (
+    [BccCodeId] int NOT NULL IDENTITY,
+    [BccCodeDesc] nvarchar(max) NULL,
+    CONSTRAINT [PK_BccCode] PRIMARY KEY ([BccCodeId])
+);
 
 GO
 
@@ -11,7 +23,11 @@ CREATE TABLE [SuperClass] (
 
 GO
 
-CREATE INDEX [IX_EngClass_FKsuperClassIdSuperclassID] ON [EngClass] ([FKsuperClassIdSuperclassID]);
+CREATE INDEX [IX_EngDataClassxEngDataCode_BccCodeId] ON [EngDataClassxEngDataCode] ([BccCodeId]);
+
+GO
+
+CREATE INDEX [IX_EngClass_SuperClassID] ON [EngClass] ([SuperClassID]);
 
 GO
 
@@ -19,12 +35,16 @@ CREATE UNIQUE INDEX [U_SuperClass] ON [SuperClass] ([SuperclassID]);
 
 GO
 
-ALTER TABLE [EngClass] ADD CONSTRAINT [FK_EngClass_SuperClass_FKsuperClassIdSuperclassID] FOREIGN KEY ([FKsuperClassIdSuperclassID]) REFERENCES [SuperClass] ([SuperclassID]) ON DELETE NO ACTION;
+ALTER TABLE [EngClass] ADD CONSTRAINT [FK_EngClass_SuperClass_SuperClassID] FOREIGN KEY ([SuperClassID]) REFERENCES [SuperClass] ([SuperclassID]) ON DELETE CASCADE;
+
+GO
+
+ALTER TABLE [EngDataClassxEngDataCode] ADD CONSTRAINT [FK_EngDataClassxEngDataCode_BccCode_BccCodeId] FOREIGN KEY ([BccCodeId]) REFERENCES [BccCode] ([BccCodeId]) ON DELETE CASCADE;
 
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20230117022455_superclass', N'3.1.32');
+VALUES (N'20230119062846_SuperClass', N'3.1.32');
 
 GO
 
