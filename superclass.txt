@@ -8,6 +8,7 @@ GO
 
 CREATE TABLE [BccCode] (
     [BccCodeId] int NOT NULL IDENTITY,
+    [BccCodeNumber] int NOT NULL,
     [BccCodeDesc] nvarchar(max) NULL,
     CONSTRAINT [PK_BccCode] PRIMARY KEY ([BccCodeId])
 );
@@ -44,7 +45,7 @@ ALTER TABLE [EngDataClassxEngDataCode] ADD CONSTRAINT [FK_EngDataClassxEngDataCo
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20230119062846_SuperClass', N'3.1.32');
+VALUES (N'20230120065443_SuperClass', N'3.1.32');
 
 GO
 

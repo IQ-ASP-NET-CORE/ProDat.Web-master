@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,6 +14,7 @@ namespace ProDat.Web2.Models
         public int EngDataCodeId { get; set; }
 
         public int BccCodeId { get; set; }
+
 
         public virtual BccCode BccCode { get; set; }
 

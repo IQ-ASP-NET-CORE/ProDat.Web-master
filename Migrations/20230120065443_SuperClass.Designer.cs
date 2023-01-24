@@ -10,7 +10,7 @@ using ProDat.Web2.Data;
 namespace ProDat.Web2.Migrations
 {
     [DbContext(typeof(TagContext))]
-    [Migration("20230119062846_SuperClass")]
+    [Migration("20230120065443_SuperClass")]
     partial class SuperClass
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,6 +63,9 @@ namespace ProDat.Web2.Migrations
 
                     b.Property<string>("BccCodeDesc")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("BccCodeNumber")
+                        .HasColumnType("int");
 
                     b.HasKey("BccCodeId");
 

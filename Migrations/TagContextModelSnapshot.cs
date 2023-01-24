@@ -62,6 +62,9 @@ namespace ProDat.Web2.Migrations
                     b.Property<string>("BccCodeDesc")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("BccCodeNumber")
+                        .HasColumnType("int");
+
                     b.HasKey("BccCodeId");
 
                     b.ToTable("BccCode");

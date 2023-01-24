@@ -358,13 +358,13 @@ namespace ProDat.Web2.Controllers
                          select new
                          {
                              Value = i.EngClassId,
-                             Text = i.EngClassDesc == null ? i.EngClassName : i.EngClassName + i.EngClassDesc + t.BccCodeId + y.EngDataCodeName + y.EngDataCodeDesc + y.EngDataCodeNotes + y.EngDataCodeSAPDesc + y.EngDataCodeDDLType,
+                             Text = i.EngClassDesc == null ? i.EngClassName : i.EngClassName + ": " + i.EngClassDesc + ": " + t.BccCodeId + ": " + y.EngDataCodeName + ": " + y.EngDataCodeDesc + y.EngDataCodeSAPDesc + y.EngDataCodeDDLType,
+                             //Text = i.EngClassDesc == null ? i.EngClassName: y.EngDataCodeName + y.EngDataCodeDesc + y.EngDataCodeNotes + y.EngDataCodeSAPDesc + y.EngDataCodeDDLType,
                              Parent = i.SuperClassID,
                              Short = i.EngClassName
-                         };
+                         }
 
-
-         var retVal = lookup.ToList();
+            var retVal = lookup.ToList();
 
             if (User.IsInRole("Admin"))
                 retVal.Insert(0, new { Value = -1, Text = "(Manage Listing)", Parent = 0, Short = "." });

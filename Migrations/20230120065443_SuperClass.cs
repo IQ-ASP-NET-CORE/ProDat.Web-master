@@ -24,6 +24,7 @@ namespace ProDat.Web2.Migrations
                 {
                     BccCodeId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    BccCodeNumber = table.Column<int>(nullable: false),
                     BccCodeDesc = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
