@@ -345,7 +345,35 @@ namespace ProDat.Web2.Controllers
             return DataSourceLoader.Load(retVal, loadOptions);
         }
 
-        //Getting information from all the tables and just shows its as a clump of text
+
+        //This lookup takes in the superclassID and uses it search for the engclass and the attributes that are required
+        [HttpGet]
+        public object SuperClassToEngCodeData_Lookup(DataSourceLoadOptions loadOptions, int superClassId)
+        {
+
+            var lookup = from i in _context.EngClass
+                         join e in _context.EngDataClassxEngDataCode on i.EngClassId equals e.EngClassId
+                         join t in _context.BccCode on e.BccCodeId equals t.BccCodeId
+                         join y in _context.EngDataCode on e.EngDataCodeId equals y.EngDataCodeId
+                         where i.SuperClassID == superClassId
+                         select new
+                         {
+                             Value = i.EngClassId,
+                             Text = i.EngClassDesc == null ? i.EngClassName : i.EngClassName + ": " + i.EngClassDesc + ": " + t.BccCodeId + ": " + y.EngDataCodeName + ": " + y.EngDataCodeDesc + (y.EngDataCodeSAPDesc ?? " BLANK ") + (y.EngDataCodeDDLType ?? " BLANK "),
+                             Parent = i.SuperClassID,
+                             Short = i.EngClassName
+                         };
+
+            var retVal = lookup.ToList();
+
+            if (User.IsInRole("Admin"))
+                retVal.Insert(0, new { Value = -1, Text = "(Manage Listing)", Parent = 0, Short = "." });
+
+            return DataSourceLoader.Load(retVal, loadOptions);
+        }
+
+
+        //Test controller too see how the values are returned.
         [HttpGet]
         public object test_Lookup(DataSourceLoadOptions loadOptions, int superClassId)
         {
@@ -358,11 +386,10 @@ namespace ProDat.Web2.Controllers
                          select new
                          {
                              Value = i.EngClassId,
-                             Text = i.EngClassDesc == null ? i.EngClassName : i.EngClassName + ": " + i.EngClassDesc + ": " + t.BccCodeId + ": " + y.EngDataCodeName + ": " + y.EngDataCodeDesc + y.EngDataCodeSAPDesc + y.EngDataCodeDDLType,
-                             //Text = i.EngClassDesc == null ? i.EngClassName: y.EngDataCodeName + y.EngDataCodeDesc + y.EngDataCodeNotes + y.EngDataCodeSAPDesc + y.EngDataCodeDDLType,
+                             Text = i.EngClassDesc == null ? i.EngClassName : i.EngClassName + ": " + i.EngClassDesc + ": " + t.BccCodeId + ": " + y.EngDataCodeName + ": " + y.EngDataCodeDesc + (y.EngDataCodeSAPDesc ?? " BLANK ") + (y.EngDataCodeDDLType ?? " BLANK "),
                              Parent = i.SuperClassID,
                              Short = i.EngClassName
-                         }
+                         };
 
             var retVal = lookup.ToList();
 
