@@ -10,8 +10,8 @@ using ProDat.Web2.Data;
 namespace ProDat.Web2.Migrations
 {
     [DbContext(typeof(TagContext))]
-    [Migration("20230120065443_SuperClass")]
-    partial class SuperClass
+    [Migration("20230127073013_tag")]
+    partial class tag
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -834,6 +834,21 @@ namespace ProDat.Web2.Migrations
                     b.ToTable("EnvZone");
                 });
 
+            modelBuilder.Entity("ProDat.Web2.Models.EquipmentTypes", b =>
+                {
+                    b.Property<int>("EquipTypeID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("EquipTypeDesc")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("EquipTypeID");
+
+                    b.ToTable("EquipmentTypes");
+                });
+
             modelBuilder.Entity("ProDat.Web2.Models.ExMethod", b =>
                 {
                     b.Property<int>("ExMethodId")
@@ -1053,6 +1068,12 @@ namespace ProDat.Web2.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Alias")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ColumnNumber")
+                        .HasColumnType("int");
 
                     b.Property<int>("EngDataCode")
                         .HasColumnType("int");
@@ -2849,6 +2870,9 @@ namespace ProDat.Web2.Migrations
                     b.Property<int?>("EnvZoneId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("EquipTypeID")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ExMethodId")
                         .HasColumnName("ExMethodID")
                         .HasColumnType("int");
@@ -3106,6 +3130,8 @@ namespace ProDat.Web2.Migrations
                     b.HasIndex("EngStatusId");
 
                     b.HasIndex("EnvZoneId");
+
+                    b.HasIndex("EquipTypeID");
 
                     b.HasIndex("ExMethodId");
 
@@ -4214,6 +4240,10 @@ namespace ProDat.Web2.Migrations
                     b.HasOne("ProDat.Web2.Models.EnvZone", "EnvZone")
                         .WithMany()
                         .HasForeignKey("EnvZoneId");
+
+                    b.HasOne("ProDat.Web2.Models.EquipmentTypes", "EquipmentType")
+                        .WithMany()
+                        .HasForeignKey("EquipTypeID");
 
                     b.HasOne("ProDat.Web2.Models.ExMethod", "ExMethod")
                         .WithMany("Tags")

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProDat.Web2.Migrations;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -235,12 +236,16 @@ namespace ProDat.Web2.Models
         [Display(Name = "WBS Element Id")]
         public int? WBSElementId { get; set; }
 
+        public int? EquipTypeID { get; set; }
+
 
         public int? PbsId { get; set; }
 
         public int? EnvZoneId { get; set; }
 
         // FK Entities
+        [ForeignKey("EquipTypeID")]
+        public virtual EquipmentTypes EquipmentType { get; set; }
 
         public virtual EnvZone EnvZone { get; set; }
 

@@ -1,51 +1,37 @@
-﻿ALTER TABLE [EngDataClassxEngDataCode] ADD [BccCodeId] int NOT NULL DEFAULT 0;
+﻿ALTER TABLE [EquipmentTypes] ADD [ModelID] int NOT NULL DEFAULT 0;
 
 GO
 
-ALTER TABLE [EngClass] ADD [SuperClassID] int NOT NULL DEFAULT 0;
-
-GO
-
-CREATE TABLE [BccCode] (
-    [BccCodeId] int NOT NULL IDENTITY,
-    [BccCodeNumber] int NOT NULL,
-    [BccCodeDesc] nvarchar(max) NULL,
-    CONSTRAINT [PK_BccCode] PRIMARY KEY ([BccCodeId])
+CREATE TABLE [BOM] (
+    [BOMID] int NOT NULL IDENTITY,
+    [EquipTypeID] int NOT NULL,
+    [ItemCatalogID] int NOT NULL,
+    [ItemQuantity] int NOT NULL,
+    CONSTRAINT [PK_BOM] PRIMARY KEY ([BOMID]),
+    CONSTRAINT [FK_BOM_EquipmentTypes_EquipTypeID] FOREIGN KEY ([EquipTypeID]) REFERENCES [EquipmentTypes] ([EquipTypeID]) ON DELETE CASCADE,
+    CONSTRAINT [FK_BOM_ItemCatalog_ItemCatalogID] FOREIGN KEY ([ItemCatalogID]) REFERENCES [ItemCatalog] ([ItemCatalogID]) ON DELETE CASCADE
 );
 
 GO
 
-CREATE TABLE [SuperClass] (
-    [SuperclassID] int NOT NULL IDENTITY,
-    [SuperclassName] nvarchar(50) NOT NULL,
-    [Superclassdescription] nvarchar(255) NOT NULL,
-    CONSTRAINT [PK_SuperClass] PRIMARY KEY ([SuperclassID])
-);
+CREATE INDEX [IX_EquipmentTypes_ModelID] ON [EquipmentTypes] ([ModelID]);
 
 GO
 
-CREATE INDEX [IX_EngDataClassxEngDataCode_BccCodeId] ON [EngDataClassxEngDataCode] ([BccCodeId]);
+CREATE INDEX [IX_BOM_EquipTypeID] ON [BOM] ([EquipTypeID]);
 
 GO
 
-CREATE INDEX [IX_EngClass_SuperClassID] ON [EngClass] ([SuperClassID]);
+CREATE INDEX [IX_BOM_ItemCatalogID] ON [BOM] ([ItemCatalogID]);
 
 GO
 
-CREATE UNIQUE INDEX [U_SuperClass] ON [SuperClass] ([SuperclassID]);
-
-GO
-
-ALTER TABLE [EngClass] ADD CONSTRAINT [FK_EngClass_SuperClass_SuperClassID] FOREIGN KEY ([SuperClassID]) REFERENCES [SuperClass] ([SuperclassID]) ON DELETE CASCADE;
-
-GO
-
-ALTER TABLE [EngDataClassxEngDataCode] ADD CONSTRAINT [FK_EngDataClassxEngDataCode_BccCode_BccCodeId] FOREIGN KEY ([BccCodeId]) REFERENCES [BccCode] ([BccCodeId]) ON DELETE CASCADE;
+ALTER TABLE [EquipmentTypes] ADD CONSTRAINT [FK_EquipmentTypes_Models_ModelID] FOREIGN KEY ([ModelID]) REFERENCES [Models] ([ModelID]) ON DELETE CASCADE;
 
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20230120065443_SuperClass', N'3.1.32');
+VALUES (N'20230127075700_bom', N'3.1.32');
 
 GO
 

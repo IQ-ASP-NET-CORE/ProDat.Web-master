@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Vml.Office;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Logging;
@@ -28,8 +29,8 @@ namespace ProDat.Web2.Data
         public virtual DbSet<TagViewColumns> TagViewColumns { get; set; }
         public virtual DbSet<TagViewColumnsUser> TagViewColumnsUser { get; set; }
 
-        public virtual DbSet<BccCode>  BccCode { get; set; }
-
+        public virtual DbSet<BccCode> BccCode { get; set; }
+        public virtual DbSet<BOM> BOM { get; set; }
 
         public virtual DbSet<SAPExportDetail> SAPExportDetail { get; set; }
 
@@ -55,11 +56,11 @@ namespace ProDat.Web2.Data
         public virtual DbSet<EngClass> EngClass { get; set; }
         public virtual DbSet<EngDataClass> EngDataClass { get; set; }
         public virtual DbSet<EngClassRequiredDocs> EngClassRequiredDocs { get; set; }
-
+        public virtual DbSet<EquipmentTypes> EquipmentTypes { get; set; }
         public virtual DbSet<EngDataClassxEngDataCode> EngDataClassxEngDataCode { get; set; }
         public virtual DbSet<EngDataCode> EngDataCode { get; set; }
         public virtual DbSet<EngDataCodeDropDown> EngDataCodeDropDown { get; set; }
-
+        public virtual DbSet<ItemCatalog> ItemCatalog { get; set; }
         public virtual DbSet<EngDisc> EngDisc { get; set; }
         //public virtual DbSet<EngPlant> EngPlant { get; set; }
         public virtual DbSet<EngStatus> EngStatus { get; set; }

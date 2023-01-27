@@ -15,11 +15,14 @@ namespace ProDat.Web2.Models
         [Display(Name = "Eng Data Code")]
         public int EngDataCode { get; set; }
 
+        public int ColumnNumber { get; set; }
+        public string Alias { get; set; }
+
         //public IEnumerable<EngDataCode> EngDataCodes { get; set; }
 
         public virtual EngDataCode EngDataCodes { get; set; }
 
-        public virtual KeyList KeyList { get; set; }    
+        public virtual KeyList KeyList { get; set; }
     }
 }
 
