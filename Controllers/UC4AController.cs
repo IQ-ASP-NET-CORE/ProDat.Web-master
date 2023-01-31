@@ -19,12 +19,12 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ProDat.Web2.Controllers
 {
-    public class UC2Controller : Controller
+    public class UC4AController : Controller
     {
         #region instantiate controller
         private readonly TagContext _context;
 
-        public UC2Controller(TagContext context)
+        public UC4AController(TagContext context)
         {
             _context = context;
         }
@@ -34,40 +34,24 @@ namespace ProDat.Web2.Controllers
         public IActionResult Index()
         {
 
-            // confirm user has mfa, else redirect to MFA setup.
-            var claimTwoFactorEnabled =
-               User.Claims.FirstOrDefault(t => t.Type == "amr");
+            #region get instance info and update UC4 viewmodel
 
-            if (claimTwoFactorEnabled != null && "mfa".Equals(claimTwoFactorEnabled.Value))
-            {
-                // continue
-            }
-            else
-            {
-                return Redirect(
-                    // Modified by MWM 
-                    "/Identity/Account/Login");
-                    //"/Identity/Account/Manage/TwoFactorAuthentication");
-            }
-
-            #region get instance info and update UC2 viewmodel
-
-            // update UC2 data. Not using this for much at the moment.
-            UC2 uc2 = new UC2();
+            // update UC4 data. Not using this for much at the moment.
+            UC4 uc4 = new UC4();
 
             #endregion
             ViewBag.GlobalProjectDescription = _context.Project.First().ProjectName;
-            return View(uc2);
+            return View(uc4);
         }
 
         #region  Display Eng Attributes associated by MaintType 
         public IActionResult EngAttributesByClassification(int id)
         {
-            var tag = _context.Tag.Where(x => x.TagId == id).FirstOrDefault(); 
-            
+            var tag = _context.Tag.Where(x => x.TagId == id).FirstOrDefault();
+
             ViewBag.TagId = tag.TagId;
             ViewBag.TagNumber = tag.TagNumber;
-            ViewBag.TagFlocDesc = tag.TagFlocDesc != null? " - " + tag.TagFlocDesc : "";
+            ViewBag.TagFlocDesc = tag.TagFlocDesc != null ? " - " + tag.TagFlocDesc : "";
             ViewBag.GlobalProjectDescription = _context.Project.First().ProjectName;
             return View();
         }
@@ -85,7 +69,7 @@ namespace ProDat.Web2.Controllers
             if (tag == null)
                 return BadRequest();
 
-            if(destinationComponent == "MaintTree")
+            if (destinationComponent == "MaintTree")
             {
                 // validate Parent.
                 if (string.IsNullOrEmpty(maintParentId))
@@ -103,8 +87,8 @@ namespace ProDat.Web2.Controllers
 
                 await _context.SaveChangesAsync();
             }
-            
-            if(destinationComponent == "NonMaintainedDataGrid")
+
+            if (destinationComponent == "NonMaintainedDataGrid")
             {
                 MaintHierarchyNodeMovedToNonMaintainable(tag.TagId);
             }
@@ -132,11 +116,11 @@ namespace ProDat.Web2.Controllers
 
             var tag = await _context.Tag.FindAsync(int.Parse(TagId));
 
-            if (tag == null || tagStatusId <1)
+            if (tag == null || tagStatusId < 1)
                 return BadRequest();
 
             tag.MaintTypeId = tagStatusId;
-               
+
             await _context.SaveChangesAsync();
 
             // return 200.
@@ -173,11 +157,11 @@ namespace ProDat.Web2.Controllers
                 // validate parameters
                 var rec = await _context.FlocXpmassembly.FindAsync(int.Parse(oldParent), int.Parse(pmAId));
                 if (rec == null)
-                    return Ok(new { message = "Does not exist in DB" });
+                    return BadRequest();
 
                 _context.FlocXpmassembly.Remove(rec);
             }
-            
+
             // add relationship if new parent within MaintTree
             if (!string.IsNullOrEmpty(newParent) && destinationComponent == "MaintTree")
             {
@@ -189,11 +173,6 @@ namespace ProDat.Web2.Controllers
                 var fk2 = await _context.Tag.FindAsync(int.Parse(newParent));
                 if (fk2 == null)
                     return BadRequest();
-
-                // Test for existence. Exit gracefyully as its already there...
-                var test_exists = _context.FlocXpmassembly.FirstOrDefault(x => x.PmassemblyId == int.Parse(pmAId) && x.TagId == int.Parse(newParent));
-                if (test_exists != null)
-                    return Ok(new { message = "Already Exists" });
 
                 // add FlocxPMAssembly (pmAId, newParent)
                 var rec = new FlocXpmassembly();
@@ -216,7 +195,7 @@ namespace ProDat.Web2.Controllers
             if (!string.IsNullOrEmpty(oldParent) || destinationComponent == "MaintenanceItemsDataGrid")
             {
                 // validate parameters
-                var rec = await _context.FlocXmaintItem.FirstOrDefaultAsync(x=> x.FlocId == int.Parse(oldParent) && x.MaintItemId == int.Parse(miId));
+                var rec = await _context.FlocXmaintItem.FirstOrDefaultAsync(x => x.FlocId == int.Parse(oldParent) && x.MaintItemId == int.Parse(miId));
                 if (rec == null)
                     return BadRequest();
                 _context.FlocXmaintItem.Remove(rec);
@@ -447,7 +426,7 @@ namespace ProDat.Web2.Controllers
         }
 
         // Service class to Load MaintTree.
-        public MaintHeirarchyNode BuildMaintHierarchy(string TagNumber, int depth=0)
+        public MaintHeirarchyNode BuildMaintHierarchy(string TagNumber, int depth = 0)
         {
             IList<MaintHeirarchyNode> children = new List<MaintHeirarchyNode>();
 
@@ -461,11 +440,11 @@ namespace ProDat.Web2.Controllers
             // might retrieve set of tags with a MaintParentID, and MaintType in (N, M, P), then build hierarchy.
             Tag tag = _context.Tag
                 .Include(t => t.InverseMaintParents).ThenInclude(child => child.MaintType)
-                .Include(t=> t.MaintType)
+                .Include(t => t.MaintType)
                 .Where(t => t.TagNumber == TagNumber)
                 .FirstOrDefault();
 
-           
+
             foreach (Tag child in tag.InverseMaintParents
                             .Where(t => t.TagDeleted == false)
                             .Where(t => t.MaintType != null)
@@ -483,7 +462,7 @@ namespace ProDat.Web2.Controllers
 
             // Add PMA as children for current Tag, using FlocXMaintItem relationship. Is not hierarchical.
             var flocXPMAs = _context.FlocXpmassembly
-                                    .Include(x=> x.Pmassembly)
+                                    .Include(x => x.Pmassembly)
                                     .Where(t => t.TagId == tag.TagId)
                                     .ToList();
 
@@ -492,7 +471,7 @@ namespace ProDat.Web2.Controllers
                 children.Add(new MaintHeirarchyNode
                 {
                     Id = tag.TagId + ":" + flocXPMA.PmassemblyId.ToString(),
-                    dbId = flocXPMA.PmassemblyId.ToString(), 
+                    dbId = flocXPMA.PmassemblyId.ToString(),
                     ParentId = tag.TagId.ToString(),
                     Name = flocXPMA.Pmassembly.PmassemblyName,
                     IsDirectory = false,
@@ -510,7 +489,7 @@ namespace ProDat.Web2.Controllers
                 IsDirectory = true, // required to allow DnD onto node.
                 nodeType = tag.MaintType.MaintTypeName,
                 IsDeleted = tag.TagDeleted,
-                IsExpanded = depth <= MaintHierarchy_LoadDepth ? true: false,
+                IsExpanded = depth <= MaintHierarchy_LoadDepth ? true : false,
                 SAPStatusId = tag.SAPStatusId != null ? (int)tag.SAPStatusId : 0,
                 MaintStatus = tag.SAPStatusId.ToString(),
                 Items = children
@@ -527,15 +506,10 @@ namespace ProDat.Web2.Controllers
             // return root node if initial query
             if (parentId == null || parentId == "0")
             {
-                // get root of MaintHierarchy
-                Project prj = _context.Project
-                                .FirstOrDefault();
-
-
                 Tag root = _context.Tag
                .Include(t => t.InverseMaintParents).ThenInclude(child => child.MaintType)
                .Include(t => t.MaintType)
-               .Where(t => t.TagId == prj.MaintenanceRootTagId)
+               .Where(t => t.TagId == 1)
                .FirstOrDefault();
 
                 children.Add(new MaintHeirarchyNode
@@ -553,10 +527,6 @@ namespace ProDat.Web2.Controllers
                 });
                 return children;
             }
-
-            // ignore complex nodes as they dont have children (PMA, MI, etc.)
-            if (parentId.Contains(":"))
-                return children;
 
             Tag tag = _context.Tag
                 .Include(t => t.InverseMaintParents).ThenInclude(child => child.MaintType)
@@ -584,8 +554,8 @@ namespace ProDat.Web2.Controllers
                                     .Where(t => t.TagId == child.TagId)
                                     .ToList();
 
-                // Todo, hasChildren to test for PMA, so expansion will show these next load.
-                bool hasChildren = x.InverseMaintParents.Count >0 || y.Count>0;
+                // Todo, hasChildren to test for PMA, so exmansion will show these next load.
+                bool hasChildren = x.InverseMaintParents.Count > 0 || y.Count > 0;
 
                 children.Add(new MaintHeirarchyNode
                 {
@@ -618,7 +588,6 @@ namespace ProDat.Web2.Controllers
                     ParentId = tag.TagId.ToString(),
                     Name = flocXPMA.Pmassembly.PmassemblyName,
                     IsDirectory = false,
-                    IsExpanded = true,
                     IsDeleted = false, // not a feature of PMA.
                     nodeType = "PMA",
                 });
@@ -654,42 +623,6 @@ namespace ProDat.Web2.Controllers
             return DataSourceLoader.Load(dataSet, loadOptions);
         }
 
-        [HttpGet]
-        public object FlocSearchDataGrid_GetData(DataSourceLoadOptions loadOptions)
-        {
-            // list of all items accessible via  MaintTreeView
-            var dataSet = _context.Tag
-                          .Where(x=> x.MaintParentId != null)
-                          .Where(x=> x.TagDeleted== false)
-                          //.Where(x=> x.MaintType.MaintTypeName != "R")
-                          .Select( rec=> new { rec.TagId, rec.TagFloc, rec.TagFlocDesc, rec.MaintStatusId, rec.MaintTypeId });
-
-            return DataSourceLoader.Load(dataSet, loadOptions);
-        }
-
-        [HttpGet]
-        public string GetFlocMaintPath(int TagId)
-        {
-            List<int> tagPath = new List<int>();
-
-            while(true)
-            {
-                tagPath.Insert(0, TagId);
-                var tag = _context.Tag
-                    .Where(x => x.TagId == TagId).FirstOrDefault();
-
-                if (tag.MaintParentId == null) { 
-                    break;
-                }
-
-                TagId = (int)tag.MaintParentId;
-            }
-
-            // convert array to string for ajax ease of use
-            var path = string.Join("/", tagPath);
-            return path;
-        }
-
         #endregion
 
         #region Manage Maintenance Items List Data Grid.
@@ -715,12 +648,6 @@ namespace ProDat.Web2.Controllers
             return ViewComponent("NonMaintainedDataGrid", new { height = Height, width = Width });
         }
 
-        public IActionResult ReloadFlocSearchDataGrid(int Height, int Width)
-        {
-            return ViewComponent("FlocSearchDataGrid", new { height = Height, width = Width });
-        }
-        
-
         public IActionResult ReloadPMAssembliesDataGrid(int Height, int Width)
         {
             return ViewComponent("PMAssembliesDataGrid", new { height = Height, width = Width });
@@ -735,8 +662,8 @@ namespace ProDat.Web2.Controllers
         public object NonMaintained_GetData(DataSourceLoadOptions loadOptions)
         {
             var dataSet = from rec in _context.Tag
-                         where rec.MaintType.MaintTypeName == "R"
-                        select new { rec.TagId, rec.TagNumber, rec.TagService,  rec.TagFloc, rec.TagFlocDesc, rec.EngDiscId, rec.SubSystem.SubSystemNum};
+                          where rec.MaintType.MaintTypeName == "R"
+                          select new { rec.TagId, rec.TagNumber, rec.TagService, rec.TagFloc, rec.TagFlocDesc, rec.EngDiscId, rec.SubSystem.SubSystemNum };
 
             return DataSourceLoader.Load(dataSet, loadOptions);
         }
@@ -838,8 +765,8 @@ namespace ProDat.Web2.Controllers
                             .Include(x => x.MaintType)
                             .Include(x => x.SubSystem)
                             .Where(x => x.MaintType == null || x.MaintType.MaintTypeName == "M" || x.MaintType.MaintTypeName == "P")
-                            .Where(y=> y.MaintParentId == null)
-                            .Select(z=> new { z.TagId, z.TagNumber, z.TagService, z.TagFloc, z.TagFlocDesc, z.EngDiscId, z.MaintTypeId, z.MaintType.MaintTypeName, z.SubSystem.SubSystemNum } );
+                            .Where(y => y.MaintParentId == null)
+                            .Select(z => new { z.TagId, z.TagNumber, z.TagService, z.TagFloc, z.TagFlocDesc, z.EngDiscId, z.MaintTypeId, z.MaintType.MaintTypeName, z.SubSystem.SubSystemNum });
 
             return DataSourceLoader.Load(dataSet, loadOptions);
         }
@@ -935,7 +862,7 @@ namespace ProDat.Web2.Controllers
 
 
         #region Manage TagProperties
-        
+
         [HttpGet]
         public object TagProperties_GetDataGrid(DataSourceLoadOptions loadOptions, int tagId = 1561)
         {
@@ -947,19 +874,20 @@ namespace ProDat.Web2.Controllers
                             .Where(x => x.TagId == tagId)
                             .Include(x => x.TagEngDatas)
                               .ThenInclude(x => x.EngDataCode)
-                                .ThenInclude( x=> x.MaintClassXEngDataCode)
+                                .ThenInclude(x => x.MaintClassXEngDataCode)
                             .FirstOrDefault();
 
             var tagMaintClassInfo = _context.Tag
                             .Where(x => x.TagId == tagId)
                             .Include(x => x.MaintObjectType)
                               .ThenInclude(x => x.MaintObjectTypeXMaintClass)
-                                .ThenInclude (x=> x.MaintClass)
+                                .ThenInclude(x => x.MaintClass)
                             .FirstOrDefault();
 
             var tagMaintClasses = new List<MaintClass>();
-            if(tagMaintClassInfo.MaintObjectType != null) { 
-                foreach(var i in tagMaintClassInfo.MaintObjectType.MaintObjectTypeXMaintClass)
+            if (tagMaintClassInfo.MaintObjectType != null)
+            {
+                foreach (var i in tagMaintClassInfo.MaintObjectType.MaintObjectTypeXMaintClass)
                     tagMaintClasses.Add(i.MaintClass);
             }
 
@@ -973,7 +901,7 @@ namespace ProDat.Web2.Controllers
                 // Required Eng Data
                 foreach (var required in engData.EngDataCode.MaintClassXEngDataCode)
                 {
-                    foreach(var maintClass in tagMaintClasses)
+                    foreach (var maintClass in tagMaintClasses)
                     {
                         if (required.MaintClassId == maintClass.MaintClassId)
                         {
@@ -990,7 +918,7 @@ namespace ProDat.Web2.Controllers
                 }
                 // EngData, no MaintClass or MaintClass Not Required.
                 //need to handle where its required by a class not for this type as well.
-                if(engData.EngDataCode.MaintClassXEngDataCode == null || assigned == false)
+                if (engData.EngDataCode.MaintClassXEngDataCode == null || assigned == false)
                 {
                     tmp.MaintClassName = "Other";
                     tmp.TagId = engData.TagId;
@@ -1019,7 +947,7 @@ namespace ProDat.Web2.Controllers
             //retrieve item to update
             var item = _context.TagEngData.Find(tagId, engDataCodeId);
 
-            if(item == null)
+            if (item == null)
                 return BadRequest();
 
             // Replace change to DDLValue with EngDataValue. Why is this here?
@@ -1038,14 +966,14 @@ namespace ProDat.Web2.Controllers
             return Ok();
         }
 
-        public IActionResult ReloadTagProperties(int Height, int Width, int TagId=1628)
+        public IActionResult ReloadTagProperties(int Height, int Width, int TagId = 1628)
         {
-            return ViewComponent("TagProperties", new { height = Height, width = Width, tagId=TagId });
+            return ViewComponent("TagProperties", new { height = Height, width = Width, tagId = TagId });
         }
 
 
         #endregion
 
-        
+
     }
 }

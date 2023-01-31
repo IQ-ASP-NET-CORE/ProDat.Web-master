@@ -62,11 +62,20 @@ namespace ProDat.Web2.Areas.Identity.Services
             msg.Body = message;
 
             // port? 25 (default), ssl: 465 (default) 587 Microsoft specific port for SMTP
-            SmtpClient client = new SmtpClient("smtp.office365.com", 587)
+            //Changed to an e-mail server that doesn't require authentication  MWM
+            //This isn't as secure as it was before, but it has limited the machines that can send out e-mails to ones that are on the domain.
+            //The new authentication method allows us to connect to the SMTP server without specifying a username and password, I believe this is cheaper (free) as it's not a mailbox.
+            //This may need to change eventually as I would assume that there'll be a ProDat support address that will need to be monitored.
+
+
+            
+            SmtpClient client = new SmtpClient("iqim-com0e.mail.protection.outlook.com", 25)
             {
                 //Credentials = new NetworkCredential("prodat", apiKey),
-                Credentials = new NetworkCredential("prodat@iq-im.com", "j3^3Y#@!8DcDZm^^bl02xvCm0"),
-                //Credentials = new NetworkCredential("matthew.mckenna", "Testing1599"),
+                //Credentials = new NetworkCredential("prodat@iq-im.com", "j3^3Y#@!8DcDZm^^bl02xvCm0"),
+                //Passing no password parameter first, try something else next.
+                //Credentials = new NetworkCredential("scanner@iq-im.com", ""),
+                
                 EnableSsl = true
             };
 

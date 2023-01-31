@@ -20,46 +20,93 @@
     }
 }
 
-<div id="testbtn"></div>
-
-
-<button id="testing" onclick="gotoSearchedItem()">TestSearch</button>
-
 <!-- add components for UC2 here. Control UI using UC2 View Model -->
+<script>
+
+
+</script>
+<button id="showHideSearch1" class="btn btn-secondary btn-sm" type="button" onclick="toggleTreeSearch()" aria-expanded="false" aria-controls="collapseExample">Search</button>
+<style>
+    .H4 {
+
+        color: #fff;
+    }
+
+</style>
+
+
+
+
 <div class="uc2_content">
     <div class="uc2_main">
-        <div id="maintTreeDiv" class="uc2_leftPane">
-            @*@await Component.InvokeAsync("MaintTree", new { height = Model.MaintTree_H, width = Model.MaintTree_W })*@
-        </div>
-
-        <div class="uc2_rightPane">
-            <div class="uc2_sub_one" id="TagProperties">
-                @*@await Component.InvokeAsync("TagProperties", new { height = Model.TagProperties_H, width = Model.TagProperties_W })*@
+        <div id="uc2_leftpane" class="uc2_leftPane">
+            <!-- note collapse is added to hide Search module on init -->
+            <div id="FlocSearchDataGridDiv" class="uc2_leftPane_top collapse">
+                @*@await Component.InvokeAsync("FlocSearchDataGrid", new { height = Model.MaintTree_H, width = Model.MaintTree_W })*@
             </div>
+            <div id="maintTreeDiv" class="uc2_leftPane_bot">
+                @*@await Component.InvokeAsync("MaintTree", new { height = Model.MaintTree_H, width = Model.MaintTree_W })*@
+            </div>
+        </div>
+        <div class="resizer" data-direction="vertical"></div>d
+        <div class="uc2_rightPane">
+            <div class="uc2_sub_one" id="TagProperties" style="background-color:#FFFFFF;">
+                @*@await Component.InvokeAsync("TagProperties", new { height = Model.TagProperties_H, width = Model.TagProperties_W style="background-color: #FFF;" })*@
+            </div>
+            <div class="resizer" data-direction="horizontal"></div>
             <div class="uc2_sub_two" id="uc2_sub_two">
-                <div class="dx-swatch-Datagrid_Blue" style="background-color: #77c4ed;">
+                <div class="dx-swatch-Datagrid_Blue" style="background-color: #83a38c;">
                     <div>
-                        <h4 style="display: inline-block;">&nbsp; PMA/Unassigned Tags &nbsp;</h4>
-                        <div id="VCSelector"></div>
-                        <div id="ViewComponents">
+                        <h4 style="display: inline-block; color: #fff;">&nbsp; PMA/Unassigned Tags &nbsp;</h4>
+                        <div id="VCSelector"></div><h4>&nbsp;</h4>
+                        <div id="ViewComponents" style="color: #fff;">
                             @*@await Component.InvokeAsync("MaintenanceItemsDataGrid", new { height = Model.UnassignedTags_H, width = Model.UnassignedTags_W })*@
                         </div>
                     </div>
                 </div>
             </div>
-
+            <div class="resizer" data-direction="horizontal"></div>
             <div class="uc2_sub_three" id="uc2_sub_three">
-                <div id="NonMaintainedDataGrid" class="dx-swatch-Datagrid_Green" style="background-color: #3cbab2">
-                    nm
+                <div id="NonMaintainedDataGrid" class="dx-swatch-Datagrid_Green" style="background-color: #83a38c; color: #fff;">
+
                     @*@await Component.InvokeAsync("NonMaintainedDataGrid", new { height = Model.NonMaintained_H, width = Model.NonMaintained_W })*@
                 </div>
             </div>
         </div>
     </div>
-    <input type="hidden" id="treeViewSearchQueue" value="" />
 </div>
 
+
+    <!-- used by FlocSearchTreeView_OnContentReady -->
+    <input type="hidden" id="treeViewSearchQueue" value="" />
+
+
+<!-- Show/Hide search tree div -->
 <script>
+
+    function toggleTreeSearch() {
+        var myElement = $("#FlocSearchDataGridDiv")
+        myElement.toggleClass("collapse");
+
+        // update button text
+        if (hasClass(myElement, "collapse") ) {
+            var myBtn = $("#showHideSearch");
+            myBtn[0].innerText = "Search";
+        }
+        else {
+            var myBtn = $("#showHideSearch");
+            myBtn[0].innerText = "Hide Search";
+        }
+    }
+
+    function hasClass(element, className) {
+        return (' ' + element[0].className + ' ').indexOf(' ' + className + ' ') > -1;
+    }
+
+</script>
+
+    <!-- General scripting -->
+    <script>
 
     $(document).ready(function (){
 
@@ -86,8 +133,9 @@
         }
 
         // Initial View Components loaded:
-        //loadVC("maintTreeDiv", "MaintTree");
-        loadVC("maintTreeDiv", "MaintTreeDemand");
+        loadVC("FlocSearchDataGridDiv", "FlocSearchDataGrid");
+        loadVC("maintTreeDiv", "MaintTree");
+        //loadVC("maintTreeDiv", "MaintTreeDemand");
         loadVC("TagProperties", "TagProperties");
         loadVC2("ViewComponents", "UnassignedDataGrid", "uc2_sub_three");
         loadVC2("NonMaintainedDataGrid", "NonMaintainedDataGrid", "uc2_sub_two");
@@ -96,7 +144,6 @@
         $(window).resize(function () {
             location.reload();
         })
-
     });
 
     function UpdateCaptionStatus(e)
@@ -124,6 +171,7 @@
             valueExpr: "Value",
             displayExpr: "Name",
             value: options[selectedItem].Value,
+            style: "color: #fff;",
             onValueChanged: function (data) {
                 loadVC2("ViewComponents", data.value, "uc2_sub_three");
             }
@@ -180,7 +228,6 @@
             data: { Height: parseInt(h), Width: parseInt(w), TagId: tagId },
             success: function (data) {
                 $("#" + divId).html(data);
-                
             }
         })
     }
@@ -201,30 +248,29 @@
         setTimeout(() => loadVC3("TagProperties", "TagProperties", TagId), 200);
     }
 
-    // #############
-    // DnD functions
-
+    // ###############
+    // DnD functions #
+    // ###############
     function moveGridNodeToTreeNode(fromNodeItemData, toNode)
     {
         // Will only allow drop of single item in grid to INSIDE a treeNode.
         // function shared by other grid views.
+        var toTreeView = $('#treeViewMaintItems').dxTreeView('instance');
 
         var nodeType = fromNodeItemData.nodeType;
-        //var parentId = fromNodeItemData.ParentId; irrelevant
-        //var fromId = fromNodeItemData.Id;
         var fromId = fromNodeItemData.dbId;
         var maintParentId = toNode.key;
 
         // Update DB activities
         if (nodeType == 'M')
         {
-            UpdateNodeParent(fromId, maintParentId, 'MaintTree');
             console.log('isM');
+            UpdateNodeParent(fromId, maintParentId, 'MaintTree');
         }
         else if (nodeType == 'MI')
         {
-            UpdateMI(fromId, null, maintParentId, 'MaintTree');
             console.log('isMI');
+            UpdateMI(fromId, null, maintParentId, 'MaintTree');
         }
         else if (nodeType == 'PMA')
         {
@@ -233,7 +279,9 @@
         }
 
         // Update TreeView
-        toNode.itemData.Items.splice(toNode.itemData.Items.length, 0, fromNodeItemData);
+        var toItems = toTreeView.option('items');
+        //toNode.itemData.Items.splice(toItems.length, 0, fromNodeItemData);
+        toItems.splice(toItems.length, 0, fromNodeItemData)
 
     }
 
@@ -255,8 +303,6 @@
                 fromNode.Id = fromNode.ParentId + ':' + fromNode.dbId;
 
                 // Move into TreeView.
-                // moveGridNodeToTreeNode is in UC2/Index.cshtml
-                // as used by all grids
                 var toItems = toTreeView.option('items');
                 moveGridNodeToTreeNode(fromNode, toNode);
 
@@ -304,8 +350,6 @@
                 fromNode.Id = fromNode.ParentId + ':' + fromNode.dbId;
 
                 // Move into TreeView.
-                // moveGridNodeToTreeNode is in UC2/Index.cshtml
-                // as used by all grids
                 var toItems = toTreeView.option('items');
                 moveGridNodeToTreeNode(fromNode, toNode);
 
@@ -352,8 +396,6 @@
             fromNode.ParentId = toNode.key;
 
             // move into TreeView. Refresh view (toTreeview.option() )
-            // moveGridNodeToTreeNode is in UC2/Index.cshtml
-            // as used by all GridViews
             var toItems = toTreeView.option('items');
             moveGridNodeToTreeNode(fromNode, toNode);
             toTreeView.option("items", toItems);
@@ -380,14 +422,14 @@
                 text: "Engineering data",
                 onItemClick: function () {
                     var target = "/TagEngDatas/Index/" + e.row.data.TagId;
-                    window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+                    window.open(target, '', "directories=no, titlebar=no, toolbar=no,location=no, status=no, menubar=no, resizable=yes, width=800, Height=700, left=100, top=10");
                 }
             },
             {
                 text: "Documents",
                 onItemClick: function () {
                     var target = "/TagXdocs/DocByTagId/" + e.row.data.TagId;
-                    window.open(target, '', "resizable=yes, width=800, Height=700, left=100, top=10");
+                    window.open(target, '', "directories=no, titlebar=no, toolbar=no,location=no, status=no, menubar=no, resizable=yes, width=800, Height=700, left=100, top=10");
                 }
             }];
         }
@@ -425,8 +467,6 @@
             fromNode.ParentId = toNode.key;
 
             // move into TreeView. Refresh view (toTreeview.option() )
-            // moveGridNodeToTreeNode is in UC2/Index.cshtml
-            // as used by all GridViews
             var toItems = toTreeView.option('items');
             moveGridNodeToTreeNode(fromNode, toNode);
             toTreeView.option("items", toItems);
@@ -489,7 +529,7 @@
             return;
         }
 
-        var fromTreeView = getTreeView(e.fromData);
+        var fromTreeView = getTreeView();
         var fromNode = findNode(fromTreeView, e.fromIndex);
         var fromItems = fromTreeView.option('items');
 
@@ -521,7 +561,7 @@
             {
                 var msg1 = 'Warning. This Node has ' + fromNode.children.length;
                 var msg2 = fromNode.children.length == 1 ? ' child. ' : ' children. ';
-                msg = msg1 + msg2 + 'Do you want to continue?';
+                msg = msg1 + msg2 + 'Do you want to continue? This Tag and its descendants will have their MaintParent Hierarchy reset.';
                 ok = window.confirm(msg);
             }
             if (ok)
@@ -530,10 +570,16 @@
                 //var fromId = fromNode.key;
                 var fromId = fromNode.itemData.dbId;
                 var parentId = fromNode.itemData.ParentId;
-                var fromNodeContainingArray = getNodeContainingArray(fromNode, fromItems);
-                var fromIndex = findIndex(fromNodeContainingArray, fromNode.itemData.Id);
-                var fromType = fromNode.itemData.nodeType;
 
+                // ## this is only for Hierarchical structure ##
+                //var fromNodeContainingArray = getNodeContainingArray(fromNode, fromItems);
+                //var fromIndex = findIndex(fromNodeContainingArray, fromNode.itemData.Id);
+
+                // ## This is for simple structure ##
+                var fromIndex = findIndex(fromItems, fromNode.itemData.Id);
+
+
+                var fromType = fromNode.itemData.nodeType;
                 if (fromType == 'M')
                     UpdateNodeParent(fromId, null, e.toData);
                 else if (fromType == 'MI')
@@ -542,7 +588,12 @@
                     UpdatePMA(fromId, parentId, null, e.toData);
 
                 // Remove node from tree
-                fromNodeContainingArray.splice(fromIndex, 1);
+                // ## this is for Hierarhical structure
+                // fromNodeContainingArray.splice(fromIndex, 1);
+                // ## this is for Hierarhical structure
+                fromItems.splice(fromIndex, 1);
+
+                // Refreshes tree after splice
                 fromTreeView.option("items", fromItems);
 
                 // refresh related components
@@ -556,7 +607,8 @@
         // Move within TreeView
         if (e.toData == 'MaintTree')
         {
-            var toTreeView = getTreeView(e.toData);
+            //var toTreeView = getTreeView(e.toData);
+            var toTreeView = getTreeView();
             var toNode = findNode(toTreeView, calculateToIndex(e));
 
             // Illegal actions. Exit if encountered:
@@ -788,8 +840,8 @@
             success: function () {
                 console.log("OK:  UpdatePMA");
             },
-            error: function () {
-                console.log("ERR:  UpdatePMA");
+            error: function (message) {
+                console.log("ERR:  UpdatePMA" + message);
             }
         });
     }
@@ -808,7 +860,6 @@
             }
         });
     }
-
     function Unset_Tag_maintParent(TagId) {
         $.ajax({
             type: "POST",
@@ -823,7 +874,6 @@
             }
         });
     }
-
     function Update_Tag_MaintTypeName(TagId, Status) {
         $.ajax({
             type: "POST",
@@ -850,7 +900,6 @@
 
 
     // Tag Properties
-
     function testDDL(result)
     {
         if (result.length == 0)
@@ -1035,107 +1084,144 @@
 
 
 
-</script>
+        </script>
 
-<!-- TreeViewDemand -->
-<script>
+        <!-- FLOCSearch-->
+        <script>
 
-    // get On Demand Data from server, based on Nodes ID.
-    function treeView_createChildren(parent) {
-        var parentId = parent ? parent.itemData.Id : "";
+            function FlocSearch_OnSelectionChanged(e) {
+                // find first selected item
+                var tagId = e.selectedRowKeys[0];
+                var maintType = e.selectedRowsData[0].MaintTypeId;
 
-        return $.ajax({
-            url: "/UC2/GetMaintTreeDemand",
-            dataType: "json",
-            data: { parentId: parentId }
-        });
-    }
-
-    // OnContentReady Called once tree has loaded.
-    function MaintTreeDemand_OnContentReady(e) {
-
-        // check if request to load searched item is in progress
-        var queue = $('#treeViewSearchQueue').val();
-        if (queue.length > 0) {
-
-            var thisTree = $('#treeViewMaintItems').dxTreeView('instance');
-            var arrQueue = queue.split("/");
-
-            if (arrQueue.length > 1) {
-                thisTree.expandItem(arrQueue[0]);
-            }
-            else {
-                thisTree.scrollToItem(arrQueue[0]);
-                thisTree.selectItem(arrQueue[arrQueue.length - 1]);
-            }
-
-            // pop 1st item, update treeViewSearchQueue
-            arrQueue.shift();
-            if (arrQueue.length == 0) {
-                $('#treeViewSearchQueue').val("");
-            }
-            else {
-                queue = arrQueue.join("/");
-                $('#treeViewSearchQueue').val(queue);
-            }
-        }
-    }
-</script>
-
-<script>
-
-    // when Item is selected in datagrid, goto Item using its path attribute
-
-    function gotoSearchedItem(path) {
-
-        //var queue = "1/6/22187/22228"; //otway
-        var path = "1628/3/24/252/253/1701" //dev
-
-        var arrQueue = path.split("/");
-        var futureQueue = path.split("/");
-        var thisTree = $('#treeViewMaintItems').dxTreeView('instance');
-        var depth = arrQueue.length;
-
-        // find 1st unloaded node
-        for (i = 0; i < arrQueue.length; i++) {
-            if (!thisTree.selectItem(arrQueue[i])) {
-                // store unfound part of path for OnContentReady.
-                for (j = 0; j < i; j++) {
-                    futureQueue.shift(); 
+                // todo: determine Non Mainttained not by ID, but by text value (R).
+                if (maintType == 4) {
+                    $("#searchcommentary").html("Non-Maintainable content is not in Maintenance Hierarchy.");
+                }
+                else {
+                    $("#searchcommentary").html("");
                 }
 
-                path = futureQueue.join("/");
-                $('#treeViewSearchQueue').val(path);
-                depth = i;
-                break;
+                if (tagId != null && maintType != 4) {
+                    getFlocPath(tagId);
+                }
             }
-        }
 
-        // expand loaded nodes and 1st unloaded node
-        for (i = 0; i < depth; i++) {
-            thisTree.expandItem(arrQueue[i]);
-            thisTree.selectItem(arrQueue[i]);
-        }
-    }
+            function getFlocPath(tagId) {
+                $.ajax({
+                    url: "/UC2/GetFlocMaintPath",
+                    data: { TagId: tagId },
+                    success: function (data) {
+                        console.log('ok: ' + data);
+                        gotoSearchedItem(data);
+                    },
+                    error: function (data) {
+                        console.log('bad: ' + data.responseText);
+                    }
+                });
+            }
 
-</script>
+            function gotoSearchedItem(path) {
 
-<!-- setting maintTreeNode class and text -->
-<script>
-    function MaintTreeNodeTemplate(itemData, itemIndex, itemElement) {
-        var iconClass = '';
-        if (itemData.nodeType == 'N') {
-            iconClass = 'dx-icon dx-icon-activefolder';
-        }
-        else if (itemData.nodeType == 'PMA') {
-            iconClass = 'dx-icon dx-icon-PMA';
-        }
-        else {
-            iconClass = 'dx-icon dx-icon-SAP' + itemData.SAPStatusId;
-        }
-        var myDiv = $("<div>");
-        myDiv.append($("<i>").addClass(iconClass));
-        myDiv.append($("<span>").text(itemData.Name));
-        itemElement.append(myDiv);
-    }
-</script>
+                if (path != null) {
+                    var arrQueue = path.split("/");
+                    var futureQueue = path.split("/");
+                    var thisTree = $('#treeViewMaintItems').dxTreeView('instance');
+                    var depth = arrQueue.length;
+
+                    // find 1st unloaded node
+                    for (i = 0; i < arrQueue.length; i++) {
+                        if (!thisTree.selectItem(arrQueue[i])) {
+                            // store unfound part of path for OnContentReady.
+                            for (j = 0; j < i; j++) {
+                                futureQueue.shift();
+                            }
+
+                            path = futureQueue.join("/");
+                            $('#treeViewSearchQueue').val(path);
+                            depth = i;
+                            break;
+                        }
+                    }
+
+                    // expand loaded nodes and 1st unloaded node
+                    for (i = 0; i < depth; i++) {
+                        thisTree.expandItem(arrQueue[i]);
+                        thisTree.selectItem(arrQueue[i]);
+                        if (i == depth - 1) {
+                            TagProperties_Reload(arrQueue[i]);
+                            thisTree.scrollToItem(arrQueue[i]);
+                        }
+                    }
+                }
+            }
+
+        </script>
+
+
+
+
+        <!-- TreeViewDemand Functions -->
+        <script>
+            function treeView_createChildren(parent) {
+                var parentId = parent ? parent.itemData.Id : "";
+
+                return $.ajax({
+                    url: "/UC2/GetMaintTreeDemand",
+                    dataType: "json",
+                    data: { parentId: parentId }
+                });
+            }
+
+            function MaintTreeDemand_OnContentReady(e) {
+
+                // check if request to load searched item is in progress
+                var queue = $('#treeViewSearchQueue').val();
+                if (queue.length > 0) {
+
+                    var thisTree = $('#treeViewMaintItems').dxTreeView('instance');
+                    var arrQueue = queue.split("/");
+
+                    if (arrQueue.length > 1) {
+                        thisTree.expandItem(arrQueue[0]);
+                    }
+                    else {
+                        // highlight node, scroll to it, reload B1
+                        thisTree.selectItem(arrQueue[0]);
+                        TagProperties_Reload(arrQueue[0]);
+                        thisTree.scrollToItem(arrQueue[0]);
+                    }
+
+                    // pop 1st item, update treeViewSearchQueue
+                    arrQueue.shift();
+                    if (arrQueue.length == 0) {
+                        $('#treeViewSearchQueue').val("");
+                    }
+                    else {
+                        queue = arrQueue.join("/");
+                        $('#treeViewSearchQueue').val(queue);
+                    }
+                }
+            }
+
+        </script>
+
+        <!-- setting maintTreeNode class and text -->
+        <script>
+            function MaintTreeNodeTemplate(itemData, itemIndex, itemElement) {
+                var iconClass = '';
+                if (itemData.nodeType == 'N') {
+                    iconClass = 'dx-icon dx-icon-activefolder';
+                }
+                else if (itemData.nodeType == 'PMA') {
+                    iconClass = 'dx-icon dx-icon-PMA';
+                }
+                else {
+                    iconClass = 'dx-icon dx-icon-SAP' + itemData.SAPStatusId;
+                }
+                var myDiv = $("<div>");
+                myDiv.append($("<i>").addClass(iconClass));
+                myDiv.append($("<span>").text(itemData.Name));
+                itemElement.append(myDiv);
+            }
+        </script>
