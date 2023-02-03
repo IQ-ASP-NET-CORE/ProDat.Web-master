@@ -1,0 +1,20 @@
+﻿@model ProDat.Web2.ViewModels.UC5
+
+@using ProDat.Web2.TagLibrary
+
+@{
+    ViewData["Title"] = "Maintenance Plan1";
+}
+
+@(Html.DevExtreme().DataGrid()
+    .ID("gridContainer")
+        .DataSource(ds => ds.Mvc()
+        .Controller("UC5")
+        .LoadAction("TagRegister_GetData")
+       // .InsertAction("TagRegister_Insert")
+       // .UpdateAction("TagRegister_Update")
+       // .DeleteAction("TagRegister_Delete")
+       // .Key("TagId")
+    )
+    .ShowBorders(true)
+)
