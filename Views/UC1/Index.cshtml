@@ -23,7 +23,7 @@
                             .DataSource( d => d
                                 .Mvc()
                                 .Controller("Lookups")
-                            .LoadParams(new { superClassId = 22 })
+                            .LoadParams(new { ColumnSetsEntity = "Tag" })
                             .LoadAction("test_Lookup")
                                 .Key("Text"))
                             .DisplayExpr("Text")
