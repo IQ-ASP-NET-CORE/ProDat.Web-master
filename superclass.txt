@@ -1,37 +1,9 @@
-﻿ALTER TABLE [EquipmentTypes] ADD [ModelID] int NOT NULL DEFAULT 0;
-
-GO
-
-CREATE TABLE [BOM] (
-    [BOMID] int NOT NULL IDENTITY,
-    [EquipTypeID] int NOT NULL,
-    [ItemCatalogID] int NOT NULL,
-    [ItemQuantity] int NOT NULL,
-    CONSTRAINT [PK_BOM] PRIMARY KEY ([BOMID]),
-    CONSTRAINT [FK_BOM_EquipmentTypes_EquipTypeID] FOREIGN KEY ([EquipTypeID]) REFERENCES [EquipmentTypes] ([EquipTypeID]) ON DELETE CASCADE,
-    CONSTRAINT [FK_BOM_ItemCatalog_ItemCatalogID] FOREIGN KEY ([ItemCatalogID]) REFERENCES [ItemCatalog] ([ItemCatalogID]) ON DELETE CASCADE
-);
-
-GO
-
-CREATE INDEX [IX_EquipmentTypes_ModelID] ON [EquipmentTypes] ([ModelID]);
-
-GO
-
-CREATE INDEX [IX_BOM_EquipTypeID] ON [BOM] ([EquipTypeID]);
-
-GO
-
-CREATE INDEX [IX_BOM_ItemCatalogID] ON [BOM] ([ItemCatalogID]);
-
-GO
-
-ALTER TABLE [EquipmentTypes] ADD CONSTRAINT [FK_EquipmentTypes_Models_ModelID] FOREIGN KEY ([ModelID]) REFERENCES [Models] ([ModelID]) ON DELETE CASCADE;
+﻿ALTER TABLE [BccCode] ADD [BccColour] nvarchar(max) NULL;
 
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20230127075700_bom', N'3.1.32');
+VALUES (N'20230203062449_bccCodeColour', N'3.1.32');
 
 GO
 

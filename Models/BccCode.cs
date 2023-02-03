@@ -16,6 +16,8 @@ namespace ProDat.Web2.Models
 
         public string BccCodeDesc { get;set; }
 
+        public string BccColour { get; set; }
+
         public ICollection<EngDataClassxEngDataCode> EngDataClasses { get; set;}
 
     }
