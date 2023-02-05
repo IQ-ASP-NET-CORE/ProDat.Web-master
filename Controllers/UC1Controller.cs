@@ -44,9 +44,11 @@ namespace ProDat.Web2.Controllers
         public async Task<IActionResult> Index(string columnSetsName="Default")
         {
 
+            // to update. Add check for MFA not set and redirect to 2FA Management page. 
             // confirm user has mfa, else redirect to MFA setup.
             var claimTwoFactorEnabled =
                User.Claims.FirstOrDefault(t => t.Type == "amr");
+
 
             if (claimTwoFactorEnabled != null && "mfa".Equals(claimTwoFactorEnabled.Value))
             {
