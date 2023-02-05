@@ -7,8 +7,14 @@
     .Group("shared")
     .AllowReordering(true)
     .AllowDropInsideItem(true)
-    .OnDragChange("MaintTreeOnDragChange")
-    .OnDragEnd("MaintTreeOnDragEnd")
+
+     .OnDragChange("MaintTreeOnDragChange")
+     .OnDragEnd("onDragEndH")
+
+    // Not needed for our incarnation.  
+    //.OnDragStart("dragStartH")
+    //.DragTemplate(new JS("dragTemplateH"))
+
     .Content(
         Html.DevExtreme().TreeView()
             .ID("treeViewMaintItems")
@@ -27,16 +33,18 @@
 
             // mirror client/server values.
             .KeyExpr("Id")
+            .ParentIdExpr("ParentId")
+            .ExpandedExpr("IsExpanded")
             .DisplayExpr("Name")
             .ItemsExpr("Items")
-            .ParentIdExpr("ParentId")
+            
             // added below to keep highlight of selected item.
             .SelectionMode(NavSelectionMode.Single)
             .SelectByClick(true)
             .FocusStateEnabled(false)
 
             // behaviour
-            .ExpandedExpr("IsExpanded")
+            
             .OnItemContextMenu("onTreeViewItemContextMenu")
             .OnItemClick("MaintTree_OnClick")
             .ItemTemplate(new JS("MaintTreeNodeTemplate"))

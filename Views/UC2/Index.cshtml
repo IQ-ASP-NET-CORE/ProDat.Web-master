@@ -24,10 +24,8 @@
 <button id="showHideSearch" class="btn btn-secondary btn-sm" type="button" onclick="toggleTreeSearch()" aria-expanded="false" aria-controls="collapseExample">Search</button>
 <style>
     .H4 {
-
         color: #fff;
     }
-
 </style>
 <div class="uc2_content">
     <div class="uc2_main">
@@ -67,8 +65,8 @@
 </div>
 
 
-    <!-- used by FlocSearchTreeView_OnContentReady -->
-    <input type="hidden" id="treeViewSearchQueue" value="" />
+<!-- used by FlocSearchTreeView_OnContentReady -->
+<input type="hidden" id="treeViewSearchQueue" value="" />
 
 
 <!-- Show/Hide search tree div -->
@@ -79,7 +77,7 @@
         myElement.toggleClass("collapse");
 
         // update button text
-        if (hasClass(myElement, "collapse") ) {
+        if (hasClass(myElement, "collapse")) {
             var myBtn = $("#showHideSearch");
             myBtn[0].innerText = "Search";
         }
@@ -95,8 +93,8 @@
 
 </script>
 
-    <!-- General scripting -->
-    <script>
+<!-- General scripting -->
+<script>
 
     $(document).ready(function (){
 
@@ -510,6 +508,7 @@
         }
     }
 
+
     function MaintTreeOnDragEnd(e)
     {
         // do nothing if it hasn't moved.
@@ -525,6 +524,10 @@
 
         // Move out of TreeView to another Component.
         // Allow permitted moves only.
+        console.log("itemData Printed");
+        console.log(fromNode.itemData.nodeType);
+
+
         if (e.toData == 'NonMaintainedDataGrid' || e.toData == 'PMAssembliesDataGrid' || e.toData == 'MaintenanceItemDataGrid' || e.toData == 'UnassignedDataGrid')
         {
             // test for invalid removals.
@@ -726,6 +729,8 @@
     }
     function moveNode(fromNode, toNode, fromItems, toItems, isDropInsideItem, destinationComponent)
     {
+        // fromNodeContainingArray == null if fromNode.parent.itemData.Items = null
+        // findIndex throws error if fromNodeContainingArray == null.
         var fromNodeContainingArray = getNodeContainingArray(fromNode, fromItems);
         var fromIndex = findIndex(fromNodeContainingArray, fromNode.itemData.Id);
         var fromType = fromNode.itemData.nodeType;
@@ -739,22 +744,23 @@
         // get siblings parentId if required.
         if (!isDropInsideItem && toNodeContainingArray.length > 0 && toNodeContainingArray[0].hasOwnProperty('ParentId'))
         {
-            maintParentId = toNodeContainingArray[0].ParentId;;
+            maintParentId = toNodeContainingArray[0].ParentId;
         }
 
         // Ajax - Update DB
-        if (fromType == 'M')
-        {
-            UpdateNodeParent(fromId, maintParentId, destinationComponent);
-        }
-        else if (fromType == 'MI')
-        {
-            UpdateMI(fromId, parentId, maintParentId, destinationComponent);
-        }
-        else if (fromType == 'PMA')
-        {
-            UpdatePMA(fromId, parentId, maintParentId, destinationComponent);
-        }
+        //TODO: Uncomment after Client testing.
+        //if (fromType == 'M')
+        //{
+        //    UpdateNodeParent(fromId, maintParentId, destinationComponent);
+        //}
+        //else if (fromType == 'MI')
+        //{
+        //    UpdateMI(fromId, parentId, maintParentId, destinationComponent);
+        //}
+        //else if (fromType == 'PMA')
+        //{
+        //    UpdatePMA(fromId, parentId, maintParentId, destinationComponent);
+        //}
 
         // Update TreeView
         if (isDropInsideItem)
@@ -774,9 +780,17 @@
     }
     function getNodeContainingArray(node, rootArray)
     {
-        return node === null || node.parent === null
-            ? rootArray
-            : node.parent.itemData.Items;
+        if (node === null || node.parent === null) {
+            return rootArray
+        }
+        else if (node.parent.items != null) {
+            return node.parent.items
+        }
+        else if (node.parent.itemData != null)
+        {
+            return [].concat(node.parent.itemData);
+        }
+
     }
     function findIndex(array, id)
     {
@@ -1074,144 +1088,414 @@
 
 
 
-        </script>
+</script>
 
-        <!-- FLOCSearch-->
-        <script>
+<!-- FLOCSearch-->
+<script>
 
-            function FlocSearch_OnSelectionChanged(e) {
-                // find first selected item
-                var tagId = e.selectedRowKeys[0];
-                var maintType = e.selectedRowsData[0].MaintTypeId;
+    function FlocSearch_OnSelectionChanged(e) {
+        // find first selected item
+        var tagId = e.selectedRowKeys[0];
+        var maintType = e.selectedRowsData[0].MaintTypeId;
 
-                // todo: determine Non Mainttained not by ID, but by text value (R).
-                if (maintType == 4) {
-                    $("#searchcommentary").html("Non-Maintainable content is not in Maintenance Hierarchy.");
-                }
-                else {
-                    $("#searchcommentary").html("");
-                }
+        // todo: determine Non Mainttained not by ID, but by text value (R).
+        if (maintType == 4) {
+            $("#searchcommentary").html("Non-Maintainable content is not in Maintenance Hierarchy.");
+        }
+        else {
+            $("#searchcommentary").html("");
+        }
 
-                if (tagId != null && maintType != 4) {
-                    getFlocPath(tagId);
+        if (tagId != null && maintType != 4) {
+            getFlocPath(tagId);
+        }
+    }
+
+    function getFlocPath(tagId) {
+        $.ajax({
+            url: "/UC2/GetFlocMaintPath",
+            data: { TagId: tagId },
+            success: function (data) {
+                console.log('ok: ' + data);
+                gotoSearchedItem(data);
+            },
+            error: function (data) {
+                console.log('bad: ' + data.responseText);
+            }
+        });
+    }
+
+    function gotoSearchedItem(path) {
+
+        if (path != null) {
+            var arrQueue = path.split("/");
+            var futureQueue = path.split("/");
+            var thisTree = $('#treeViewMaintItems').dxTreeView('instance');
+            var depth = arrQueue.length;
+
+            // find 1st unloaded node
+            for (i = 0; i < arrQueue.length; i++) {
+                if (!thisTree.selectItem(arrQueue[i])) {
+                    // store unfound part of path for OnContentReady.
+                    for (j = 0; j < i; j++) {
+                        futureQueue.shift();
+                    }
+
+                    path = futureQueue.join("/");
+                    $('#treeViewSearchQueue').val(path);
+                    depth = i;
+                    break;
                 }
             }
 
-            function getFlocPath(tagId) {
-                $.ajax({
-                    url: "/UC2/GetFlocMaintPath",
-                    data: { TagId: tagId },
-                    success: function (data) {
-                        console.log('ok: ' + data);
-                        gotoSearchedItem(data);
-                    },
-                    error: function (data) {
-                        console.log('bad: ' + data.responseText);
-                    }
-                });
-            }
-
-            function gotoSearchedItem(path) {
-
-                if (path != null) {
-                    var arrQueue = path.split("/");
-                    var futureQueue = path.split("/");
-                    var thisTree = $('#treeViewMaintItems').dxTreeView('instance');
-                    var depth = arrQueue.length;
-
-                    // find 1st unloaded node
-                    for (i = 0; i < arrQueue.length; i++) {
-                        if (!thisTree.selectItem(arrQueue[i])) {
-                            // store unfound part of path for OnContentReady.
-                            for (j = 0; j < i; j++) {
-                                futureQueue.shift();
-                            }
-
-                            path = futureQueue.join("/");
-                            $('#treeViewSearchQueue').val(path);
-                            depth = i;
-                            break;
-                        }
-                    }
-
-                    // expand loaded nodes and 1st unloaded node
-                    for (i = 0; i < depth; i++) {
-                        thisTree.expandItem(arrQueue[i]);
-                        thisTree.selectItem(arrQueue[i]);
-                        if (i == depth - 1) {
-                            TagProperties_Reload(arrQueue[i]);
-                            thisTree.scrollToItem(arrQueue[i]);
-                        }
-                    }
+            // expand loaded nodes and 1st unloaded node
+            for (i = 0; i < depth; i++) {
+                thisTree.expandItem(arrQueue[i]);
+                thisTree.selectItem(arrQueue[i]);
+                if (i == depth - 1) {
+                    TagProperties_Reload(arrQueue[i]);
+                    thisTree.scrollToItem(arrQueue[i]);
                 }
             }
+        }
+    }
 
-        </script>
+</script>
 
 
 
 
-        <!-- TreeViewDemand Functions -->
-        <script>
-            function treeView_createChildren(parent) {
-                var parentId = parent ? parent.itemData.Id : "";
+<!-- TreeViewDemand Functions -->
+<script>
+    function treeView_createChildren(parent) {
+        var parentId = parent ? parent.itemData.Id : "";
 
-                return $.ajax({
-                    url: "/UC2/GetMaintTreeDemand",
-                    dataType: "json",
-                    data: { parentId: parentId }
-                });
+        return $.ajax({
+            url: "/UC2/GetMaintTreeDemand",
+            dataType: "json",
+            data: { parentId: parentId }
+        });
+    }
+
+    function MaintTreeDemand_OnContentReady(e) {
+
+        // check if request to load searched item is in progress
+        var queue = $('#treeViewSearchQueue').val();
+        if (queue.length > 0) {
+
+            var thisTree = $('#treeViewMaintItems').dxTreeView('instance');
+            var arrQueue = queue.split("/");
+
+            if (arrQueue.length > 1) {
+                thisTree.expandItem(arrQueue[0]);
+            }
+            else {
+                // highlight node, scroll to it, reload B1
+                thisTree.selectItem(arrQueue[0]);
+                TagProperties_Reload(arrQueue[0]);
+                thisTree.scrollToItem(arrQueue[0]);
             }
 
-            function MaintTreeDemand_OnContentReady(e) {
+            // pop 1st item, update treeViewSearchQueue
+            arrQueue.shift();
+            if (arrQueue.length == 0) {
+                $('#treeViewSearchQueue').val("");
+            }
+            else {
+                queue = arrQueue.join("/");
+                $('#treeViewSearchQueue').val(queue);
+            }
+        }
+    }
 
-                // check if request to load searched item is in progress
-                var queue = $('#treeViewSearchQueue').val();
-                if (queue.length > 0) {
+</script>
 
-                    var thisTree = $('#treeViewMaintItems').dxTreeView('instance');
-                    var arrQueue = queue.split("/");
 
-                    if (arrQueue.length > 1) {
-                        thisTree.expandItem(arrQueue[0]);
-                    }
-                    else {
-                        // highlight node, scroll to it, reload B1
-                        thisTree.selectItem(arrQueue[0]);
-                        TagProperties_Reload(arrQueue[0]);
-                        thisTree.scrollToItem(arrQueue[0]);
-                    }
+@*######################
+########################
+######################*@
 
-                    // pop 1st item, update treeViewSearchQueue
-                    arrQueue.shift();
-                    if (arrQueue.length == 0) {
-                        $('#treeViewSearchQueue').val("");
-                    }
-                    else {
-                        queue = arrQueue.join("/");
-                        $('#treeViewSearchQueue').val(queue);
-                    }
-                }
+
+
+
+<script>
+
+   
+    function onDragChangeH(e) {
+        if (e.fromComponent === e.toComponent) {
+            var $nodes = e.element.find(".dx-treeview-node");
+            var isDragIntoChild = $nodes.eq(e.fromIndex).find($nodes.eq(e.toIndex)).length > 0;
+            if (isDragIntoChild) {
+                e.cancel = true;
+            }
+        }
+    }
+
+    function onDragEndH(e) {
+        if (e.fromComponent === e.toComponent && e.fromIndex === e.toIndex) {
+            return;
+        }
+
+        var fromTreeView = getTreeViewH(e.fromData);
+        var toTreeView = getTreeViewH(e.toData);
+
+        var fromNode = findNodeH(fromTreeView, e.fromIndex);
+        var toNode = findNodeH(toTreeView, calculateToIndexH(e));
+
+        var fromItems = fromTreeView.option('items');
+        var toItems = toTreeView.option('items');
+
+        if (e.dropInsideItem && toNode !== null && !toNode.itemData.IsDirectory) {
+            return;
+        }
+
+        // A
+        // Business logic. 
+        if (e.toData == 'NonMaintainedDataGrid' || e.toData == 'PMAssembliesDataGrid' || e.toData == 'MaintenanceItemDataGrid' || e.toData == 'UnassignedDataGrid') {
+            // test for invalid removals.
+            if (fromNode.itemData.nodeType == 'M' && (e.toData != 'UnassignedDataGrid' && e.toData != 'NonMaintainedDataGrid')) {
+                console.log("Move maintenance item to Unnassigned or Non Maintained to remove from Hierarchy");
+                return;
+            }
+            if (fromNode.itemData.nodeType == 'N' || fromNode.itemData.nodeType == 'P') {
+                console.log("Cannot delete Navigational or Package structure.");
+                return;
+            }
+            if (fromNode.itemData.nodeType == 'PMA' && e.toData != 'PMAssembliesDataGrid') {
+                console.log("Drag to PMA grid to remove a PMA");
+                return;
+            }
+            if (fromNode.itemData.nodeType == 'MI' && e.toData != 'MaintenanceItemDataGrid') {
+                console.log("Drag to MI grid to remove an MI");
+                return;
             }
 
-        </script>
-
-        <!-- setting maintTreeNode class and text -->
-        <script>
-            function MaintTreeNodeTemplate(itemData, itemIndex, itemElement) {
-                var iconClass = '';
-                if (itemData.nodeType == 'N') {
-                    iconClass = 'dx-icon dx-icon-activefolder';
-                }
-                else if (itemData.nodeType == 'PMA') {
-                    iconClass = 'dx-icon dx-icon-PMA';
-                }
-                else {
-                    iconClass = 'dx-icon dx-icon-SAP' + itemData.SAPStatusId;
-                }
-                var myDiv = $("<div>");
-                myDiv.append($("<i>").addClass(iconClass));
-                myDiv.append($("<span>").text(itemData.Name));
-                itemElement.append(myDiv);
+            // prompt user. advise this item has children; do you want to remove them all? Y|N Do nothing otherwise. 
+            var ok = true;
+            if (fromNode.children.length > 0) {
+                var msg1 = 'Warning. This Node has ' + fromNode.children.length;
+                var msg2 = fromNode.children.length == 1 ? ' child. ' : ' children. ';
+                msg = msg1 + msg2 + 'Do you want to continue? This Tag and its descendants will have their MaintParent Hierarchy reset.';
+                ok = window.confirm(msg);
             }
-        </script>
+
+            if (ok) {
+                // Update DB params and splice params
+                var fromId = fromNode.itemData.dbId;
+                var parentId = fromNode.itemData.ParentId;
+                var fromIndex = findIndex(fromItems, fromNode.itemData.Id);
+
+                // AJAX Calls.
+                var fromType = fromNode.itemData.nodeType;
+                if (fromType == 'M')
+                    UpdateNodeParent(fromId, null, e.toData);
+                else if (fromType == 'MI')
+                    UpdateMI(fromId, parentId, null, e.toData);
+                else if (fromType == 'PMA')
+                    UpdatePMA(fromId, parentId, null, e.toData);
+
+
+                // ######################
+                // Remove node from tree
+
+                // ## this is for Hierarhical structure
+                // fromNodeContainingArray.splice(fromIndex, 1);
+                // ## this is for Plain Structure
+                fromItems.splice(fromIndex, 1);
+
+                // Refreshes tree after splice
+                fromTreeView.option("items", fromItems);
+
+                // refresh related components
+                if (e.toData == 'NonMaintainedDataGrid')
+                    NonMaintainedDataGrid_Reload();
+                if (e.toData == 'UnassignedDataGrid')
+                    UnassignedDataGrid_Reload();
+            }
+
+        }
+
+        // Move within TreeView
+        if (e.toData == 'MaintTree') {
+
+            //var toTreeView = getTreeView(e.toData);
+            //var toTreeView = getTreeView();
+            //var toNode = findNode(toTreeView, calculateToIndex(e));
+
+            // Illegal actions. Exit if encountered:
+            if (toNode == null)
+                return;
+
+            if ((fromNode.itemData.nodeType == "PMA" || fromNode.itemData.nodeType == "MI") && (toNode.itemData.nodeType != "M" && toNode.itemData.nodeType != "P"))
+                return;
+
+            if (fromNode.itemData.nodeType == "N" && toNode.itemData.nodeType != "N")
+                return;
+
+            if ((fromNode.itemData.nodeType == "M" || fromNode.itemData.nodeType == "P") && (toNode.itemData.nodeType == "MI" || toNode.itemData.nodeType == "PMA"))
+                return;
+
+            var fromTopVisibleNode = getTopVisibleNodeH(fromTreeView);
+            var toTopVisibleNode = getTopVisibleNodeH(toTreeView);
+
+            // moveNode (fromNode, toNode, fromItems, toItems, e.dropInsideItem, e.toData);
+            moveNodeH(fromNode, toNode, fromItems, toItems, e.dropInsideItem, e.toData);
+
+            // Refresh Treeview to reflect changes
+            fromTreeView.option("items", fromItems);
+            toTreeView.option("items", toItems);
+
+            // keep the starting node in view.
+            fromTreeView.scrollToItem(fromTopVisibleNode);
+            toTreeView.scrollToItem(toTopVisibleNode);
+        }
+    }
+
+    function getTreeViewH() {
+        return $('#treeViewMaintItems').dxTreeView('instance');
+    }
+
+    function calculateToIndexH(e) {
+        if (e.fromComponent != e.toComponent || e.dropInsideItem) {
+            return e.toIndex;
+        }
+
+        return e.fromIndex >= e.toIndex
+            ? e.toIndex
+            : e.toIndex + 1;
+    }
+
+
+    function findNodeH(treeView, index) {
+        var nodeElement = treeView.element().find('.dx-treeview-node')[index];
+        if (nodeElement) {
+            return findNodeByIdH(treeView.getNodes(), nodeElement.getAttribute('data-item-id'));
+        }
+        return null;
+    }
+
+    function findNodeByIdH(nodes, id) {
+        for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i].itemData.Id == id) {
+                return nodes[i];
+            }
+            if (nodes[i].children) {
+                var node = findNodeByIdH(nodes[i].children, id);
+                if (node != null) {
+                    return node;
+                }
+            }
+        }
+        return null;
+    }
+
+    function moveNodeH(fromNode, toNode, fromItems, toItems, isDropInsideItem, destinationComponent) {
+
+        var fromIndex = findIndexH(fromItems, fromNode.itemData.Id);
+        fromItems.splice(fromIndex, 1);
+
+        var toIndex = toNode === null || isDropInsideItem
+            ? toItems.length
+            : findIndexH(toItems, toNode.itemData.Id);
+        toItems.splice(toIndex, 0, fromNode.itemData);
+
+        var fromType = fromNode.itemData.nodeType;
+        var parentId = fromNode.itemData.ParentId;
+        var fromId = fromNode.itemData.dbId;
+        // note: toNode.key within tree is always a TagId, not MI/PMA id.
+        // if not dropInsideItem, then get maintParentId from destination sibling.
+        var maintParentId = toNode.key;
+        if (!isDropInsideItem) {
+            maintParentId = toNode != null ? toNode.itemData.ParentId : undefined;
+        }
+
+        // Ajax Call to update nodes parent. 
+        if (fromType == 'M' || fromType == 'N') {
+            UpdateNodeParent(fromId, maintParentId, destinationComponent);
+        }
+        else if (fromType == 'MI') {
+            UpdateMI(fromId, parentId, maintParentId, destinationComponent);
+        }
+        else if (fromType == 'PMA') {
+            UpdatePMA(fromId, parentId, maintParentId, destinationComponent);
+        }
+
+        // gui updates required as using flat data structure. No effect on data itself.
+        moveChildrenH(fromNode, fromItems, toItems);
+
+        if (isDropInsideItem)
+        {
+            fromNode.itemData.ParentId = toNode.itemData.Id;
+        }
+        else
+        {
+            fromNode.itemData.ParentId = toNode != null ? toNode.itemData.ParentId : undefined;
+        }
+        // ORIG END
+
+    }
+
+    function moveChildrenH(node, fromItems, toItems) {
+        if (!node.itemData.IsDirectory) {
+            return;
+        }
+
+        node.children.forEach(function (child) {
+            if (child.itemData.IsDirectory) {
+                moveChildrenH(child, fromItems, toItems);
+            }
+
+            var fromIndex = findIndexH(fromItems, child.itemData.Id);
+            fromItems.splice(fromIndex, 1);
+            toItems.splice(toItems.length, 0, child.itemData);
+        });
+    }
+
+    function findIndexH(array, id) {
+        var idsArray = array.map(function (elem) { return elem.Id; });
+        return idsArray.indexOf(id);
+    }
+
+    function getTopVisibleNodeH(component) {
+        var treeViewElement = component.element().get(0);
+        var treeViewTopPosition = treeViewElement.getBoundingClientRect().top;
+        var nodes = treeViewElement.querySelectorAll(".dx-treeview-node");
+        for (var i = 0; i < nodes.length; i++) {
+            var nodeTopPosition = nodes[i].getBoundingClientRect().top;
+            if (nodeTopPosition >= treeViewTopPosition) {
+                return nodes[i];
+            }
+        }
+
+        return null;
+    }
+
+    function mapIconsH(item) {
+        if (item.Icon) {
+            item.icon = item.Icon;
+        }
+        return item;
+    }
+
+
+</script>
+
+<!-- setting maintTreeNode class and text -->
+<script>
+    function MaintTreeNodeTemplate(itemData, itemIndex, itemElement) {
+        var iconClass = '';
+        if (itemData.nodeType == 'N') {
+            iconClass = 'dx-icon dx-icon-activefolder';
+        }
+        else if (itemData.nodeType == 'PMA') {
+            iconClass = 'dx-icon dx-icon-PMA';
+        }
+        else {
+            iconClass = 'dx-icon dx-icon-SAP' + itemData.SAPStatusId;
+        }
+        var myDiv = $("<div>");
+        myDiv.append($("<i>").addClass(iconClass));
+        myDiv.append($("<span>").text(itemData.Name));
+        itemElement.append(myDiv);
+    }
+</script>
