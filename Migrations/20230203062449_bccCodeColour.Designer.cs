@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProDat.Web2.Data;
 
 namespace ProDat.Web2.Migrations
 {
     [DbContext(typeof(TagContext))]
-    partial class TagContextModelSnapshot : ModelSnapshot
+    [Migration("20230203062449_bccCodeColour")]
+    partial class bccCodeColour
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

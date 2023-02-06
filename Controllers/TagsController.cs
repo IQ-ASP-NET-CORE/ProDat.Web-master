@@ -180,7 +180,7 @@ namespace ProDat.Web2.Controllers
 
             _logger.LogInformation("completed ViewData Extracts {Time}", DateTime.UtcNow);
 
-            // SAP Validation 
+            // SAP Validation
             var EAId = _context.EntityAttribute.Where(x => x.EntityName == "Tag")
                             .Include(x => x.EntityAttributeRequirements);
             ViewData["SapValidationJson"] = JsonConvert.SerializeObject(EAId);
@@ -296,7 +296,7 @@ namespace ProDat.Web2.Controllers
         }
 
         // POST: Tags/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -340,7 +340,7 @@ namespace ProDat.Web2.Controllers
         }
 
         // POST: Tags/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -436,7 +436,7 @@ namespace ProDat.Web2.Controllers
                 return BadRequest(new { reset_value = "", errors = Validation_errors });
             }
 
-            // prevent circular setting of MaintParent.. 
+            // prevent circular setting of MaintParent..
             // TODO: handle problem with Ajax, so that value is reset in UI.
             if (attributeName == "MaintParentId")
             {
@@ -474,8 +474,8 @@ namespace ProDat.Web2.Controllers
                 }
                 else
                 {
-                    // standard int.parse will throw exception if null or invalid data. 
-                    // As null is allowed for optional fields, need to handle this and let Validator do its job. 
+                    // standard int.parse will throw exception if null or invalid data.
+                    // As null is allowed for optional fields, need to handle this and let Validator do its job.
                     int temp;
                     intNewValue = int.TryParse(newValue, out temp) ? temp : default(int?);
                 }
@@ -541,7 +541,7 @@ namespace ProDat.Web2.Controllers
 
         }
 
-        // faster method to retrieve hierarchy. Used to test for creation of circular references. 
+        // faster method to retrieve hierarchy. Used to test for creation of circular references.
         public int CheckTagHierarchy(int TagId, int sourceTagId, int depth = 0, int counter = 0)
         {
             Tag tag = _context.Tag
@@ -566,7 +566,7 @@ namespace ProDat.Web2.Controllers
 
         public bool isCircularReference(int TagId, int ParentId)
         {
-            // Test if by setting this tags MaintParentId to ParentId, we create a circular reference. 
+            // Test if by setting this tags MaintParentId to ParentId, we create a circular reference.
             var hier = CheckTagHierarchy(TagId, ParentId);
             return hier > 1;
         }
@@ -582,7 +582,7 @@ namespace ProDat.Web2.Controllers
                                     .Where(t => t.ColumnName == attributeName)
                                     .FirstOrDefaultAsync();
 
-                // If nothing returned, error out, as you are modifying a viewColumn that dosent exist. 
+                // If nothing returned, error out, as you are modifying a viewColumn that dosent exist.
                 if (ViewCol == null)
                     return BadRequest();
 
@@ -615,7 +615,7 @@ namespace ProDat.Web2.Controllers
 
         }
 
-        // Return Excel document to User. 
+        // Return Excel document to User.
         // Takes current TagRegisterSearchViewModel to filter.
         public IActionResult Excel(string currentFilter)
         {
@@ -664,7 +664,7 @@ namespace ProDat.Web2.Controllers
                 //InverseMaintParents takes long time to query as each Tag hashes whole table to get parent.
                 ignoreFields.Add("InverseMaintParents");
 
-                // Fields to export = distinct set of fieldnames in ColumnSets, so is controlled by Admin table. 
+                // Fields to export = distinct set of fieldnames in ColumnSets, so is controlled by Admin table.
                 List<string> fieldsToExport = new List<string> { };
                 var tmp = _context.ColumnSets
                                   .Where(x => x.ColumnSetsEntity == "Tag")
@@ -685,7 +685,7 @@ namespace ProDat.Web2.Controllers
                     if (ignoreFields.Contains(property.Name) || property.Name.EndsWith("Id"))
                         continue;
 
-                    // If not basic attribute, it is an entity. 
+                    // If not basic attribute, it is an entity.
                     // Drill into entity and retrieve property ending with Num, else Name
                     if (property.ModelType != typeof(string) && property.ModelType != typeof(int) && property.ModelType != typeof(DateTime) && property.ModelType != typeof(bool))
                     {

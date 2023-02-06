@@ -23,8 +23,8 @@
                             .DataSource( d => d
                                 .Mvc()
                                 .Controller("Lookups")
-                                .LoadParams(new { ColumnSetsEntity = "Tag" })
-                                .LoadAction("ColumnSets_Lookup")
+                            .LoadParams(new { ColumnSetsEntity = "Tag" })
+                            .LoadAction("test_Lookup")
                                 .Key("Text"))
                             .DisplayExpr("Text")
                             .ValueExpr("Text")
@@ -68,7 +68,7 @@
     .OnContentReady("TagRegister_OnContentReady")
     .OnToolbarPreparing("TagRegister_OnToolbarPreparing")
     .ShowBorders(true)
-    .FilterRow(f => f.Visible(true)) // won't txt search lookup columns. 
+    .FilterRow(f => f.Visible(true)) // won't txt search lookup columns.
                                      //.SelectionFilter(true)
     .HeaderFilter(x=> x.Visible(true))
     .ColumnChooser(c=> c
@@ -699,7 +699,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
 
-<!-- override basic functionality of dxdatagrid. 
+<!-- override basic functionality of dxdatagrid.
     NOT SUPPORTED BY DEVEX. -->
 <script>
         DevExpress.ui.dxDataGrid.registerModule("columnChooserSorting", {
@@ -751,8 +751,8 @@
             });
     }
 
-   
-    // Override default search for specified lookup columns. 
+
+    // Override default search for specified lookup columns.
     function OnEditorPreparing_lookupCols(e) {
         if (e.parentType === "filterRow" && e.dataField === "MaintLocationId") {
             e.editorName = "dxTextBox";

@@ -22,7 +22,7 @@ using ProDat.Web2.ViewModels;
 namespace ProDat.Web2.Controllers
 {
     /*
-     * Provides functionality to manage Tag Register. 
+     * Provides functionality to manage Tag Register.
      * Note: Star lookup data sources are defined in Lookups Controller.
      */
 
@@ -43,7 +43,7 @@ namespace ProDat.Web2.Controllers
 
         public async Task<IActionResult> Index(string columnSetsName = "Default")
         {
-            //TODO:  Update Dictionary<str, int> to <str, obj> so we can capture default width as well. 
+            //TODO:  Update Dictionary<str, int> to <str, obj> so we can capture default width as well.
             Dictionary<string, ColParams> colIndex = new Dictionary<string, ColParams>();
             var col_customisations = await _context.ColumnSets
                                         .Where(x => x.ColumnSetsName == columnSetsName)
@@ -61,7 +61,7 @@ namespace ProDat.Web2.Controllers
                 colIndex.Add(cust.ColumnName, new ColParams(cust.ColumnOrder, cust.ColumnWidth));
             }
 
-            // SAP Validation 
+            // SAP Validation
             var EAId = _context.EntityAttribute
                            .Where(x => x.EntityName == "TaskListHeader")
                            .Include(x => x.EntityAttributeRequirements);
@@ -77,12 +77,12 @@ namespace ProDat.Web2.Controllers
 
 
 
-        #region Create new MaintPlan with a Form View. 
+        #region Create new MaintPlan with a Form View.
 
         [HttpGet]
         public IActionResult Create()
         {
-            // Load up Create Form without data. 
+            // Load up Create Form without data.
             ViewBag.GlobalProjectDescription = _context.Project.First().ProjectName;
             return View();
         }
@@ -91,7 +91,7 @@ namespace ProDat.Web2.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(string values)
         {
-            // Post from Create Form. 
+            // Post from Create Form.
             var model = new TaskListHeader();
             var valuesDict = JsonConvert.DeserializeObject<IDictionary>(values);
             PopulateModel(model, valuesDict);
@@ -228,7 +228,7 @@ namespace ProDat.Web2.Controllers
             {
                 model.TaskListClassId = values[CLASS_ID] != null ? Convert.ToInt32(values[CLASS_ID]) : (int?)null;
             }
-            
+
         }
 
         private string GetFullErrorMessage(ModelStateDictionary modelState)
@@ -252,12 +252,12 @@ namespace ProDat.Web2.Controllers
 
         public Object TLHRegister_GetData(DataSourceLoadOptions loadOptions)
         {
-            // Oh well, this causes a loop, so will need to find waht field is causing an objhect depth to exceed 32 or be cyclic. 
+            // Oh well, this causes a loop, so will need to find waht field is causing an objhect depth to exceed 32 or be cyclic.
             // var dataSet = _context.Tag.AsQueryable();
 
             var dataSet = _context.TaskListHeader;
                               //select new { rec.TagId, rec.TagNumber, rec.TagService, rec.TagFloc, rec.TagFlocDesc, rec.EngDiscId, rec.SubSystem.SubSystemNum };
-                          
+
 
             return DataSourceLoader.Load(dataSet, loadOptions);
         }
@@ -267,7 +267,7 @@ namespace ProDat.Web2.Controllers
         public IActionResult TLHRegister_Insert(string values)
         {
             // added below to remove 'MaintPlanId=\"xx\",' as ID will cause error in MaintPlan on add.
-            // this shouldnt happen... Add should ignore PK field(?) to investigate. 
+            // this shouldnt happen... Add should ignore PK field(?) to investigate.
             var orgTaskListHeaderId = "";
 
             if (values.Contains("TaskListHeaderId"))
@@ -291,12 +291,12 @@ namespace ProDat.Web2.Controllers
                 return BadRequest();
 
             _context.TaskListHeader.Add(newObj);
-            _context.SaveChanges(); // need to save to set TaskListHeaderId. 
+            _context.SaveChanges(); // need to save to set TaskListHeaderId.
 
             // clone old TLH's TLO's if any.
             var tlos = _context.TaskListOperations
                         .Where(x => x.TaskListHeaderId == int.Parse(orgTaskListHeaderId))
-                        .AsNoTracking(); // AsNoTracking required so we dont accidently modify originals. 
+                        .AsNoTracking(); // AsNoTracking required so we dont accidently modify originals.
 
             foreach (TaskListOperations tlo in tlos)
             {
@@ -320,7 +320,7 @@ namespace ProDat.Web2.Controllers
         [HttpPut]
         public IActionResult TLHRegister_Update(int key, string values)
         {
-            // TODO override to update tag state. 
+            // TODO override to update tag state.
             var order = _context.TaskListHeader.First(o => o.TaskListHeaderId == key);
             JsonConvert.PopulateObject(values, order);
 
@@ -428,14 +428,14 @@ namespace ProDat.Web2.Controllers
             return DataSourceLoader.Load(data, loadOptions);
         }
 
-        #endregion 
+        #endregion
 
 
         public IActionResult Excel(string currentFilter)
         {
             // Retrieve all TLH into recordset. State which star models to include.
             var tagModel = (from t in _context.TaskListHeader
-                                
+
                                 .Include(t => t.MaintPackage)
                                 .Include(t => t.MaintStrategy)
                                 .Include(t => t.MaintWorkCentre)
@@ -461,7 +461,7 @@ namespace ProDat.Web2.Controllers
                 // fieldNames to ignore.
                 ICollection<string> ignoreFields = new System.Collections.ObjectModel.Collection<string>();
 
-                // Fields to export = distinct set of fieldnames in ColumnSets, so is controlled by Admin table. 
+                // Fields to export = distinct set of fieldnames in ColumnSets, so is controlled by Admin table.
                 List<string> fieldsToExport = new List<string> { };
                 var tmp = _context.ColumnSets
                                   .Where(x => x.ColumnSetsEntity == "TaskListHeader")
@@ -485,7 +485,7 @@ namespace ProDat.Web2.Controllers
                     if (ignoreFields.Contains(property.Name) || property.Name.EndsWith("Id"))
                         continue;
 
-                    // If not basic attribute, it is an entity. 
+                    // If not basic attribute, it is an entity.
                     // Drill into entity and retrieve property ending with Num, else Name
                     if (property.ModelType != typeof(string) && property.ModelType != typeof(int) && property.ModelType != typeof(DateTime) && property.ModelType != typeof(bool))
                     {
@@ -528,7 +528,7 @@ namespace ProDat.Web2.Controllers
                                 }
                             }
 
-                            
+
                         }
                     }
                     else

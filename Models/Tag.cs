@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProDat.Web2.Migrations;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -24,35 +25,35 @@ namespace ProDat.Web2.Models
         }
 
 
-        // Tag Attributes. 
+        // Tag Attributes.
 
         public int TagId { get; set; }
-		
+
 		[Required]
         [Display(Name ="Tag Number")]
         public string TagNumber { get; set; }
 
         [Display(Name = "Tag Service")]
         public string TagService { get; set; }
-		
+
 		[Display(Name ="FLOC"), MaxLength(100, ErrorMessage ="Max Length is 100")]
         public string TagFloc { get; set; }
-        
+
 		[Display(Name = "Sub Sys.")]
 		public int? SubSystemId { get; set; }
-        
+
         [Display(Name = "Eng Class")]
         public int? EngClassId { get; set; }
-        
+
 		[Display(Name = "Eng. Parent")]
 		public int? EngParentId { get; set; }
 
         [Display(Name = "Maint Parent")]
         public int? MaintParentId { get; set; }
-        
+
 		[Display(Name = "Disc")]
 		public int? EngDiscId { get; set; }
-        
+
 		[Display(Name = "Maint. Loc.")]
 		public int? MaintLocationId { get; set; }
 
@@ -73,43 +74,43 @@ namespace ProDat.Web2.Models
 
         [Display(Name = "Edc")]
         public int? MaintEdcCodeId { get; set; }
-        
-        [Display(Name = "struct. Indicator")] 
+
+        [Display(Name = "struct. Indicator")]
         public int? MaintStructureIndicatorId { get; set; }
-        
+
         [Display(Name = "Comm. SubSys")]
         public int? CommissioningSubsystemId { get; set; }
-        
+
         [Display(Name = "Comm. Class")]
         public int? CommClassId { get; set; }
-        
+
         [Display(Name = "Comm. Zone")]
         public int? CommZoneId { get; set; }
-        
+
         [Display(Name = "Plan Group")]
         public int? MaintPlannerGroupId { get; set; }
-        
+
         [Display(Name = "Plan")]
         public int? MaintenanceplanId { get; set; }
-        
+
 		[Display(Name = "Crit.")]
 		public int? MaintCriticalityId { get; set; }
-        
+
         [Display(Name = "Perf Std")]
         public int? PerformanceStandardId { get; set; }
-        
+
         //[Display(Name = "Maint. Class")]
         //public int? MaintClassId { get; set; }
-        
+
         [Display(Name = "Key Doc")]
         public int? KeyDocId { get; set; }
 
         [Display(Name = "PO")]
         public int? PoId { get; set; }
-        
+
         [Display(Name = "Source")]
         public string TagSource { get; set; }
-        
+
         public bool TagDeleted { get; set; }
 
         [Display(Name = "Run to Fail")]
@@ -117,12 +118,12 @@ namespace ProDat.Web2.Models
 
         [Display(Name = "FLOC Description"), MaxLength(100, ErrorMessage = "Max Length is 100")]
         public string TagFlocDesc { get; set; }
-        
+
         public int? FlocTypeId { get; set; }
 
 		[Display(Name = "Open Query")]
 		public bool TagMaintQuery { get; set; }
-        
+
         [Display(Name = "Comment")]
         public string TagComment { get; set; }
 
@@ -138,13 +139,13 @@ namespace ProDat.Web2.Models
 
         [Display(Name = "Vib")]
         public int? VibId { get; set; }
-        
+
         [Display(Name = "Non Eng")]
         public bool Tagnoneng { get; set; }
-        
+
         [Display(Name = "Vendor Number")]
         public string TagVendorTag { get; set; }
-		
+
 		[Display(Name = "Type")]
         public int? MaintObjectTypeId { get; set; }
 
@@ -156,16 +157,16 @@ namespace ProDat.Web2.Models
 
         [Display(Name = "RcmId")]
         public int? RcmId { get; set; }
-        
+
         [Display(Name = "Raw Number")]
         public string TagRawNumber { get; set; }
-        
+
         [Display(Name = "Raw Desc")]
         public string TagRawDesc { get; set; }
-        
+
         [Display(Name = "PS Review Team")]
         public int? MaintScePsReviewTeamId { get; set; }
-        
+
         [Display(Name = "Sce PS Justification")]
         public string MaintScePsJustification { get; set; }
 
@@ -174,10 +175,10 @@ namespace ProDat.Web2.Models
 
         [Display(Name = "RbmId")]
         public int? RbmId { get; set; }
-        
+
         [Display(Name = "Manufacturer")]
         public int? ManufacturerId { get; set; }
-        
+
         [Display(Name = "Ex Method")]
         public int? ExMethodId { get; set; }
 
@@ -235,19 +236,23 @@ namespace ProDat.Web2.Models
         [Display(Name = "WBS Element Id")]
         public int? WBSElementId { get; set; }
 
+        public int? EquipTypeID { get; set; }
+
 
         public int? PbsId { get; set; }
 
         public int? EnvZoneId { get; set; }
 
         // FK Entities
+        [ForeignKey("EquipTypeID")]
+        public virtual EquipmentTypes EquipmentType { get; set; }
 
         public virtual EnvZone EnvZone { get; set; }
 
         public virtual Pbs Pbs { get; set; }
-        
+
         public virtual CommZone CommZone { get; set; }
-        
+
         public virtual CommClass CommClass { get; set; }
 
         public virtual MaintStatus MaintStatus { get; set; }
@@ -256,10 +261,10 @@ namespace ProDat.Web2.Models
         public virtual MaintEdcCode MaintEdcCode { get; set; }
         public virtual EngClass EngClass { get; set; }
         public virtual EngDisc EngDisc { get; set; }
-        
+
 		[ForeignKey("EngParentID")]
 		public virtual Tag EngParent { get; set; }
-		
+
         public virtual EngStatus EngStatus { get; set; }
         public virtual ExMethod ExMethod { get; set; }
 
@@ -267,7 +272,7 @@ namespace ProDat.Web2.Models
         public virtual Ipf Ipf { get; set; }
         public virtual Doc KeyDoc { get; set; }
         public virtual Location Location { get; set; }
-        
+
         //public virtual MaintClass MaintClass { get; set; }
         public virtual MaintCriticality MaintCriticality { get; set; }
         public virtual MaintenancePlant MaintenancePlant { get; set; }

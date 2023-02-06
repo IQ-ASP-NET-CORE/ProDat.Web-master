@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Vml.Office;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Logging;
@@ -28,6 +29,9 @@ namespace ProDat.Web2.Data
         public virtual DbSet<TagViewColumns> TagViewColumns { get; set; }
         public virtual DbSet<TagViewColumnsUser> TagViewColumnsUser { get; set; }
 
+        public virtual DbSet<BccCode> BccCode { get; set; }
+        public virtual DbSet<BOM> BOM { get; set; }
+
         public virtual DbSet<SAPExportDetail> SAPExportDetail { get; set; }
 
         public virtual DbSet<UC2ViewColumns> UC2ViewColumns { get; set; }
@@ -52,11 +56,11 @@ namespace ProDat.Web2.Data
         public virtual DbSet<EngClass> EngClass { get; set; }
         public virtual DbSet<EngDataClass> EngDataClass { get; set; }
         public virtual DbSet<EngClassRequiredDocs> EngClassRequiredDocs { get; set; }
-
+        public virtual DbSet<EquipmentTypes> EquipmentTypes { get; set; }
         public virtual DbSet<EngDataClassxEngDataCode> EngDataClassxEngDataCode { get; set; }
         public virtual DbSet<EngDataCode> EngDataCode { get; set; }
         public virtual DbSet<EngDataCodeDropDown> EngDataCodeDropDown { get; set; }
-
+        public virtual DbSet<ItemCatalog> ItemCatalog { get; set; }
         public virtual DbSet<EngDisc> EngDisc { get; set; }
         //public virtual DbSet<EngPlant> EngPlant { get; set; }
         public virtual DbSet<EngStatus> EngStatus { get; set; }
@@ -123,6 +127,7 @@ namespace ProDat.Web2.Data
         public virtual DbSet<ScePsreview> ScePsreview { get; set; }
         public virtual DbSet<Sp> Sp { get; set; }
         public virtual DbSet<SubSystem> SubSystem { get; set; }
+        public virtual DbSet<SuperClass> SuperClass { get; set; }
         public virtual DbSet<SysCond> SysCond { get; set; }
         public virtual DbSet<Systems> System { get; set; }
         public virtual DbSet<Tag> Tag { get; set; }
@@ -135,7 +140,7 @@ namespace ProDat.Web2.Data
         public virtual DbSet<TaskListOperations> TaskListOperations { get; set; }
         public virtual DbSet<TaskListXscePsreview> TaskListXscePsreview { get; set; }
         public virtual DbSet<Vib> Vib { get; set; }
-        
+
         public virtual DbSet<Priority> Priority { get; set; }
 
         public virtual DbSet<SchedulingPeriodUOM> SchedulingPeriodUOM { get; set; }
@@ -330,7 +335,7 @@ namespace ProDat.Web2.Data
                     .HasConstraintName("FK_CommZone_Project");
             });
 
-            
+
 
 
             modelBuilder.Entity<ControlKey>(entity =>
@@ -358,7 +363,7 @@ namespace ProDat.Web2.Data
             //        .HasForeignKey(d => d.CompanyId)
             //        .HasConstraintName("FK_Division_Company");
             //});
-            
+
 
             modelBuilder.Entity<Doc>(entity =>
             {
@@ -403,7 +408,7 @@ namespace ProDat.Web2.Data
                 entity.Property(e => e.DocTypeName)
                     .IsRequired()
                     .HasMaxLength(255);
-               
+
             });
 
 
@@ -420,6 +425,8 @@ namespace ProDat.Web2.Data
                 entity.Property(e => e.EngClassName)
                     .IsRequired()
                     .HasMaxLength(255);
+
+
             });
 
             modelBuilder.Entity<EngClassRequiredDocs>(entity =>
@@ -507,13 +514,13 @@ namespace ProDat.Web2.Data
             modelBuilder.Entity<EngStatus>(entity =>
             {
                 entity.HasIndex(e => e.EngStatusName)
-                    
+
                     .IsUnique();
 
                 entity.Property(e => e.EngStatusId).HasColumnName("EngStatusID");
 
                 entity.Property(e => e.EngStatusName)
-                    
+
                     .HasMaxLength(255);
 
             });
@@ -703,7 +710,7 @@ namespace ProDat.Web2.Data
 
                 entity.Property(e => e.ParentLocationID);
 
-               
+
 
                 entity.HasOne(d => d.Area)
                     .WithMany(p => p.Locations)
@@ -711,7 +718,7 @@ namespace ProDat.Web2.Data
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Location_Area");
 
-                
+
             });
 
             modelBuilder.Entity<MaintArea>(entity =>
@@ -1518,6 +1525,26 @@ namespace ProDat.Web2.Data
                     .HasForeignKey(d => d.SystemsId)
                     .HasConstraintName("FK_SubSystem_System");
             });
+
+            modelBuilder.Entity<SuperClass>(entity =>
+            {
+                entity.HasIndex(e => e.SuperclassID)
+                                .HasName("U_SuperClass")
+                                .IsUnique();
+                entity.Property(e => e.SuperclassID).HasColumnName("SuperclassID");
+
+                entity.Property(e => e.SuperclassName)
+                                .IsRequired()
+                                .HasColumnName("SuperclassName")
+                                .HasMaxLength(50);
+
+
+                entity.Property(e => e.Superclassdescription)
+                                .IsRequired()
+                                .HasMaxLength(255);
+
+            });
+
 
             modelBuilder.Entity<SysCond>(entity =>
             {

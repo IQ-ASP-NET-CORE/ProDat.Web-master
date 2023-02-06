@@ -42,7 +42,7 @@ namespace ProDat.Web2.Controllers
             else
             {
                 return Redirect(
-                    // Modified by MWM 
+                    // Modified by MWM
                     "/Identity/Account/Login");
                     //"/Identity/Account/Manage/TwoFactorAuthentication");
             }
@@ -68,12 +68,12 @@ namespace ProDat.Web2.Controllers
                           .Where(x=> x.TagDeleted == false)
                           .Include(y=> y.FlocXmaintItems)
                           .OrderBy(x=> x.TagNumber)
-                          .Select(x=> new FlocListingDataGridUC3ViewModel { 
-                              TagId = x.TagId, 
-                              TagFloc = x.TagFloc, 
-                              TagFlocDesc = x.TagFlocDesc, 
-                              RTF = x.RTF, 
-                              MaintPlannerGroupId = x.MaintPlannerGroupId, 
+                          .Select(x=> new FlocListingDataGridUC3ViewModel {
+                              TagId = x.TagId,
+                              TagFloc = x.TagFloc,
+                              TagFlocDesc = x.TagFlocDesc,
+                              RTF = x.RTF,
+                              MaintPlannerGroupId = x.MaintPlannerGroupId,
                               MICount = x.FlocXmaintItems.Count
                           });
 
@@ -100,7 +100,7 @@ namespace ProDat.Web2.Controllers
         [HttpPut]
         public IActionResult FlocListingDataGridUC3_Update(int key, string values)
         {
-            // TODO override to update tag state. 
+            // TODO override to update tag state.
             var order = _context.Tag.First(o => o.TagId == key);
             JsonConvert.PopulateObject(values, order);
 
@@ -164,7 +164,7 @@ namespace ProDat.Web2.Controllers
             {
                 _context.FlocXmaintItem.Add(FlocXMI);
                 _context.SaveChanges();
-                
+
             }
 
             // test if first floc.
@@ -212,7 +212,7 @@ namespace ProDat.Web2.Controllers
                     mi.HeaderFlocId = null;
                     _context.SaveChanges();
                 }
-                
+
                 return Json("OK");
             }
             return Json("BAD");
@@ -305,7 +305,7 @@ namespace ProDat.Web2.Controllers
                             .Include(x=> x.MaintItem)
                             //.OrderBy(x=> x.TaskListHeader.TaskListGroup.TaskListGroupName)
                             .OrderBy(x => x.TaskListHeader.Counter)
-                            .Select(x=> new TaskListHeader_UC3v2 {   
+                            .Select(x=> new TaskListHeader_UC3v2 {
                                                 TaskListHeader = new Models.TaskListHeader
                                                 {
                                                     TaskListHeaderId = x.TaskListHeaderId,
@@ -344,13 +344,13 @@ namespace ProDat.Web2.Controllers
                             .Where(e => e.TaskListHeaderId == TaskListHeaderId);
                 return DataSourceLoader.Load(TLOs, loadOptions);
         }
-        
+
         [HttpGet]
         public IActionResult MaintenanceStrategiesForm_Reload(int Height, int Width, int? Parent)
         {
             return ViewComponent("MaintenanceStrategiesForm", new { height = Height, width = Width, parent = Parent });
         }
-        
+
         [HttpGet]
         public IActionResult MaintPlanForm_Reload(int Height, int Width, int? Parent)
         {
@@ -453,7 +453,7 @@ namespace ProDat.Web2.Controllers
             else if (propertyType == "DateTime")
             {
                 // 'Tue Jan 08 1901 00:00:00 GMT+0800 (W. Australia Standard Time)'
-                // ugly.. see if any built in tools for this. 
+                // ugly.. see if any built in tools for this.
                 var converted = DateTime.Parse(newValue.Substring(4,11));
                 bool Valid = Validator.TryValidateProperty(converted, vc, results);
                 if (Valid)
@@ -581,7 +581,7 @@ namespace ProDat.Web2.Controllers
             else if (propertyType == "DateTime")
             {
                 // 'Tue Jan 08 1901 00:00:00 GMT+0800 (W. Australia Standard Time)'
-                // ugly.. see if any built in tools for this. 
+                // ugly.. see if any built in tools for this.
                 var converted = DateTime.Parse(newValue.Substring(4, 11));
                 bool Valid = Validator.TryValidateProperty(converted, vc, results);
                 if (Valid)
@@ -686,7 +686,7 @@ namespace ProDat.Web2.Controllers
             else if (propertyType == "DateTime")
             {
                 // 'Tue Jan 08 1901 00:00:00 GMT+0800 (W. Australia Standard Time)'
-                // ugly.. see if any built in tools for this. 
+                // ugly.. see if any built in tools for this.
                 var converted = DateTime.Parse(newValue.Substring(4, 11));
                 bool Valid = Validator.TryValidateProperty(converted, vc, results);
                 if (Valid)
@@ -791,7 +791,7 @@ namespace ProDat.Web2.Controllers
             else if (propertyType == "DateTime")
             {
                 // 'Tue Jan 08 1901 00:00:00 GMT+0800 (W. Australia Standard Time)'
-                // ugly.. see if any built in tools for this. 
+                // ugly.. see if any built in tools for this.
                 var converted = DateTime.Parse(newValue.Substring(4, 11));
                 bool Valid = Validator.TryValidateProperty(converted, vc, results);
                 if (Valid)

@@ -9,10 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 using ProDat.Web2.Models;
 using ProDat.Web2.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
 
 namespace ProDat.Web2.Controllers
 {
-    // used by UC1, 2 & 3 to retrieve lookup data. 
+    // used by UC1, 2 & 3 to retrieve lookup data.
     public class LookupsController : Controller
     {
         private readonly TagContext _context;
@@ -167,7 +168,7 @@ namespace ProDat.Web2.Controllers
             return DataSourceLoader.Load(retVal, loadOptions);
         }
 
-        
+
         [HttpGet]
         public object TaskListGroup_Lookup(DataSourceLoadOptions loadOptions)
         {
@@ -296,8 +297,108 @@ namespace ProDat.Web2.Controllers
                 var retVal = lookup.Distinct();
                 return DataSourceLoader.Load(retVal, loadOptions);
             }
-            
+
         }
+        //Just selected all the values in the superclass and picks the description
+        [HttpGet]
+        public object SuperClass_Lookup(DataSourceLoadOptions loadOptions)
+        {
+            var lookup = _context.SuperClass
+                .OrderBy(x => x.SuperclassName)
+                .Select(x => new
+                {
+                    Value = 0,
+                    Text = x.Superclassdescription,
+                    Short = x.SuperclassName
+                });
+
+            var retVal = lookup.ToList();
+            if (User.IsInRole("Admin"))
+                retVal.Insert(0, new { Value = -1, Text = "(Manage Listing)", Short = "." });
+
+            return DataSourceLoader.Load(retVal, loadOptions);
+
+        }
+
+        //Ues the Id of the superclass to call the engclasses values
+        [HttpGet]
+        public object EngClassBySuperClass_Lookup(DataSourceLoadOptions loadOptions, int superClassId)
+        {
+
+            var lookup = from i in _context.EngClass
+                        .Where (i => i.SuperClassID == superClassId)
+                         orderby i.EngClassId
+                         select new
+                         {
+                             Value = i.EngClassId,
+                             Text = i.EngClassDesc == null ? i.EngClassName : i.EngClassName + ": " + i.EngClassDesc,
+                             Parent = i.SuperClassID,
+                             Short = i.EngClassName,
+                         };
+
+
+
+            var retVal = lookup.ToList();
+            if (User.IsInRole("Admin"))
+                retVal.Insert(0, new { Value = -1, Text = "(Manage Listing)", Parent = 0, Short = "." });
+
+            return DataSourceLoader.Load(retVal, loadOptions);
+        }
+
+
+        //This lookup takes in the superclassID and uses it search for the engclass and the attributes that are required
+        [HttpGet]
+        public object SuperClassToEngCodeData_Lookup(DataSourceLoadOptions loadOptions, int superClassId)
+        {
+
+            var lookup = from i in _context.EngClass
+                         join e in _context.EngDataClassxEngDataCode on i.EngClassId equals e.EngClassId
+                         join t in _context.BccCode on e.BccCodeId equals t.BccCodeId
+                         join y in _context.EngDataCode on e.EngDataCodeId equals y.EngDataCodeId
+                         where i.SuperClassID == superClassId
+                         select new
+                         {
+                             Value = i.EngClassId,
+                             Text = i.EngClassDesc == null ? i.EngClassName : i.EngClassName + ": " + i.EngClassDesc + ": " + t.BccCodeId + ": " + y.EngDataCodeName + ": " + y.EngDataCodeDesc + (y.EngDataCodeSAPDesc ?? " BLANK ") + (y.EngDataCodeDDLType ?? " BLANK "),
+                             Parent = i.SuperClassID,
+                             Short = i.EngClassName
+                         };
+
+            var retVal = lookup.ToList();
+
+            if (User.IsInRole("Admin"))
+                retVal.Insert(0, new { Value = -1, Text = "(Manage Listing)", Parent = 0, Short = "." });
+
+            return DataSourceLoader.Load(retVal, loadOptions);
+        }
+
+
+        //Test controller too see how the values are returned.
+        [HttpGet]
+        public object test_Lookup(DataSourceLoadOptions loadOptions, int superClassId)
+        {
+
+            var lookup = from i in _context.EngClass
+                         join e in _context.EngDataClassxEngDataCode on i.EngClassId equals e.EngClassId
+                         join t in _context.BccCode on e.BccCodeId equals t.BccCodeId
+                         join y in _context.EngDataCode on e.EngDataCodeId equals y.EngDataCodeId
+                         where i.SuperClassID == superClassId
+                         select new
+                         {
+                             Value = i.EngClassId,
+                             Text = i.EngClassDesc == null ? i.EngClassName : i.EngClassName + ": " + i.EngClassDesc + ": " + t.BccCodeId + ": " + y.EngDataCodeName + ": " + y.EngDataCodeDesc + (y.EngDataCodeSAPDesc ?? " BLANK ") + (y.EngDataCodeDDLType ?? " BLANK "),
+                             Parent = i.SuperClassID,
+                             Short = i.EngClassName
+                         };
+
+            var retVal = lookup.ToList();
+
+            if (User.IsInRole("Admin"))
+                retVal.Insert(0, new { Value = -1, Text = "(Manage Listing)", Parent = 0, Short = "." });
+
+            return DataSourceLoader.Load(retVal, loadOptions);
+        }
+
 
         [HttpGet]
         public object MaintParent_Lookup(DataSourceLoadOptions loadOptions)
@@ -491,7 +592,7 @@ namespace ProDat.Web2.Controllers
         [HttpGet]
         public object ManModel_Lookup(DataSourceLoadOptions loadOptions)
         {
-            
+
             var lookup = _context.Models
                         .Include(x=> x.Manufacturer)
                         .OrderBy(x=> x.Manufacturer.ManufacturerName)
@@ -499,14 +600,14 @@ namespace ProDat.Web2.Controllers
                          .Select(x => new {
                             Value = x.ModelId,
                              Parent = x.ManufacturerId ?? default,
-                             Text = x.Manufacturer.ManufacturerName + ": " + x.ModelName,   
+                             Text = x.Manufacturer.ManufacturerName + ": " + x.ModelName,
                             Short = x.ModelName
                         });
 
             var retVal = lookup.ToList();
             if (User.IsInRole("Admin"))
                 retVal.Insert(0, new { Value = -1, Parent=0, Text = "(Manage Listing)", Short = "." });
-                
+
 
             return DataSourceLoader.Load(retVal, loadOptions);
         }

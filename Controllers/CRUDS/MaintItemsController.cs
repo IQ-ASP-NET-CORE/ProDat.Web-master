@@ -67,14 +67,14 @@ namespace ProDat.Web2.Controllers.CRUDS
 
                 return View(obj);
             }
-            else 
-            { 
+            else
+            {
                 return View();
             }
         }
 
         // POST: MaintItems/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -106,7 +106,7 @@ namespace ProDat.Web2.Controllers.CRUDS
         }
 
         // POST: MaintItems/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
