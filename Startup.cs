@@ -68,6 +68,9 @@ namespace ProDat.Web2
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // UseSession must be after UseRouting() and before MapRazorPages() and MapDefaultControllerRoute
+            app.UseSession();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
