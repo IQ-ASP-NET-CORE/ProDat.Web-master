@@ -53,8 +53,8 @@ body {
     margin-bottom: 0px;
     /*overflow: scroll; remove horizontal and vertical scroll bars  MWM*/
     overflow: scroll;
-    /*Adding the top menu bar so taht it's overlaid by the content.*/
-    padding-top:30px;
+    /*Adding the top menu bar so that it's overlaid by the content.*/
+    padding-top: 45px;
 }
 
 
@@ -272,7 +272,10 @@ body {
         opacity: 0.25;
     }
 
-.agigCover{
+/*
+    Need to generate some conditional code here to set the background image
+    .agigCover{
+
 
     content:"";
     background-image: url(/img/agig-logo.png);
@@ -285,7 +288,7 @@ body {
     z-index: 10000;
 
 
-}
+}*/
 
 .form-group {
     max-width: 350px;
@@ -360,7 +363,7 @@ body {
 }
 
 .uc2_sub_one {
-    height: 139%;
+    height: 100%;
     background-color: #fcfcfc;
 }
 
@@ -373,6 +376,60 @@ body {
     height: 71%;
     border-top: 1px solid black;
 }
+.uc4_content {
+    display: flex;
+    flex-direction: column;
+    min-height: 91vh;
+}
+
+.uc4_main {
+    display: flex;
+    /*flex-direction: column;*/
+    flex: 1;
+}
+
+.uc4_leftPane {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    width: 25%;
+    /*background-color: #eef7e4;*/
+}
+
+.uc4_leftPane_bot {
+    /*border: 1px solid black;*/
+    height: 75%;
+    /*flex:2;*/
+}
+
+.uc4_leftPane_top {
+    /*border: 1px solid black;*/
+    height: 25%;
+    flex: 1;
+}
+
+.uc4_rightPane {
+    display: flex;
+    border: 1px solid black;
+    flex-direction: column;
+    width: 75%;
+}
+
+.uc4_sub_one {
+    height: 139%;
+    background-color: #fcfcfc;
+}
+
+.uc4_sub_two {
+    height: 70%;
+    border-top: 1px solid black;
+}
+
+.uc4_sub_three {
+    height: 71%;
+    border-top: 1px solid black;
+}
+
 
 
 /* CSS for UC3 width */
@@ -490,3 +547,79 @@ section.bot {
     -moz-osx-font-smoothing: grayscale;
 }*/
 
+.IQLogoWrapper {
+    display: flex;
+    width: 99.5%;
+    justify-content: center;
+    height: 55px;
+    position: absolute;
+    top: 0px;
+    background-color: #f4f4f4;
+}
+
+.ProjectImage {
+    justify-content: center;
+    position: absolute;
+    top: 5px;
+    left: 50%;
+}
+
+/*CSS form resizing areas content UC2*/
+.container {
+    display: flex;
+    /* Misc */
+    border: 1px solid #cbd5e0;
+    height: 32rem;
+    width: 100%;
+}
+
+.resizer[data-direction='horizontal'] {
+    background-color: #cbd5e0;
+    cursor: ew-resize;
+    height: 100%;
+    width: 2px;
+}
+
+.resizer[data-direction='vertical'] {
+    background-color: #cbd5e0;
+    cursor: ns-resize;
+    height: 2px;
+    width: 100%;
+}
+
+.container__left {
+    /* Initially, the left takes 1/4 width */
+    width: 25%;
+    /* Misc */
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.container__right {
+    /* Take the remaining width */
+    flex: 1;
+    /* Misc */
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.container__top {
+    /* Initial height */
+    height: 12rem;
+    /* Misc */
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.container__bottom {
+    /* Take the remaining height */
+    flex: 1;
+    /* Misc */
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
