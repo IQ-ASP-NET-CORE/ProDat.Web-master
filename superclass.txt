@@ -1,9 +1,13 @@
-﻿ALTER TABLE [BccCode] ADD [BccColour] nvarchar(max) NULL;
+﻿ALTER TABLE [ImportTransform] ADD [AttributeNameOrg] nvarchar(max) NULL;
+
+GO
+
+ALTER TABLE [ImportTransform] ADD [AttributeValueOldTxt] nvarchar(max) NULL;
 
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20230203062449_bccCodeColour', N'3.1.32');
+VALUES (N'20230208052031_importTransform', N'3.1.32');
 
 GO
 
