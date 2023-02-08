@@ -73,7 +73,7 @@ namespace ProDat.Web2.Controllers
                     .Include(x => x.MaintObjectType)
                     .Include(x => x.Manufacturer)
                     .Include(x=> x.MaintenancePlant)
-                    
+
                     //.Include(x=> x.Model)  // we are using ModelDescription now?
                     //.Where(x => x.SAPStatusId == 7)
 
@@ -116,7 +116,7 @@ namespace ProDat.Web2.Controllers
                                    ted.EngDataCode.EngDataCodeSAPDesc,
                                    mcXedc.MaintClass.MaintClassName
                                };
-            
+
                 return recs;
             }
             else if (outputName == "SenexFlocs" && sheetname == "FL_CL")
@@ -136,7 +136,7 @@ namespace ProDat.Web2.Controllers
                 dynamic recs = from tag in _context.Tag
                                from ted in tag.TagEngDatas
                                from mcXedc in ted.EngDataCode.MaintClassXEngDataCode
-                               
+
                                select new
                                {
                                    tag.TagFloc,
@@ -237,7 +237,7 @@ namespace ProDat.Web2.Controllers
                 dynamic recs = from TaskListOperations in _context.TaskListOperations
                                select new
                                {
-                                   TaskListOperations.TaskListHeader.TaskListGroup.TaskListGroupName, 
+                                   TaskListOperations.TaskListHeader.TaskListGroup.TaskListGroupName,
                                    TaskListOperations.TaskListHeader.Counter,
                                    TaskListOperations.OperationNum,
                                    TaskListOperations.MaintPackage.MaintPackageCycleLength,
@@ -290,12 +290,12 @@ namespace ProDat.Web2.Controllers
                         parts[i + 1] = null;
                     }
                     // perform mult on prior and next.
-                    
+
                 }
                 if (parts[i] == "#DIV#")
                 {
                     if (double.TryParse(parts[i - 1], out double a) && double.TryParse(parts[i + 1], out double b) && b>0)
-                    { 
+                    {
                         var newVal = a / b;
                         parts[i - 1] = null;
                         parts[i] = null;
@@ -319,7 +319,7 @@ namespace ProDat.Web2.Controllers
                 if (parts[i] == "#ADD#")
                 {
                     if (double.TryParse(parts[i - 1], out double a) && double.TryParse(parts[i + 1], out double b))
-                    { 
+                    {
                         var newVal = a + b;
                         parts[i - 1] = null;
                         parts[i] = null;
@@ -375,8 +375,8 @@ namespace ProDat.Web2.Controllers
         private static string cleanPath(string path)
         {
             ////
-            /// given a path, output in a more formal syntax to allow excel writer to construct value from 
-            /// it. 
+            /// given a path, output in a more formal syntax to allow excel writer to construct value from
+            /// it.
             /// e.g.  Tag.MaintItem.MaintItemName #AMP# Tag.Status.StatusName
             /// becomes
             ///  #EXPR# MaintItemName #AMP# StatusName
@@ -385,24 +385,24 @@ namespace ProDat.Web2.Controllers
             ///  e.g. 3
             ///  becomes
             ///    #LIT#3    (interprets as literal so dosent try to find literal in recordset)
-            ///  
+            ///
             ///  e.g. Tag.Amount #MULT# Tag.Quantity
             ///  becomes
             ///    #EXPR# Amount #MULT# Quantity
             ///  outputs as number:
             ///    34.3
-            ///    
-            ///  todo: 
-            ///  
-            ///  Add another layer to format LINQ expression. only for numbers, so can be used like so; 
+            ///
+            ///  todo:
+            ///
+            ///  Add another layer to format LINQ expression. only for numbers, so can be used like so;
             ///  e.g. PAD(Tag.System.SystemNum,2)
-            ///  
+            ///
             ///  Will be checked for later... no spaces or it will not be part of token!
-            ///  
-            ///  
+            ///
+            ///
             if (path == null)
                 return null;
-            
+
             string retVal = null;
             if (path.Contains("#AMP#") || path.Contains("#MULT#") || path.Contains("#DIV#") || path.Contains("#ADD#") || path.Contains("#SUB#") || path.Contains("PAD("))
             {
@@ -411,7 +411,7 @@ namespace ProDat.Web2.Controllers
                 var tokens = path.Split(" ");
                 foreach (var token in tokens)
                 {
-                    // TODO: Add function to remove 'PAD(' and ',*)' 
+                    // TODO: Add function to remove 'PAD(' and ',*)'
                     var temp_token = token;
                     if (temp_token.Contains("PAD("))
                     {
@@ -430,7 +430,7 @@ namespace ProDat.Web2.Controllers
                     }
                 }
             }
-            else if (path.Contains(".")) 
+            else if (path.Contains("."))
             {
                 // is a singular linq expression. Whilst we're not building LINQ statement dynamically only need fieldname.
                 retVal = path.Substring(path.LastIndexOf(".")+1);
@@ -445,7 +445,7 @@ namespace ProDat.Web2.Controllers
 
         private static string pathPadding(string path)
         {
-            // Given the path, search for pad functions, 
+            // Given the path, search for pad functions,
             //   e.g. #EXPR# PAD(linqExpr,2) PAD(LineExpr,4) LinqExpr
             //  returns: 2,4,-1
 
@@ -486,7 +486,7 @@ namespace ProDat.Web2.Controllers
                 return "";
             };
         }
-             
+
 
         public IEnumerable<string> GetSheets(string sheetname)
         {
@@ -530,11 +530,11 @@ namespace ProDat.Web2.Controllers
         }
 
 
-        /* 
+        /*
          *  This will return report based on requested Report.
          *  Iterates ofver each sheet to be created,
-         *  
-         * 
+         *
+         *
          */
         public async Task<IActionResult> ExcelReport(string fileName, bool ExportAll)
         {
@@ -548,7 +548,7 @@ namespace ProDat.Web2.Controllers
                 {
                     var recs = GetRec(ReportName, sheet, ExportAll);
                     var fields = GetFields(ReportName, sheet);
-                    
+
                     // create sheet. initialise counters
                     IXLWorksheet worksheet = workbook.Worksheets.Add(sheet);
                     int currentRow = 1;
@@ -591,8 +591,8 @@ namespace ProDat.Web2.Controllers
                                 worksheet.Cell(currentRow, colIndex).SetValue(value);
                             }
 
-                        } 
-                    } 
+                        }
+                    }
 
                     worksheet.Columns("A:BB").AdjustToContents();
 
@@ -613,7 +613,7 @@ namespace ProDat.Web2.Controllers
             } // using workbook
 
         } // ExcelReport
-            
+
     } // Class
 
 } // Namespace

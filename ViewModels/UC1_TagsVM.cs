@@ -28,7 +28,7 @@ namespace ProDat.Web2.ViewModels
             IpfId = rec.IpfId;
             KeyDocId = rec.KeyDocId;
             LocationId = rec.LocationID;
-            //MaintClassId  = //rec.MaintClassId; 
+            //MaintClassId  = //rec.MaintClassId;
             MaintCriticalityId = rec.MaintCriticalityId;
             MaintEdcCodeId = rec.MaintEdcCodeId;
             MaintenanceplanId = rec.MaintenanceplanId;
@@ -82,9 +82,9 @@ namespace ProDat.Web2.ViewModels
             VibId = rec.VibId;
             WBSElementId = rec.WBSElementId;
         }
-        
+
         public int TagId { get; set; }
-        
+
         [Display(Name = "RTF")]
         public bool RTF { get; set; }
 
@@ -103,6 +103,7 @@ namespace ProDat.Web2.ViewModels
 
         [Display(Name = "Eng Class")]
         public int? EngClassId { get; set; }
+
 
         [Display(Name = "Eng. Parent")]
         public int? EngParentId { get; set; }
@@ -294,5 +295,7 @@ namespace ProDat.Web2.ViewModels
         public int? PbsId { get; set; }
 
         public int? EnvZoneId { get; set; }
+
+
     }
 }

@@ -45,7 +45,7 @@ namespace ProDat.Web2.Controllers
             else
             {
                 return Redirect(
-                    // Modified by MWM 
+                    // Modified by MWM
                     "/Identity/Account/Login");
                     //"/Identity/Account/Manage/TwoFactorAuthentication");
             }
@@ -60,11 +60,11 @@ namespace ProDat.Web2.Controllers
             return View(uc2);
         }
 
-        #region  Display Eng Attributes associated by MaintType 
+        #region  Display Eng Attributes associated by MaintType
         public async Task<IActionResult> EngAttributesByClassification(int id)
         {
-            var tag = _context.Tag.Where(x => x.TagId == id).FirstOrDefault(); 
-            
+            var tag = _context.Tag.Where(x => x.TagId == id).FirstOrDefault();
+
             ViewBag.TagId = tag.TagId;
             ViewBag.TagNumber = tag.TagNumber;
             ViewBag.TagFlocDesc = tag.TagFlocDesc != null? " - " + tag.TagFlocDesc : "";
@@ -95,7 +95,7 @@ namespace ProDat.Web2.Controllers
                 if (tagParent == null)
                     return BadRequest();
 
-                // update Tag. 
+                // update Tag.
                 tag.MaintParentId = int.Parse(maintParentId);
                 // If no MaintTypeId set, or is NonMaintainable, set to M.
                 if (tag.MaintTypeId == null || tag.MaintTypeId == 4)
@@ -103,7 +103,7 @@ namespace ProDat.Web2.Controllers
 
                 await _context.SaveChangesAsync();
             }
-            
+
             if(destinationComponent == "NonMaintainedDataGrid")
             {
                 MaintHierarchyNodeMovedToNonMaintainable(tag.TagId);
@@ -136,7 +136,7 @@ namespace ProDat.Web2.Controllers
                 return BadRequest();
 
             tag.MaintTypeId = tagStatusId;
-               
+
             await _context.SaveChangesAsync();
 
             // return 200.
@@ -177,7 +177,7 @@ namespace ProDat.Web2.Controllers
 
                 _context.FlocXpmassembly.Remove(rec);
             }
-            
+
             // add relationship if new parent within MaintTree
             if (!string.IsNullOrEmpty(newParent) && destinationComponent == "MaintTree")
             {
@@ -269,8 +269,8 @@ namespace ProDat.Web2.Controllers
                 MaintHierarchyNodeMovedToNonMaintainable(child.TagId);
 
             // ############################
-            // Reached leaf nodes. 
-            // Update ONLY Maintenance Tags 
+            // Reached leaf nodes.
+            // Update ONLY Maintenance Tags
             // or null value, on ascent.
             // ############################
 
@@ -313,8 +313,8 @@ namespace ProDat.Web2.Controllers
                 MaintHierarchyNodeMovedToUnassigned(child.TagId);
 
             // ############################
-            // Reached leaf nodes. 
-            // Update ONLY Maintenance Tags 
+            // Reached leaf nodes.
+            // Update ONLY Maintenance Tags
             // or null value, on ascent.
             // ############################
 
@@ -355,7 +355,7 @@ namespace ProDat.Web2.Controllers
             MaintHeirarchyNode node = BuildMaintHierarchyDemand("Plant");
             maintItems.Add(node);
 
-            // controller specific Content takes two parameters, viewComponent does not. 
+            // controller specific Content takes two parameters, viewComponent does not.
             //return Content(JsonConvert.SerializeObject(DataSourceLoader.Load(maintItems, loadOptions)), "application/json");
             return Content(JsonConvert.SerializeObject(DataSourceLoader.Load(maintItems, loadOptions)));
         }
@@ -370,7 +370,7 @@ namespace ProDat.Web2.Controllers
                                 .Select(x => x.MaintHierarchy_LoadDepth)
                                 .FirstOrDefault();
 
-            // Use of thenInclude is slow. 
+            // Use of thenInclude is slow.
             // might retrieve set of tags with a MaintParentID, and MaintType in (N, M, P), then build hierarchy.
             Tag tag = _context.Tag
                 .Include(t => t.InverseMaintParents).ThenInclude(child => child.MaintType)
@@ -441,7 +441,7 @@ namespace ProDat.Web2.Controllers
             MaintHeirarchyNode node = BuildMaintHierarchy("Plant");
             maintItems.Add(node);
 
-            // controller specific Content takes two parameters, viewComponent does not. 
+            // controller specific Content takes two parameters, viewComponent does not.
             //return Content(JsonConvert.SerializeObject(DataSourceLoader.Load(maintItems, loadOptions)), "application/json");
             return Content(JsonConvert.SerializeObject(DataSourceLoader.Load(maintItems, loadOptions)));
         }
@@ -457,7 +457,7 @@ namespace ProDat.Web2.Controllers
                                 .Select(x => x.MaintHierarchy_LoadDepth)
                                 .FirstOrDefault();
 
-            // Use of thenInclude is slow. 
+            // Use of thenInclude is slow.
             // might retrieve set of tags with a MaintParentID, and MaintType in (N, M, P), then build hierarchy.
             Tag tag = _context.Tag
                 .Include(t => t.InverseMaintParents).ThenInclude(child => child.MaintType)
@@ -465,7 +465,7 @@ namespace ProDat.Web2.Controllers
                 .Where(t => t.TagNumber == TagNumber)
                 .FirstOrDefault();
 
-           
+
             foreach (Tag child in tag.InverseMaintParents
                             .Where(t => t.TagDeleted == false)
                             .Where(t => t.MaintType != null)
@@ -492,7 +492,7 @@ namespace ProDat.Web2.Controllers
                 children.Add(new MaintHeirarchyNode
                 {
                     Id = tag.TagId + ":" + flocXPMA.PmassemblyId.ToString(),
-                    dbId = flocXPMA.PmassemblyId.ToString(), 
+                    dbId = flocXPMA.PmassemblyId.ToString(),
                     ParentId = tag.TagId.ToString(),
                     Name = flocXPMA.Pmassembly.PmassemblyName,
                     IsDirectory = false,
@@ -707,7 +707,7 @@ namespace ProDat.Web2.Controllers
                 var tag = _context.Tag
                     .Where(x => x.TagId == TagId).FirstOrDefault();
 
-                if (tag.MaintParentId == null) { 
+                if (tag.MaintParentId == null) {
                     break;
                 }
 
@@ -748,7 +748,7 @@ namespace ProDat.Web2.Controllers
         {
             return ViewComponent("FlocSearchDataGrid", new { height = Height, width = Width });
         }
-        
+
 
         public IActionResult ReloadPMAssembliesDataGrid(int Height, int Width)
         {
@@ -790,7 +790,7 @@ namespace ProDat.Web2.Controllers
         [HttpPut]
         public IActionResult NonMaintained_Update(int key, string values)
         {
-            // TODO override to update tag state. 
+            // TODO override to update tag state.
             var order = _context.Tag.First(o => o.TagId == key);
             JsonConvert.PopulateObject(values, order);
 
@@ -897,7 +897,7 @@ namespace ProDat.Web2.Controllers
         [HttpPut]
         public IActionResult Unassigned_Update(int key, string values)
         {
-            // TODO override to update tag state. 
+            // TODO override to update tag state.
             var order = _context.Tag.First(o => o.TagId == key);
             JsonConvert.PopulateObject(values, order);
 
@@ -964,7 +964,7 @@ namespace ProDat.Web2.Controllers
 
 
         #region Manage TagProperties
-        
+
         [HttpGet]
         public object TagProperties_GetDataGrid(DataSourceLoadOptions loadOptions, int tagId = 1561)
         {
@@ -987,7 +987,7 @@ namespace ProDat.Web2.Controllers
                             .FirstOrDefault();
 
             var tagMaintClasses = new List<MaintClass>();
-            if(tagMaintClassInfo.MaintObjectType != null) { 
+            if(tagMaintClassInfo.MaintObjectType != null) {
                 foreach(var i in tagMaintClassInfo.MaintObjectType.MaintObjectTypeXMaintClass)
                     tagMaintClasses.Add(i.MaintClass);
             }
@@ -1075,6 +1075,6 @@ namespace ProDat.Web2.Controllers
 
         #endregion
 
-        
+
     }
 }

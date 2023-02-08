@@ -18,11 +18,11 @@ using ProDat.Web2.ViewModels;
 
 namespace ProDat.Web2.Controllers.CRUDS
 {
-    public class ModelsController : Controller
+    public class SuperClassController : Controller
     {
         private readonly TagContext _context;
 
-        public ModelsController(TagContext context)
+        public SuperClassController(TagContext context)
         {
             _context = context;
         }
@@ -32,7 +32,7 @@ namespace ProDat.Web2.Controllers.CRUDS
         {
             Dictionary<string, ColParams> colIndex = new Dictionary<string, ColParams>();
             var col_customisations = _context.ColumnSets
-                                        .Where(x => x.ColumnSetsEntity == "Model")
+                                        .Where(x => x.ColumnSetsEntity == "SuperClass")
                                         .Where(x => x.ColumnSetsName == columnSetsName)
                                         .Select(x => new
                                         {
@@ -52,7 +52,7 @@ namespace ProDat.Web2.Controllers.CRUDS
 
             // SAP Validation
             var EAId = _context.EntityAttribute
-                           .Where(x => x.EntityName == "Model")
+                           .Where(x => x.EntityName == "SuperClass")
                            .Include(x => x.EntityAttributeRequirements);
 
             ViewData["SapValidationJson"] = JsonConvert.SerializeObject(EAId);
@@ -64,31 +64,25 @@ namespace ProDat.Web2.Controllers.CRUDS
             return View();
         }
 
-        private void PopulateModel(Model model, IDictionary values)
+        private void PopulateModel(SuperClass superClass, IDictionary values)
         {
-            string Model_ID = nameof(Model.ModelId);
-            string MANUFACTURER_ID = nameof(Model.ManufacturerId);
-            string Model_NAME = nameof(Model.ModelName);
-            string Model_DESC = nameof(Model.ModelDesc);
+            string SuperclassID = nameof(superClass.SuperclassID);
+            string superClassName = nameof(superClass.SuperclassName);
+            string superClassDescrp = nameof(superClass.Superclassdescription);
 
-            if (values.Contains(Model_ID))
+            if (values.Contains(SuperclassID))
             {
-                model.ModelId = Convert.ToInt32(values[Model_ID]);
+                superClass.SuperclassID = Convert.ToInt32(values[SuperclassID]);
             }
 
-            if (values.Contains(MANUFACTURER_ID))
+            if (values.Contains(superClassName))
             {
-                model.ManufacturerId = Convert.ToInt32(values[MANUFACTURER_ID]);
+                superClass.SuperclassName = Convert.ToString(values[superClassName]);
             }
 
-            if (values.Contains(Model_NAME))
+            if (values.Contains(superClassDescrp))
             {
-                model.ModelName = Convert.ToString(values[Model_NAME]);
-            }
-
-            if (values.Contains(Model_DESC))
-            {
-                model.ModelDesc = Convert.ToString(values[Model_DESC]);
+                superClass.Superclassdescription = Convert.ToString(values[superClassDescrp]);
             }
 
         }
@@ -111,9 +105,9 @@ namespace ProDat.Web2.Controllers.CRUDS
             // Oh well, this causes a loop, so will need to find waht field is causing an objhect depth to exceed 32 or be cyclic.
             // var dataSet = _context.Tag.AsQueryable();
 
-            var dataSet = from rec in _context.Models
+            var dataSet = from rec in _context.SuperClass
                               //select new { rec.TagId, rec.TagNumber, rec.TagService, rec.TagFloc, rec.TagFlocDesc, rec.EngDiscId, rec.SubSystem.SubSystemNum };
-                          select new { rec.ModelId, rec.ManufacturerId, rec.ModelName, rec.ModelDesc };
+                          select new { rec.SuperclassID,rec.SuperclassName,rec.Superclassdescription };
 
             return DataSourceLoader.Load(dataSet, loadOptions);
         }

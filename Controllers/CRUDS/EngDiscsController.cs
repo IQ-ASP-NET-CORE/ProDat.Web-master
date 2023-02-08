@@ -50,7 +50,7 @@ namespace ProDat.Web2.Controllers.CRUDS
                 colIndex.Add(cust.ColumnName, new ColParams(cust.ColumnOrder, cust.ColumnWidth));
             }
 
-            // SAP Validation 
+            // SAP Validation
             var EAId = _context.EntityAttribute
                            .Where(x => x.EntityName == "EngDisc")
                            .Include(x => x.EntityAttributeRequirements);
@@ -102,7 +102,7 @@ namespace ProDat.Web2.Controllers.CRUDS
 
         public Object EngDiscs_GetData(DataSourceLoadOptions loadOptions)
         {
-            // Oh well, this causes a loop, so will need to find waht field is causing an objhect depth to exceed 32 or be cyclic. 
+            // Oh well, this causes a loop, so will need to find waht field is causing an objhect depth to exceed 32 or be cyclic.
             // var dataSet = _context.Tag.AsQueryable();
 
             var dataSet = from rec in _context.EngDisc
@@ -131,7 +131,7 @@ namespace ProDat.Web2.Controllers.CRUDS
         [HttpPut]
         public IActionResult EngDiscs_Update(int key, string values)
         {
-            // TODO override to update tag state. 
+            // TODO override to update tag state.
             var order = _context.EngDisc.First(o => o.EngDiscId == key);
             JsonConvert.PopulateObject(values, order);
 
@@ -200,7 +200,7 @@ namespace ProDat.Web2.Controllers.CRUDS
         {
             var valid = _context.EngDisc.Any(x => x.EngDiscName == eng_disc.EngDiscName);
             return !valid;
-            
+
         }
     }
 }

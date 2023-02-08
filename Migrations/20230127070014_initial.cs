@@ -3,10 +3,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ProDat.Web2.Migrations
 {
-    public partial class initial_sl : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "BccCode",
+                columns: table => new
+                {
+                    BccCodeId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BccCodeNumber = table.Column<int>(nullable: false),
+                    BccCodeDesc = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BccCode", x => x.BccCodeId);
+                });
+
             migrationBuilder.CreateTable(
                 name: "ClassCharacteristics",
                 columns: table => new
@@ -103,20 +117,6 @@ namespace ProDat.Web2.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ControlKey", x => x.ControlKeyID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EngClass",
-                columns: table => new
-                {
-                    EngClassID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    EngClassName = table.Column<string>(maxLength: 255, nullable: false),
-                    EngClassDesc = table.Column<string>(maxLength: 255, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EngClass", x => x.EngClassID);
                 });
 
             migrationBuilder.CreateTable(
@@ -805,6 +805,20 @@ namespace ProDat.Web2.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SuperClass",
+                columns: table => new
+                {
+                    SuperclassID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SuperclassName = table.Column<string>(maxLength: 50, nullable: false),
+                    Superclassdescription = table.Column<string>(maxLength: 255, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SuperClass", x => x.SuperclassID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SysCond",
                 columns: table => new
                 {
@@ -1013,32 +1027,6 @@ namespace ProDat.Web2.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "KeyListxEngClass",
-                columns: table => new
-                {
-                    KeyListxEngClassId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    KeyListId = table.Column<int>(nullable: false),
-                    EngClassID = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_KeyListxEngClass", x => x.KeyListxEngClassId);
-                    table.ForeignKey(
-                        name: "FK_KeyListxEngClass_EngClass_EngClassID",
-                        column: x => x.EngClassID,
-                        principalTable: "EngClass",
-                        principalColumn: "EngClassID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_KeyListxEngClass_KeyList_KeyListId",
-                        column: x => x.KeyListId,
-                        principalTable: "KeyList",
-                        principalColumn: "KeyListId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "MaintLoad",
                 columns: table => new
                 {
@@ -1217,6 +1205,27 @@ namespace ProDat.Web2.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EngClass",
+                columns: table => new
+                {
+                    EngClassID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EngClassName = table.Column<string>(maxLength: 255, nullable: false),
+                    EngClassDesc = table.Column<string>(maxLength: 255, nullable: true),
+                    SuperClassID = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EngClass", x => x.EngClassID);
+                    table.ForeignKey(
+                        name: "FK_EngClass_SuperClass_SuperClassID",
+                        column: x => x.SuperClassID,
+                        principalTable: "SuperClass",
+                        principalColumn: "SuperclassID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SubSystem",
                 columns: table => new
                 {
@@ -1279,32 +1288,6 @@ namespace ProDat.Web2.Migrations
                         column: x => x.UC2ViewColumnsId,
                         principalTable: "UC2ViewColumns",
                         principalColumn: "UC2ViewColumnsId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EngDataClassxEngDataCode",
-                columns: table => new
-                {
-                    EngDataClassxEngDataCodeId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    EngClassId = table.Column<int>(nullable: false),
-                    EngDataCodeId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EngDataClassxEngDataCode", x => x.EngDataClassxEngDataCodeId);
-                    table.ForeignKey(
-                        name: "FK_EngDataClassxEngDataCode_EngClass_EngClassId",
-                        column: x => x.EngClassId,
-                        principalTable: "EngClass",
-                        principalColumn: "EngClassID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EngDataClassxEngDataCode_EngDataCode_EngDataCodeId",
-                        column: x => x.EngDataCodeId,
-                        principalTable: "EngDataCode",
-                        principalColumn: "EngDataCodeID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -1403,33 +1386,6 @@ namespace ProDat.Web2.Migrations
                         principalTable: "DocType",
                         principalColumn: "DocTypeID",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EngClassRequiredDocs",
-                columns: table => new
-                {
-                    EngClassRequiredDocsId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    EngClassId = table.Column<int>(nullable: false),
-                    DocTypeId = table.Column<int>(nullable: false),
-                    BCC = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EngClassRequiredDocs", x => x.EngClassRequiredDocsId);
-                    table.ForeignKey(
-                        name: "FK_EngClassRequiredDocs_DocType_DocTypeId",
-                        column: x => x.DocTypeId,
-                        principalTable: "DocType",
-                        principalColumn: "DocTypeID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EngClassRequiredDocs_EngClass_EngClassId",
-                        column: x => x.EngClassId,
-                        principalTable: "EngClass",
-                        principalColumn: "EngClassID",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1582,6 +1538,92 @@ namespace ProDat.Web2.Migrations
                         principalTable: "MaintArea",
                         principalColumn: "MaintAreaId",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EngClassRequiredDocs",
+                columns: table => new
+                {
+                    EngClassRequiredDocsId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EngClassId = table.Column<int>(nullable: false),
+                    DocTypeId = table.Column<int>(nullable: false),
+                    BCC = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EngClassRequiredDocs", x => x.EngClassRequiredDocsId);
+                    table.ForeignKey(
+                        name: "FK_EngClassRequiredDocs_DocType_DocTypeId",
+                        column: x => x.DocTypeId,
+                        principalTable: "DocType",
+                        principalColumn: "DocTypeID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EngClassRequiredDocs_EngClass_EngClassId",
+                        column: x => x.EngClassId,
+                        principalTable: "EngClass",
+                        principalColumn: "EngClassID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EngDataClassxEngDataCode",
+                columns: table => new
+                {
+                    EngDataClassxEngDataCodeId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EngClassId = table.Column<int>(nullable: false),
+                    EngDataCodeId = table.Column<int>(nullable: false),
+                    BccCodeId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EngDataClassxEngDataCode", x => x.EngDataClassxEngDataCodeId);
+                    table.ForeignKey(
+                        name: "FK_EngDataClassxEngDataCode_BccCode_BccCodeId",
+                        column: x => x.BccCodeId,
+                        principalTable: "BccCode",
+                        principalColumn: "BccCodeId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EngDataClassxEngDataCode_EngClass_EngClassId",
+                        column: x => x.EngClassId,
+                        principalTable: "EngClass",
+                        principalColumn: "EngClassID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EngDataClassxEngDataCode_EngDataCode_EngDataCodeId",
+                        column: x => x.EngDataCodeId,
+                        principalTable: "EngDataCode",
+                        principalColumn: "EngDataCodeID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KeyListxEngClass",
+                columns: table => new
+                {
+                    KeyListxEngClassId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    KeyListId = table.Column<int>(nullable: false),
+                    EngClassID = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KeyListxEngClass", x => x.KeyListxEngClassId);
+                    table.ForeignKey(
+                        name: "FK_KeyListxEngClass_EngClass_EngClassID",
+                        column: x => x.EngClassID,
+                        principalTable: "EngClass",
+                        principalColumn: "EngClassID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_KeyListxEngClass_KeyList_KeyListId",
+                        column: x => x.KeyListId,
+                        principalTable: "KeyList",
+                        principalColumn: "KeyListId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -2636,6 +2678,11 @@ namespace ProDat.Web2.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_EngClass_SuperClassID",
+                table: "EngClass",
+                column: "SuperClassID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EngClassRequiredDocs_DocTypeId",
                 table: "EngClassRequiredDocs",
                 column: "DocTypeId");
@@ -2645,6 +2692,11 @@ namespace ProDat.Web2.Migrations
                 table: "EngClassRequiredDocs",
                 column: "EngClassId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EngDataClassxEngDataCode_BccCodeId",
+                table: "EngDataClassxEngDataCode",
+                column: "BccCodeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EngDataClassxEngDataCode_EngClassId",
@@ -3107,6 +3159,12 @@ namespace ProDat.Web2.Migrations
                 name: "IX_SubSystem_SystemID",
                 table: "SubSystem",
                 column: "SystemID");
+
+            migrationBuilder.CreateIndex(
+                name: "U_SuperClass",
+                table: "SuperClass",
+                column: "SuperclassID",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "U_SysCond",
@@ -3590,6 +3648,9 @@ namespace ProDat.Web2.Migrations
                 name: "UC2ViewColumnsUser");
 
             migrationBuilder.DropTable(
+                name: "BccCode");
+
+            migrationBuilder.DropTable(
                 name: "EntityAttribute");
 
             migrationBuilder.DropTable(
@@ -3789,6 +3850,9 @@ namespace ProDat.Web2.Migrations
 
             migrationBuilder.DropTable(
                 name: "SP");
+
+            migrationBuilder.DropTable(
+                name: "SuperClass");
 
             migrationBuilder.DropTable(
                 name: "Area");

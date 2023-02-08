@@ -22,7 +22,7 @@ using ProDat.Web2.ViewModels;
 namespace ProDat.Web2.Controllers
 {
     /*
-     * Provides functionality to manage Tag Register. 
+     * Provides functionality to manage Tag Register.
      * Note: Star lookup data sources are defined in Lookups Controller.
      */
 
@@ -57,12 +57,12 @@ namespace ProDat.Web2.Controllers
             else
             {
                 return Redirect(
-                    // Modified by MWM 
+                    // Modified by MWM
                     "/Identity/Account/Login");
                     //"/Identity/Account/Manage/TwoFactorAuthentication");
             }
 
-            //TODO:  Update Dictionary<str, int> to <str, obj> so we can capture default width as well. 
+            //TODO:  Update Dictionary<str, int> to <str, obj> so we can capture default width as well.
             Dictionary<string, ColParams> colIndex = new Dictionary<string, ColParams>();
             var col_customisations =  _context.ColumnSets
                                         .Where(x => x.ColumnSetsEntity == "Tag")
@@ -78,7 +78,7 @@ namespace ProDat.Web2.Controllers
                 colIndex.Add(cust.ColumnName, new ColParams(cust.ColumnOrder, cust.ColumnWidth) );
             }
 
-            // SAP Validation 
+            // SAP Validation
             var EAId = _context.EntityAttribute
                            .Where(x => x.EntityName == "Tag")
                            .Include(x => x.EntityAttributeRequirements);
@@ -95,13 +95,13 @@ namespace ProDat.Web2.Controllers
 
 
 
-        #region Create new Tag with a Form View. 
+        #region Create new Tag with a Form View.
 
         [Authorize(Roles = "User")]
         [HttpGet]
         public IActionResult Create()
         {
-            // Load up Create Form without data. 
+            // Load up Create Form without data.
             ViewBag.GlobalProjectDescription = _context.Project.First().ProjectName;
             return View();
         }
@@ -110,7 +110,7 @@ namespace ProDat.Web2.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(string values)
         {
-            // Post from Create Form. 
+            // Post from Create Form.
             var model = new Tag();
             var valuesDict = JsonConvert.DeserializeObject<IDictionary>(values);
             PopulateModel(model, valuesDict);
@@ -564,7 +564,7 @@ namespace ProDat.Web2.Controllers
 
         public Object TagRegister_GetData(DataSourceLoadOptions loadOptions)
         {
-            // Oh well, this causes a loop, so will need to find waht field is causing an objhect depth to exceed 32 or be cyclic. 
+            // Oh well, this causes a loop, so will need to find waht field is causing an objhect depth to exceed 32 or be cyclic.
             // var dataSet = _context.Tag.AsQueryable();
 
             var dataSet = from rec in _context.Tag
@@ -594,7 +594,7 @@ namespace ProDat.Web2.Controllers
         [HttpPut]
         public IActionResult TagRegister_Update(int key, string values)
         {
-            // TODO override to update tag state. 
+            // TODO override to update tag state.
             var order = _context.Tag.First(o => o.TagId == key);
             JsonConvert.PopulateObject(values, order);
 
@@ -660,7 +660,7 @@ namespace ProDat.Web2.Controllers
 
         #endregion
 
-        // Return Excel document to User. 
+        // Return Excel document to User.
         // Takes current TagRegisterSearchViewModel to filter.
         public IActionResult Excel(string currentFilter)
         {
@@ -709,7 +709,7 @@ namespace ProDat.Web2.Controllers
                 //InverseMaintParents takes long time to query as each Tag hashes whole table to get parent.
                 ignoreFields.Add("InverseMaintParents");
 
-                // Fields to export = distinct set of fieldnames in ColumnSets, so is controlled by Admin table. 
+                // Fields to export = distinct set of fieldnames in ColumnSets, so is controlled by Admin table.
                 List<string> fieldsToExport = new List<string> { };
                 var tmp = _context.ColumnSets
                                   .Where(x => x.ColumnSetsEntity == "Tag")
@@ -730,7 +730,7 @@ namespace ProDat.Web2.Controllers
                     if (ignoreFields.Contains(property.Name) || property.Name.EndsWith("Id"))
                         continue;
 
-                    // If not basic attribute, it is an entity. 
+                    // If not basic attribute, it is an entity.
                     // Drill into entity and retrieve property ending with Num, else Name
                     if (property.ModelType != typeof(string) && property.ModelType != typeof(int) && property.ModelType != typeof(DateTime) && property.ModelType != typeof(bool))
                     {
