@@ -1231,7 +1231,7 @@
         }
     }
 
-    function onDragEndH(e) {
+    async function onDragEndH(e) {
         if (e.fromComponent === e.toComponent && e.fromIndex === e.toIndex) {
             return;
         }
@@ -1285,6 +1285,12 @@
                 var parentId = fromNode.itemData.ParentId;
                 var fromIndex = findIndex(fromItems, fromNode.itemData.Id);
 
+                // * Seems to be a race condition. 
+                // If I call the ajax with debugging on, it works fine. If no breakpoints in code, it dosent remove node from Maint Tree!
+                // I believe this is caused by the CreateChildren method, which is being called whenever the tree structure changes.
+                // JS removes node with splice,  fromTreeView.option("items", fromItems) causes refresh, which raises the createChildren event, which gets nodes back via ajax call.
+                // update db, pause, then remove nodes.
+
                 // AJAX Calls.
                 var fromType = fromNode.itemData.nodeType;
                 if (fromType == 'M')
@@ -1294,16 +1300,13 @@
                 else if (fromType == 'PMA')
                     UpdatePMA(fromId, parentId, null, e.toData);
 
+                // manage race condition
+                await new Promise(r => setTimeout(r, 120));
 
-                // ######################
                 // Remove node from tree
-
-                // ## this is for Hierarhical structure
-                // fromNodeContainingArray.splice(fromIndex, 1);
-                // ## this is for Plain Structure
                 fromItems.splice(fromIndex, 1);
 
-                // Refreshes tree after splice
+                // Refresh treeView
                 fromTreeView.option("items", fromItems);
 
                 // refresh related components
