@@ -27,7 +27,6 @@ namespace ProDat.Web2.Models
         public int MaintenanceRootTagId { get; set; }
         public int MaintHierarchy_LoadDepth { get; set; }
 
-        public string ProjectImage { get; set; }
         public virtual MaintenancePlant MaintenancePlant { get; set; }
         public virtual ICollection<CommZone> CommZones { get; set; }
         public virtual ICollection<Sp> Sps { get; set; }

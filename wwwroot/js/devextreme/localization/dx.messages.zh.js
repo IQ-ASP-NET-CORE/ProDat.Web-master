@@ -1,24 +1,26 @@
 /*!
 * DevExtreme (dx.messages.zh.js)
-* Version: 22.1.5
-* Build date: Fri Sep 02 2022
+* Version: 20.2.3
+* Build date: Tue Oct 20 2020
 *
-* Copyright (c) 2012 - 2022 Developer Express Inc. ALL RIGHTS RESERVED
+* Copyright (c) 2012 - 2020 Developer Express Inc. ALL RIGHTS RESERVED
 * Read about DevExtreme licensing here: https://js.devexpress.com/Licensing/
 */
 "use strict";
 
 ! function(root, factory) {
     if ("function" === typeof define && define.amd) {
-        define((function(require) {
+        define(function(require) {
             factory(require("devextreme/localization"))
-        }))
-    } else if ("object" === typeof module && module.exports) {
-        factory(require("devextreme/localization"))
+        })
     } else {
-        factory(DevExpress.localization)
+        if ("object" === typeof module && module.exports) {
+            factory(require("devextreme/localization"))
+        } else {
+            factory(DevExpress.localization)
+        }
     }
-}(0, (function(localization) {
+}(this, function(localization) {
     localization.loadMessages({
         zh: {
             Yes: "\u662f",
@@ -78,7 +80,7 @@
             "dxFileUploader-upload": "\u4e0a\u4f20",
             "dxFileUploader-uploaded": "\u5df2\u4e0a\u4f20",
             "dxFileUploader-readyToUpload": "\u51c6\u5907\u4e0a\u4f20",
-            "dxFileUploader-uploadAbortedMessage": "\u4e0a\u4f20\u4e2d\u6b62",
+            "dxFileUploader-uploadAbortedMessage": "TODO",
             "dxFileUploader-uploadFailedMessage": "\u4e0a\u4f20\u5931\u8d25",
             "dxFileUploader-invalidFileExtension": "\u6587\u4ef6\u7c7b\u578b\u9519\u8bef",
             "dxFileUploader-invalidMaxFileSize": "\u6587\u4ef6\u8fc7\u5927",
@@ -153,7 +155,7 @@
             "dxDataGrid-exportSelectedRows": "\u5bfc\u51fa\u5df2\u9009\u884c",
             "dxDataGrid-exportAll": "\u5bfc\u51fa\u6240\u6709\u6570\u636e",
             "dxDataGrid-headerFilterEmptyValue": "(\u7a7a\u767d)",
-            "dxDataGrid-headerFilterOK": "\u786e\u5b9a",
+            "dxDataGrid-headerFilterOK": "\u597d",
             "dxDataGrid-headerFilterCancel": "\u53d6\u6d88",
             "dxDataGrid-ariaColumn": "\u5217",
             "dxDataGrid-ariaValue": "\u503c",
@@ -199,9 +201,9 @@
             "dxScheduler-editorLabelRecurrence": "\u91cd\u590d",
             "dxScheduler-openAppointment": "\u6253\u5f00\u65e5\u7a0b",
             "dxScheduler-recurrenceNever": "\u6c38\u4e0d",
-            "dxScheduler-recurrenceMinutely": "\u6bcf\u5206\u949f",
-            "dxScheduler-recurrenceHourly": "\u6bcf\u5c0f\u65f6",
-            "dxScheduler-recurrenceDaily": "\u6bcf\u65e5",
+            "dxScheduler-recurrenceMinutely": "Minutely",
+            "dxScheduler-recurrenceHourly": "Hourly",
+            "dxScheduler-recurrenceDaily": "\u65e5\u5e38",
             "dxScheduler-recurrenceWeekly": "\u6bcf\u5468",
             "dxScheduler-recurrenceMonthly": "\u6bcf\u6708",
             "dxScheduler-recurrenceYearly": "\u6bcf\u5e74",
@@ -210,8 +212,8 @@
             "dxScheduler-recurrenceEnd": "\u505c\u6b62\u91cd\u590d",
             "dxScheduler-recurrenceAfter": "\u4e4b\u540e",
             "dxScheduler-recurrenceOn": "\u5728",
-            "dxScheduler-recurrenceRepeatMinutely": "\u5206\u949f",
-            "dxScheduler-recurrenceRepeatHourly": "\u5c0f\u65f6",
+            "dxScheduler-recurrenceRepeatMinutely": "minute(s)",
+            "dxScheduler-recurrenceRepeatHourly": "hour(s)",
             "dxScheduler-recurrenceRepeatDaily": "\u65e5",
             "dxScheduler-recurrenceRepeatWeekly": "\u5468",
             "dxScheduler-recurrenceRepeatMonthly": "\u6708",
@@ -285,77 +287,8 @@
             "dxHtmlEditor-dialogInsertTableRowsField": "!TODO",
             "dxHtmlEditor-dialogInsertTableColumnsField": "!TODO",
             "dxHtmlEditor-dialogInsertTableCaption": "!TODO",
-            "dxHtmlEditor-dialogUpdateImageCaption": "!TODO",
-            "dxHtmlEditor-dialogImageUpdateButton": "!TODO",
-            "dxHtmlEditor-dialogImageAddButton": "!TODO",
-            "dxHtmlEditor-dialogImageSpecifyUrl": "!TODO",
-            "dxHtmlEditor-dialogImageSelectFile": "!TODO",
-            "dxHtmlEditor-dialogImageKeepAspectRatio": "!TODO",
-            "dxHtmlEditor-dialogImageEncodeToBase64": "!TODO",
             "dxHtmlEditor-heading": "\u6807\u9898",
             "dxHtmlEditor-normalText": "\u6b63\u6587",
-            "dxHtmlEditor-background": "TODO",
-            "dxHtmlEditor-bold": "TODO",
-            "dxHtmlEditor-color": "TODO",
-            "dxHtmlEditor-font": "TODO",
-            "dxHtmlEditor-italic": "TODO",
-            "dxHtmlEditor-link": "TODO",
-            "dxHtmlEditor-image": "TODO",
-            "dxHtmlEditor-size": "TODO",
-            "dxHtmlEditor-strike": "TODO",
-            "dxHtmlEditor-subscript": "TODO",
-            "dxHtmlEditor-superscript": "TODO",
-            "dxHtmlEditor-underline": "TODO",
-            "dxHtmlEditor-blockquote": "TODO",
-            "dxHtmlEditor-header": "TODO",
-            "dxHtmlEditor-increaseIndent": "TODO",
-            "dxHtmlEditor-decreaseIndent": "TODO",
-            "dxHtmlEditor-orderedList": "TODO",
-            "dxHtmlEditor-bulletList": "TODO",
-            "dxHtmlEditor-alignLeft": "TODO",
-            "dxHtmlEditor-alignCenter": "TODO",
-            "dxHtmlEditor-alignRight": "TODO",
-            "dxHtmlEditor-alignJustify": "TODO",
-            "dxHtmlEditor-codeBlock": "TODO",
-            "dxHtmlEditor-variable": "TODO",
-            "dxHtmlEditor-undo": "TODO",
-            "dxHtmlEditor-redo": "TODO",
-            "dxHtmlEditor-clear": "TODO",
-            "dxHtmlEditor-insertTable": "TODO",
-            "dxHtmlEditor-insertHeaderRow": "TODO",
-            "dxHtmlEditor-insertRowAbove": "TODO",
-            "dxHtmlEditor-insertRowBelow": "TODO",
-            "dxHtmlEditor-insertColumnLeft": "TODO",
-            "dxHtmlEditor-insertColumnRight": "TODO",
-            "dxHtmlEditor-deleteColumn": "TODO",
-            "dxHtmlEditor-deleteRow": "TODO",
-            "dxHtmlEditor-deleteTable": "TODO",
-            "dxHtmlEditor-cellProperties": "TODO",
-            "dxHtmlEditor-tableProperties": "TODO",
-            "dxHtmlEditor-insert": "TODO",
-            "dxHtmlEditor-delete": "TODO",
-            "dxHtmlEditor-border": "TODO",
-            "dxHtmlEditor-style": "TODO",
-            "dxHtmlEditor-width": "TODO",
-            "dxHtmlEditor-height": "TODO",
-            "dxHtmlEditor-borderColor": "TODO",
-            "dxHtmlEditor-tableBackground": "TODO",
-            "dxHtmlEditor-dimensions": "TODO",
-            "dxHtmlEditor-alignment": "TODO",
-            "dxHtmlEditor-horizontal": "TODO",
-            "dxHtmlEditor-vertical": "TODO",
-            "dxHtmlEditor-paddingVertical": "TODO",
-            "dxHtmlEditor-paddingHorizontal": "TODO",
-            "dxHtmlEditor-pixels": "TODO",
-            "dxHtmlEditor-list": "TODO",
-            "dxHtmlEditor-ordered": "TODO",
-            "dxHtmlEditor-bullet": "TODO",
-            "dxHtmlEditor-align": "TODO",
-            "dxHtmlEditor-center": "TODO",
-            "dxHtmlEditor-left": "TODO",
-            "dxHtmlEditor-right": "TODO",
-            "dxHtmlEditor-indent": "TODO",
-            "dxHtmlEditor-justify": "TODO",
             "dxFileManager-newDirectoryName": "TODO",
             "dxFileManager-rootDirectoryName": "TODO",
             "dxFileManager-errorNoAccess": "TODO",
@@ -524,10 +457,6 @@
             "dxGantt-dialogCancelOperationMessage": "TODO",
             "dxGantt-dialogDeleteDependencyMessage": "TODO",
             "dxGantt-dialogMoveTaskAndKeepDependencyMessage": "TODO",
-            "dxGantt-dialogConstraintCriticalViolationSeveralTasksMessage": "TODO",
-            "dxGantt-dialogConstraintViolationSeveralTasksMessage": "TODO",
-            "dxGantt-dialogDeleteDependenciesMessage": "TODO",
-            "dxGantt-dialogMoveTaskAndKeepDependenciesMessage": "TODO",
             "dxGantt-undo": "TODO",
             "dxGantt-redo": "TODO",
             "dxGantt-expandAll": "TODO",
@@ -536,15 +465,7 @@
             "dxGantt-deleteSelectedTask": "TODO",
             "dxGantt-zoomIn": "TODO",
             "dxGantt-zoomOut": "TODO",
-            "dxGantt-fullScreen": "TODO",
-            "dxGantt-quarter": "TODO",
-            "dxGantt-sortingAscendingText": "\u5347\u5e8f\u6392\u5e8f",
-            "dxGantt-sortingDescendingText": "\u964d\u5e8f\u6392\u5e8f",
-            "dxGantt-sortingClearText": "\u6e05\u9664\u6392\u5e8f",
-            "dxGantt-showResources": "TODO",
-            "dxGantt-showDependencies": "TODO",
-            "dxGantt-dialogStartDateValidation": "TODO",
-            "dxGantt-dialogEndDateValidation": "TODO"
+            "dxGantt-fullScreen": "TODO"
         }
     })
-}));
+});

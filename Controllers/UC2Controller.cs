@@ -61,7 +61,7 @@ namespace ProDat.Web2.Controllers
         }
 
         #region  Display Eng Attributes associated by MaintType 
-        public IActionResult EngAttributesByClassification(int id)
+        public async Task<IActionResult> EngAttributesByClassification(int id)
         {
             var tag = _context.Tag.Where(x => x.TagId == id).FirstOrDefault(); 
             

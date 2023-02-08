@@ -40,214 +40,212 @@
 
 <div id="form" class="dx-swatch-Datagrid_White" style="overflow-y: hidden; overflow-x: hidden">
     <!-- <div id="form" style="overflow-y: hidden; overflow-x: hidden"> -->
-    @(
+    @(Html.DevExtreme().DataGrid<ProDat.Web2.ViewModels.UC1_TagsVM>()
+    .ID("TagRegister")
+    .Height(1150)
+    //.Width()
+    .DataSource( ds => ds.Mvc()
+        .Controller("UC1")
+        .LoadAction("TagRegister_GetData")
+        .InsertAction("TagRegister_Insert")
+        .UpdateAction("TagRegister_Update")
+        .DeleteAction("TagRegister_Delete")
+        .Key("TagId")
+    )
+    .Editing(editing =>
+    {
+        editing.Mode(GridEditMode.Cell);
+        editing.AllowUpdating(isUser);
+    })
+    .OnEditorPreparing("OnEditorPreparing_lookupCols")
+    .Selection(s => s.Mode(SelectionMode.Multiple))
+    .Export(e => e.Enabled(true).AllowExportSelectedData(true))
+    .OnExporting("exporting")
+    .RemoteOperations(false)
+    .AllowColumnReordering(true)
+    .RowAlternationEnabled(true)
+    .OnContextMenuPreparing("GridViewContextMenuDefault")
+    .OnContentReady("TagRegister_OnContentReady")
+    .OnToolbarPreparing("TagRegister_OnToolbarPreparing")
+    .ShowBorders(true)
+    .FilterRow(f => f.Visible(true)) // won't txt search lookup columns. 
+                                     //.SelectionFilter(true)
+    .HeaderFilter(x=> x.Visible(true))
+    .ColumnChooser(c=> c
+        .Enabled(true)
+    )
+    .ColumnFixing(c => c.Enabled(true))
+    .ColumnResizingMode(ColumnResizingMode.Widget)
+    .AllowColumnResizing(true)
+    .SearchPanel(s => s
+        .Visible(true)
+        .HighlightCaseSensitive(true)
+     )
+    .GroupPanel(g => g
+        .Visible(true)
+        .AllowColumnDragging(true)
+    )
+    .Grouping(g => g.AutoExpandAll(false))
+    .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+    .Paging(p=> p.PageSize(45))
+    .OnCellPrepared("DataGrid_OnCellPrepared")
+    .Columns(columns =>
+    {
+        columns.AddFor(x => x.TagId)
+            .Visible(colIndex.ContainsKey("TagId"))
+            .Caption("TagId")
+            .VisibleIndex(colIndex.ContainsKey("TagId") ? colIndex["TagId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagId") ? colIndex["TagId"].Width : 75);
 
-        Html.DevExtreme().DataGrid<ProDat.Web2.ViewModels.UC1_TagsVM>()
-        .ID("TagRegister")
-        .Height(1150)
-        //.Width()
-        .DataSource( ds => ds.Mvc()
-            .Controller("UC1")
-            .LoadAction("TagRegister_GetData")
-            .InsertAction("TagRegister_Insert")
-            .UpdateAction("TagRegister_Update")
-            .DeleteAction("TagRegister_Delete")
-            .Key("TagId")
-        )
-        .Editing(editing =>
-        {
-            editing.Mode(GridEditMode.Cell);
-            editing.AllowUpdating(isUser);
-        })
-        .OnEditorPreparing("OnEditorPreparing_lookupCols")
-        .Selection(s => s.Mode(SelectionMode.Multiple))
-        .Export(e => e.Enabled(true).AllowExportSelectedData(true))
-        .OnExporting("exporting")
-        .RemoteOperations(false)
-        .AllowColumnReordering(true)
-        .RowAlternationEnabled(true)
-        .OnContextMenuPreparing("GridViewContextMenuDefault")
-        .OnContentReady("TagRegister_OnContentReady")
-        .OnToolbarPreparing("TagRegister_OnToolbarPreparing")
-        .ShowBorders(true)
-        .FilterRow(f => f.Visible(true)) // won't txt search lookup columns. 
-                                         //.SelectionFilter(true)
-        .HeaderFilter(x=> x.Visible(true))
-        .ColumnChooser(c=> c
-            .Enabled(true)
-        )
-        .ColumnFixing(c => c.Enabled(true))
-        .ColumnResizingMode(ColumnResizingMode.Widget)
-        .AllowColumnResizing(true)
-        .SearchPanel(s => s
-            .Visible(false)
-            .HighlightCaseSensitive(true)
-         )
-        .GroupPanel(g => g
-            .Visible(true)
-            .AllowColumnDragging(true)
-        )
-        .Grouping(g => g.AutoExpandAll(false))
-        .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
-        .Paging(p=> p.PageSize(45))
-        .OnCellPrepared("DataGrid_OnCellPrepared")
-        .Columns(columns =>
-        {
-            columns.AddFor(x => x.TagId)
-                .Visible(colIndex.ContainsKey("TagId"))
-                .Caption("TagId")
-                .VisibleIndex(colIndex.ContainsKey("TagId") ? colIndex["TagId"].Order : int.MaxValue)
-                .Width(colIndex.ContainsKey("TagId") ? colIndex["TagId"].Width : 75);
+        columns.AddFor(x => x.TagDeleted)
+            .Visible(colIndex.ContainsKey("TagDeleted"))
+            .Caption("Deleted")
+            .VisibleIndex(colIndex.ContainsKey("TagDeleted") ? colIndex["TagDeleted"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagDeleted") ? colIndex["TagDeleted"].Width : 75)
+            .SelectedFilterOperation(FilterOperations.Equal)
+            .FilterValue(false);
 
-            columns.AddFor(x => x.TagDeleted)
-                .Visible(colIndex.ContainsKey("TagDeleted"))
-                .Caption("Deleted")
-                .VisibleIndex(colIndex.ContainsKey("TagDeleted") ? colIndex["TagDeleted"].Order : int.MaxValue)
-                .Width(colIndex.ContainsKey("TagDeleted") ? colIndex["TagDeleted"].Width : 75)
-                .SelectedFilterOperation(FilterOperations.Equal)
-                .FilterValue(false);
+        columns.AddFor(x => x.Tagnoneng)
+            .Visible(colIndex.ContainsKey("Tagnoneng"))
+            .Caption("Non Engineering")
+            .VisibleIndex(colIndex.ContainsKey("Tagnoneng") ? colIndex["Tagnoneng"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("Tagnoneng") ? colIndex["Tagnoneng"].Width : 75);
 
-            columns.AddFor(x => x.Tagnoneng)
-                .Visible(colIndex.ContainsKey("Tagnoneng"))
-                .Caption("Non Engineering")
-                .VisibleIndex(colIndex.ContainsKey("Tagnoneng") ? colIndex["Tagnoneng"].Order : int.MaxValue)
-                .Width(colIndex.ContainsKey("Tagnoneng") ? colIndex["Tagnoneng"].Width : 75);
+        columns.AddFor(x => x.TagMaintQuery)
+            .Visible(colIndex.ContainsKey("TagMaintQuery"))
+            .Caption("Has MaintQuery")
+            .VisibleIndex(colIndex.ContainsKey("TagMaintQuery") ? colIndex["TagMaintQuery"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagMaintQuery") ? colIndex["TagMaintQuery"].Width : 75);
 
-            columns.AddFor(x => x.TagMaintQuery)
-                .Visible(colIndex.ContainsKey("TagMaintQuery"))
-                .Caption("Has MaintQuery")
-                .VisibleIndex(colIndex.ContainsKey("TagMaintQuery") ? colIndex["TagMaintQuery"].Order : int.MaxValue)
-                .Width(colIndex.ContainsKey("TagMaintQuery") ? colIndex["TagMaintQuery"].Width : 75);
+        columns.Add()
+            .DataField("TagNumber")
+            .Caption("Tag Number")
+            .Fixed(true)
+            .Visible(colIndex.ContainsKey("TagNumber"))
+            .Width(colIndex.ContainsKey("TagNumber") ? colIndex["TagNumber"].Width : 75);
 
-            columns.Add()
-                .DataField("TagNumber")
-                .Caption("Tag Number")
-                .Fixed(true)
-                .Visible(colIndex.ContainsKey("TagNumber"))
-                .Width(colIndex.ContainsKey("TagNumber") ? colIndex["TagNumber"].Width : 75);
+        columns.AddFor(x => x.TagFloc)
+            .Visible(colIndex.ContainsKey("TagFloc"))
+            .VisibleIndex(colIndex.ContainsKey("TagFloc") ? colIndex["TagFloc"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagFloc") ? colIndex["TagFloc"].Width : 75);
 
-            columns.AddFor(x => x.TagFloc)
-                .Visible(colIndex.ContainsKey("TagFloc"))
-                .VisibleIndex(colIndex.ContainsKey("TagFloc") ? colIndex["TagFloc"].Order : int.MaxValue)
-                .Width(colIndex.ContainsKey("TagFloc") ? colIndex["TagFloc"].Width : 75);
+        columns.AddFor(x => x.TagFlocDesc)
+            .Visible(colIndex.ContainsKey("TagFlocDesc"))
+            .VisibleIndex(colIndex.ContainsKey("TagFlocDesc") ? colIndex["TagFlocDesc"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("TagFlocDesc") ? colIndex["TagFlocDesc"].Width : 75);
 
-            columns.AddFor(x => x.TagFlocDesc)
-                .Visible(colIndex.ContainsKey("TagFlocDesc"))
-                .VisibleIndex(colIndex.ContainsKey("TagFlocDesc") ? colIndex["TagFlocDesc"].Order : int.MaxValue)
-                .Width(colIndex.ContainsKey("TagFlocDesc") ? colIndex["TagFlocDesc"].Width : 75);
+        columns.AddFor(x => x.EngDiscId)
+            .Visible(colIndex.ContainsKey("EngDiscId"))
+            .VisibleIndex(colIndex.ContainsKey("EngDiscId") ? colIndex["EngDiscId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("EngDiscId") ? colIndex["EngDiscId"].Width : 75)
+            .SetCellValue("setCellValue_EngDisc")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("EngDisc_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
 
-            columns.AddFor(x => x.EngDiscId)
-                .Visible(colIndex.ContainsKey("EngDiscId"))
-                .VisibleIndex(colIndex.ContainsKey("EngDiscId") ? colIndex["EngDiscId"].Order : int.MaxValue)
-                .Width(colIndex.ContainsKey("EngDiscId") ? colIndex["EngDiscId"].Width : 75)
-                .SetCellValue("setCellValue_EngDisc")
-                .Lookup(lookup => lookup
-                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("EngDisc_Lookup").Key("Value"))
-                    .ValueExpr("Value")
-                    .DisplayExpr("Text")
-                );
-
-            columns.AddFor(x => x.MaintLocationId)
-                .Visible(colIndex.ContainsKey("MaintLocationId"))
-                .VisibleIndex(colIndex.ContainsKey("MaintLocationId") ? colIndex["MaintLocationId"].Order : int.MaxValue)
-                .Width(colIndex.ContainsKey("MaintLocationId") ? colIndex["MaintLocationId"].Width : 75)
-                .CalculateFilterExpression("calculateFilterExpression_lookupCols")
-                .SetCellValue("setCellValue_MaintLocation")
-                .Lookup(lookup => lookup
-                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintLocation_Lookup")
-                    .Key("Value"))
-                    .ValueExpr("Value")
-                    .DisplayExpr("Text")
-                );
+        columns.AddFor(x => x.MaintLocationId)
+            .Visible(colIndex.ContainsKey("MaintLocationId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintLocationId") ? colIndex["MaintLocationId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintLocationId") ? colIndex["MaintLocationId"].Width : 75)
+            .CalculateFilterExpression("calculateFilterExpression_lookupCols")
+            .SetCellValue("setCellValue_MaintLocation")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintLocation_Lookup")
+                .Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
 
 
-            columns.AddFor(x => x.MaintenancePlantId)
-                .Visible(colIndex.ContainsKey("MaintenancePlantId"))
-                .VisibleIndex(colIndex.ContainsKey("MaintenancePlantId") ? colIndex["MaintenancePlantId"].Order : int.MaxValue)
-                .Width(colIndex.ContainsKey("MaintenancePlantId") ? colIndex["MaintenancePlantId"].Width : 75)
-                .SetCellValue("setCellValue_MaintenancePlant")
-                .Lookup(lookup => lookup
-                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintenancePlant_Lookup").Key("Value"))
-                    .ValueExpr("Value")
-                    .DisplayExpr("Text")
-                );
+        columns.AddFor(x => x.MaintenancePlantId)
+            .Visible(colIndex.ContainsKey("MaintenancePlantId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintenancePlantId") ? colIndex["MaintenancePlantId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintenancePlantId") ? colIndex["MaintenancePlantId"].Width : 75)
+            .SetCellValue("setCellValue_MaintenancePlant")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintenancePlant_Lookup").Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
 
-            columns.AddFor(x => x.MaintCriticalityId)
-                .Visible(colIndex.ContainsKey("MaintCriticalityId"))
-                .VisibleIndex(colIndex.ContainsKey("MaintCriticalityId") ? colIndex["MaintCriticalityId"].Order : int.MaxValue)
-                .Width(colIndex.ContainsKey("MaintCriticalityId") ? colIndex["MaintCriticalityId"].Width : 75)
-                .SetCellValue("setCellValue_MaintCriticality")
-                .Lookup(lookup => lookup
-                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintCriticality_Lookup")
-                    .Key("Value"))
-                    .ValueExpr("Value")
-                    .DisplayExpr("Text")
-                );
+        columns.AddFor(x => x.MaintCriticalityId)
+            .Visible(colIndex.ContainsKey("MaintCriticalityId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintCriticalityId") ? colIndex["MaintCriticalityId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintCriticalityId") ? colIndex["MaintCriticalityId"].Width : 75)
+            .SetCellValue("setCellValue_MaintCriticality")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintCriticality_Lookup")
+                .Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
 
-            columns.AddFor(x => x.MaintObjectTypeId)
-                .Visible(colIndex.ContainsKey("MaintObjectTypeId"))
-                .VisibleIndex(colIndex.ContainsKey("MaintObjectTypeId") ? colIndex["MaintObjectTypeId"].Order : int.MaxValue)
-                .Width(colIndex.ContainsKey("MaintObjectTypeId") ? colIndex["MaintObjectTypeId"].Width : 75)
-                .SetCellValue("setCellValue_MaintObjectType")
-                .Lookup(lookup => lookup
-                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintObjectType_Lookup")
-                    .Key("Value"))
-                    .ValueExpr("Value")
-                    .DisplayExpr("Text")
-                );
+        columns.AddFor(x => x.MaintObjectTypeId)
+            .Visible(colIndex.ContainsKey("MaintObjectTypeId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintObjectTypeId") ? colIndex["MaintObjectTypeId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintObjectTypeId") ? colIndex["MaintObjectTypeId"].Width : 75)
+            .SetCellValue("setCellValue_MaintObjectType")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintObjectType_Lookup")
+                .Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
 
-            columns.AddFor(x => x.SubSystemId)
-                .Visible(colIndex.ContainsKey("SubSystemId"))
-                .VisibleIndex(colIndex.ContainsKey("SubSystemId") ? colIndex["SubSystemId"].Order : int.MaxValue)
-                .Width(colIndex.ContainsKey("SubSystemId") ? colIndex["SubSystemId"].Width : 75)
-                .SetCellValue("setCellValue_SubSystem")
-                .Lookup(lookup => lookup
-                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("SubSystem_Lookup")
-                    .Key("Value"))
-                    .ValueExpr("Value")
-                    .DisplayExpr("Text")
-                );
+        columns.AddFor(x => x.SubSystemId)
+            .Visible(colIndex.ContainsKey("SubSystemId"))
+            .VisibleIndex(colIndex.ContainsKey("SubSystemId") ? colIndex["SubSystemId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("SubSystemId") ? colIndex["SubSystemId"].Width : 75)
+            .SetCellValue("setCellValue_SubSystem")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("SubSystem_Lookup")
+                .Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
 
-            columns.AddFor(x => x.MaintWorkCentreId)
-                .Visible(colIndex.ContainsKey("MaintWorkCentreId"))
-                .VisibleIndex(colIndex.ContainsKey("MaintWorkCentreId") ? colIndex["MaintWorkCentreId"].Order : int.MaxValue)
-                .Width(colIndex.ContainsKey("MaintWorkCentreId") ? colIndex["MaintWorkCentreId"].Width : 75)
-                .SetCellValue("setCellValue_MaintWorkCentre")
-                .Lookup(lookup => lookup
-                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintWorkCentre_Lookup")
-                    .Key("Value"))
-                    .ValueExpr("Value")
-                    .DisplayExpr("Text")
-                );
+        columns.AddFor(x => x.MaintWorkCentreId)
+            .Visible(colIndex.ContainsKey("MaintWorkCentreId"))
+            .VisibleIndex(colIndex.ContainsKey("MaintWorkCentreId") ? colIndex["MaintWorkCentreId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("MaintWorkCentreId") ? colIndex["MaintWorkCentreId"].Width : 75)
+            .SetCellValue("setCellValue_MaintWorkCentre")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintWorkCentre_Lookup")
+                .Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
 
-            columns.AddFor(x => x.ManufacturerId)
-                .Visible(colIndex.ContainsKey("ManufacturerId"))
-                .VisibleIndex(colIndex.ContainsKey("ManufacturerId") ? colIndex["ManufacturerId"].Order : int.MaxValue)
-                .Width(colIndex.ContainsKey("ManufacturerId") ? colIndex["ManufacturerId"].Width : 75)
-                .SetCellValue("setCellValue_Manufacturer")
-                .Lookup(lookup => lookup
-                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("Manufacturer_Lookup")
-                    .Key("Value"))
-                    .ValueExpr("Value")
-                    .DisplayExpr("Text")
-                );
+        columns.AddFor(x => x.ManufacturerId)
+            .Visible(colIndex.ContainsKey("ManufacturerId"))
+            .VisibleIndex(colIndex.ContainsKey("ManufacturerId") ? colIndex["ManufacturerId"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("ManufacturerId") ? colIndex["ManufacturerId"].Width : 75)
+            .SetCellValue("setCellValue_Manufacturer")
+            .Lookup(lookup => lookup
+                .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("Manufacturer_Lookup")
+                .Key("Value"))
+                .ValueExpr("Value")
+                .DisplayExpr("Text")
+            );
 
-            //columns.AddFor(x => x.ModelId)
-            //    .Visible(colIndex.ContainsKey("ModelId"))
-            //    .VisibleIndex(colIndex.ContainsKey("ModelId") ? colIndex["ModelId"].Order : int.MaxValue)
-            //    .Width(colIndex.ContainsKey("ModelId") ? colIndex["ModelId"].Width : 75)
-            //    .SetCellValue("setCellValue_Model")
-            //    .Lookup(lookup => lookup
-            //        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("Models_Lookup")
-            //        .Key("Value"))
-            //        .ValueExpr("Value")
-            //        .DisplayExpr("Text")
-            //    );
+                //columns.AddFor(x => x.ModelId)
+                //    .Visible(colIndex.ContainsKey("ModelId"))
+                //    .VisibleIndex(colIndex.ContainsKey("ModelId") ? colIndex["ModelId"].Order : int.MaxValue)
+                //    .Width(colIndex.ContainsKey("ModelId") ? colIndex["ModelId"].Width : 75)
+                //    .SetCellValue("setCellValue_Model")
+                //    .Lookup(lookup => lookup
+                //        .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("Models_Lookup")
+                //        .Key("Value"))
+                //        .ValueExpr("Value")
+                //        .DisplayExpr("Text")
+                //    );
 
-        columns.AddFor(x => x.ModelDescription)
-        .Visible(colIndex.ContainsKey("ModelDescription"))
-        .VisibleIndex(colIndex.ContainsKey("ModelDescription") ? colIndex["ModelDescription"].Order : int.MaxValue)
-        .Width(colIndex.ContainsKey("ModelDescription") ? colIndex["ModelDescription"].Width : 75);
+                columns.AddFor(x => x.ModelDescription)
+            .Visible(colIndex.ContainsKey("ModelDescription"))
+            .VisibleIndex(colIndex.ContainsKey("ModelDescription") ? colIndex["ModelDescription"].Order : int.MaxValue)
+            .Width(colIndex.ContainsKey("ModelDescription") ? colIndex["ModelDescription"].Width : 75);
 
         columns.AddFor(x => x.TagRawDesc)
             .Visible(colIndex.ContainsKey("TagRawDesc"))
@@ -348,15 +346,10 @@
             .Visible(colIndex.ContainsKey("TagVib"))
             .VisibleIndex(colIndex.ContainsKey("TagVib") ? colIndex["TagVib"].Order : int.MaxValue)
             .Width(colIndex.ContainsKey("TagVib") ? colIndex["TagVib"].Width : 75);
-        
-        columns.AddFor(x => x.MaintParentId)
-        .Visible(colIndex.ContainsKey("MaintParentId"))
-        .VisibleIndex(colIndex.ContainsKey("MaintParentId") ? colIndex["MaintParentId"].Order : int.MaxValue)
-        .Width(colIndex.ContainsKey("MaintParentId") ? colIndex["MaintParentId"].Width : 75);
 
 
-        // Lookup Fields
-        columns.AddFor(x => x.CommissioningSubsystemId)
+                // Lookup Fields
+                columns.AddFor(x => x.CommissioningSubsystemId)
             .Visible(colIndex.ContainsKey("CommissioningSubsystemId"))
             .VisibleIndex(colIndex.ContainsKey("CommissioningSubsystemId") ? colIndex["CommissioningSubsystemId"].Order : int.MaxValue)
             .Width(colIndex.ContainsKey("CommissioningSubsystemId") ? colIndex["CommissioningSubsystemId"].Width : 75)
@@ -365,7 +358,7 @@
                 .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("CommissioningSubsystem_Lookup").Key("Value"))
                 .ValueExpr("Value")
                 .DisplayExpr("Text")
-         );
+            );
 
         columns.AddFor(x => x.CommClassId)
             .Visible(colIndex.ContainsKey("CommClassId"))
@@ -495,9 +488,7 @@
             );
 
 
-
-
-@*        columns.AddFor(x => x.MaintParentId)
+        columns.AddFor(x => x.MaintParentId)
             .Visible(colIndex.ContainsKey("MaintParentId"))
             .VisibleIndex(colIndex.ContainsKey("MaintParentId") ? colIndex["MaintParentId"].Order : int.MaxValue)
             .Width(colIndex.ContainsKey("MaintParentId") ? colIndex["MaintParentId"].Width : 75)
@@ -507,7 +498,7 @@
                 .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintParent_Lookup").Key("Value"))
                 .ValueExpr("Value")
                 .DisplayExpr("Text")
-            );*@
+            );
 
         columns.AddFor(x => x.MaintPlannerGroupId)
             .Visible(colIndex.ContainsKey("MaintPlannerGroupId"))
@@ -737,13 +728,11 @@
 
 <!-- TagRegister DataGrid Modifications-->
 <script>
-    
+
     function TagRegister_OnContentReady(e) {
-        var dataGrid = e.component;
-        alert(e.element.find(".dx-datagrid-export-button").dxButton("instance").option("text", "Export current View"));
         e.element.find(".dx-datagrid-export-button").dxButton("instance").option("text", "Export current View");
     }
-    
+
     function TagRegister_OnToolbarPreparing(e) {
 
         var dataGrid = e.component;
@@ -1373,10 +1362,4 @@
         e.cancel = true;
     }
 
-
 </script>
-<style>
-    .dx-toolbar .dx-texteditor {
-        visibility: hidden;
-    }
-</style>

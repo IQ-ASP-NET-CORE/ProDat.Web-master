@@ -1,24 +1,26 @@
 /*!
 * DevExtreme (dx.messages.tr.js)
-* Version: 22.1.5
-* Build date: Fri Sep 02 2022
+* Version: 20.2.3
+* Build date: Tue Oct 20 2020
 *
-* Copyright (c) 2012 - 2022 Developer Express Inc. ALL RIGHTS RESERVED
+* Copyright (c) 2012 - 2020 Developer Express Inc. ALL RIGHTS RESERVED
 * Read about DevExtreme licensing here: https://js.devexpress.com/Licensing/
 */
 "use strict";
 
 ! function(root, factory) {
     if ("function" === typeof define && define.amd) {
-        define((function(require) {
+        define(function(require) {
             factory(require("devextreme/localization"))
-        }))
-    } else if ("object" === typeof module && module.exports) {
-        factory(require("devextreme/localization"))
+        })
     } else {
-        factory(DevExpress.localization)
+        if ("object" === typeof module && module.exports) {
+            factory(require("devextreme/localization"))
+        } else {
+            factory(DevExpress.localization)
+        }
     }
-}(0, (function(localization) {
+}(this, function(localization) {
     localization.loadMessages({
         tr: {
             Yes: "Evet",
@@ -279,80 +281,11 @@
             "dxHtmlEditor-dialogImageAltField": "Alternatif metin",
             "dxHtmlEditor-dialogImageWidthField": "Geni\u015flik (px)",
             "dxHtmlEditor-dialogImageHeightField": "Y\xfckseklik (px)",
-            "dxHtmlEditor-dialogUpdateImageCaption": "!TODO",
-            "dxHtmlEditor-dialogImageUpdateButton": "!TODO",
-            "dxHtmlEditor-dialogImageAddButton": "!TODO",
-            "dxHtmlEditor-dialogImageSpecifyUrl": "!TODO",
-            "dxHtmlEditor-dialogImageSelectFile": "!TODO",
-            "dxHtmlEditor-dialogImageKeepAspectRatio": "!TODO",
-            "dxHtmlEditor-dialogImageEncodeToBase64": "!TODO",
-            "dxHtmlEditor-dialogInsertTableRowsField": "Sat\u0131r",
-            "dxHtmlEditor-dialogInsertTableColumnsField": "S\xfctun",
-            "dxHtmlEditor-dialogInsertTableCaption": "Tablo Ekle",
+            "dxHtmlEditor-dialogInsertTableRowsField": "!TODO",
+            "dxHtmlEditor-dialogInsertTableColumnsField": "!TODO",
+            "dxHtmlEditor-dialogInsertTableCaption": "!TODO",
             "dxHtmlEditor-heading": "Ba\u015fl\u0131k",
             "dxHtmlEditor-normalText": "Normal metin",
-            "dxHtmlEditor-background": "Arka Plan Rengi",
-            "dxHtmlEditor-bold": "Kal\u0131n",
-            "dxHtmlEditor-color": "Yaz\u0131 Tipi Rengi",
-            "dxHtmlEditor-font": "Yaz\u0131 Tipi",
-            "dxHtmlEditor-italic": "Yat\u0131k",
-            "dxHtmlEditor-link": "Ba\u011flant\u0131 Ekle",
-            "dxHtmlEditor-image": "Resim Ekle",
-            "dxHtmlEditor-size": "Boyut",
-            "dxHtmlEditor-strike": "\xdcst\xfc \xc7izili",
-            "dxHtmlEditor-subscript": "Alt Simge",
-            "dxHtmlEditor-superscript": "\xdcst Simge",
-            "dxHtmlEditor-underline": "At\u0131 \xc7izili",
-            "dxHtmlEditor-blockquote": "\xd6bek",
-            "dxHtmlEditor-header": "\xdcst Bilgi",
-            "dxHtmlEditor-increaseIndent": "Girintiyi Art\u0131r",
-            "dxHtmlEditor-decreaseIndent": "Girintiyi Azalt",
-            "dxHtmlEditor-orderedList": "S\u0131ral\u0131 Liste",
-            "dxHtmlEditor-bulletList": "TODO",
-            "dxHtmlEditor-alignLeft": "TODO",
-            "dxHtmlEditor-alignCenter": "TODO",
-            "dxHtmlEditor-alignRight": "TODO",
-            "dxHtmlEditor-alignJustify": "TODO",
-            "dxHtmlEditor-codeBlock": "TODO",
-            "dxHtmlEditor-variable": "TODO",
-            "dxHtmlEditor-undo": "TODO",
-            "dxHtmlEditor-redo": "TODO",
-            "dxHtmlEditor-clear": "TODO",
-            "dxHtmlEditor-insertTable": "TODO",
-            "dxHtmlEditor-insertHeaderRow": "TODO",
-            "dxHtmlEditor-insertRowAbove": "TODO",
-            "dxHtmlEditor-insertRowBelow": "TODO",
-            "dxHtmlEditor-insertColumnLeft": "TODO",
-            "dxHtmlEditor-insertColumnRight": "TODO",
-            "dxHtmlEditor-deleteColumn": "TODO",
-            "dxHtmlEditor-deleteRow": "TODO",
-            "dxHtmlEditor-deleteTable": "TODO",
-            "dxHtmlEditor-cellProperties": "TODO",
-            "dxHtmlEditor-tableProperties": "TODO",
-            "dxHtmlEditor-insert": "TODO",
-            "dxHtmlEditor-delete": "TODO",
-            "dxHtmlEditor-border": "TODO",
-            "dxHtmlEditor-style": "TODO",
-            "dxHtmlEditor-width": "TODO",
-            "dxHtmlEditor-height": "TODO",
-            "dxHtmlEditor-borderColor": "TODO",
-            "dxHtmlEditor-tableBackground": "TODO",
-            "dxHtmlEditor-dimensions": "TODO",
-            "dxHtmlEditor-alignment": "TODO",
-            "dxHtmlEditor-horizontal": "TODO",
-            "dxHtmlEditor-vertical": "TODO",
-            "dxHtmlEditor-paddingVertical": "TODO",
-            "dxHtmlEditor-paddingHorizontal": "TODO",
-            "dxHtmlEditor-pixels": "TODO",
-            "dxHtmlEditor-list": "TODO",
-            "dxHtmlEditor-ordered": "TODO",
-            "dxHtmlEditor-bullet": "TODO",
-            "dxHtmlEditor-align": "TODO",
-            "dxHtmlEditor-center": "TODO",
-            "dxHtmlEditor-left": "TODO",
-            "dxHtmlEditor-right": "TODO",
-            "dxHtmlEditor-indent": "TODO",
-            "dxHtmlEditor-justify": "TODO",
             "dxFileManager-errorNoAccess": "Eri\u015fim reddedildi. \u0130\u015flem tamamlanam\u0131yor.",
             "dxFileManager-errorDirectoryExistsFormat": "Klas\xf6r '{0}' zaten var.",
             "dxFileManager-errorFileExistsFormat": "Dosya '{0}' zaten var.",
@@ -516,10 +449,6 @@
             "dxGantt-dialogCancelOperationMessage": "TODO",
             "dxGantt-dialogDeleteDependencyMessage": "TODO",
             "dxGantt-dialogMoveTaskAndKeepDependencyMessage": "TODO",
-            "dxGantt-dialogConstraintCriticalViolationSeveralTasksMessage": "TODO",
-            "dxGantt-dialogConstraintViolationSeveralTasksMessage": "TODO",
-            "dxGantt-dialogDeleteDependenciesMessage": "TODO",
-            "dxGantt-dialogMoveTaskAndKeepDependenciesMessage": "TODO",
             "dxGantt-undo": "TODO",
             "dxGantt-redo": "TODO",
             "dxGantt-expandAll": "TODO",
@@ -528,15 +457,7 @@
             "dxGantt-deleteSelectedTask": "TODO",
             "dxGantt-zoomIn": "TODO",
             "dxGantt-zoomOut": "TODO",
-            "dxGantt-fullScreen": "TODO",
-            "dxGantt-quarter": "TODO",
-            "dxGantt-sortingAscendingText": "Artan S\u0131ralama",
-            "dxGantt-sortingDescendingText": "Azalan S\u0131ralama",
-            "dxGantt-sortingClearText": "S\u0131ralamay\u0131 Temizle",
-            "dxGantt-showResources": "TODO",
-            "dxGantt-showDependencies": "TODO",
-            "dxGantt-dialogStartDateValidation": "TODO",
-            "dxGantt-dialogEndDateValidation": "TODO"
+            "dxGantt-fullScreen": "TODO"
         }
     })
-}));
+});

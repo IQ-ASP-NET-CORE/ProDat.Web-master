@@ -1,4 +1,4 @@
-// Version: 2.8.6
+// Version: 2.7.1
 // https://github.com/DevExpress/DevExtreme.AspNet.Data
 // Copyright (c) Developer Express Inc.
 
@@ -7,27 +7,23 @@
 (function(factory) {
     "use strict";
 
-    function unwrapESModule(module) {
-        return module && module.__esModule && module.default ? module.default : module;
-    }
-
     if(typeof define === "function" && define.amd) {
         define(function(require, exports, module) {
             module.exports = factory(
-                unwrapESModule(require("devextreme/core/utils/ajax")),
+                require("devextreme/core/utils/ajax"),
                 require("jquery").Deferred,
                 require("jquery").extend,
-                unwrapESModule(require("devextreme/data/custom_store")),
-                unwrapESModule(require("devextreme/data/utils"))
+                require("devextreme/data/custom_store"),
+                require("devextreme/data/utils")
             );
         });
     } else if (typeof module === "object" && module.exports) {
         module.exports = factory(
-            unwrapESModule(require("devextreme/core/utils/ajax")),
+            require("devextreme/core/utils/ajax"),
             require("jquery").Deferred,
             require("jquery").extend,
-            unwrapESModule(require("devextreme/data/custom_store")),
-            unwrapESModule(require("devextreme/data/utils"))
+            require("devextreme/data/custom_store"),
+            require("devextreme/data/utils")
         );
     } else {
         DevExpress.data.AspNet = factory(
