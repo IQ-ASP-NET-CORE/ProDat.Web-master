@@ -446,7 +446,7 @@ namespace ProDat.Web2.Controllers
             return Content(JsonConvert.SerializeObject(DataSourceLoader.Load(maintItems, loadOptions)));
         }
 
-        // Service class to Load MaintTree.
+        // Service class to Load Entire MaintTree in one go. Legacy.
         public MaintHeirarchyNode BuildMaintHierarchy(string TagNumber, int depth=0)
         {
             IList<MaintHeirarchyNode> children = new List<MaintHeirarchyNode>();
@@ -524,7 +524,8 @@ namespace ProDat.Web2.Controllers
         {
             IList<MaintHeirarchyNode> children = new List<MaintHeirarchyNode>();
 
-            // return root node if initial query
+            // initial call:
+            // return root node for initial query
             if (parentId == null || parentId == "0")
             {
                 // get root of MaintHierarchy
@@ -587,20 +588,48 @@ namespace ProDat.Web2.Controllers
                 // Todo, hasChildren to test for PMA, so expansion will show these next load.
                 bool hasChildren = x.InverseMaintParents.Count >0 || y.Count>0;
 
-                children.Add(new MaintHeirarchyNode
-                {
-                    Id = child.TagId.ToString(),
-                    dbId = child.TagId.ToString(),
-                    ParentId = child.MaintParentId.ToString(),
-                    Name = child.TagFloc + ": " + child.TagFlocDesc,
-                    IsDirectory = true, // required to allow DnD onto node.
-                    hasItems = hasChildren,
-                    nodeType = child.MaintType.MaintTypeName,
-                    IsDeleted = child.TagDeleted,
-                    IsExpanded = false,
-                    SAPStatusId = child.SAPStatusId != null ? (int)child.SAPStatusId : 0,
-                    MaintStatus = child.SAPStatusId.ToString()
-                });
+                // get grandchildren and add to children on return. Testing if I can get Hierarchical data structure to work with On Demand loading. 
+                //IList<MaintHeirarchyNode> grandchildren = new List<MaintHeirarchyNode>();
+                //foreach (Tag grandchild in x.InverseMaintParents
+                //            .Where(t => t.TagDeleted == false)
+                //            .Where(t => t.MaintType != null)
+                //            .Where(u => u.MaintType.MaintTypeName == "N" ||
+                //                        u.MaintType.MaintTypeName == "M" ||
+                //                        u.MaintType.MaintTypeName == "P")
+                //            .OrderBy(x => x.TagFloc))
+                //{
+                //    grandchildren.Add(new MaintHeirarchyNode
+                //    {
+                //        Id = grandchild.TagId.ToString(),
+                //        dbId = grandchild.TagId.ToString(),
+                //        ParentId = grandchild.MaintParentId.ToString(),
+                //        Name = grandchild.TagFloc + ": " + grandchild.TagFlocDesc,
+                //        IsDirectory = true, // required to allow DnD onto node.
+                //        hasItems = true,
+                //        Items = new List<MaintHeirarchyNode> { },
+                //        nodeType = grandchild.MaintType.MaintTypeName,
+                //        IsDeleted = grandchild.TagDeleted,
+                //        IsExpanded = false,
+                //        SAPStatusId = grandchild.SAPStatusId != null ? (int)grandchild.SAPStatusId : 0,
+                //        MaintStatus = grandchild.SAPStatusId.ToString()
+                //    });
+                //}
+
+                    children.Add(new MaintHeirarchyNode
+                    {
+                        Id = child.TagId.ToString(),
+                        dbId = child.TagId.ToString(),
+                        ParentId = child.MaintParentId.ToString(),
+                        Name = child.TagFloc + ": " + child.TagFlocDesc,
+                        IsDirectory = true, // required to allow DnD onto node.
+                        hasItems = hasChildren,
+                        //Items = grandchildren,
+                        nodeType = child.MaintType.MaintTypeName,
+                        IsDeleted = child.TagDeleted,
+                        IsExpanded = false,
+                        SAPStatusId = child.SAPStatusId != null ? (int)child.SAPStatusId : 0,
+                        MaintStatus = child.SAPStatusId.ToString()
+                    });
             }
 
             // Add PMA as children for current Tag, using FlocXMaintItem relationship. Is not hierarchical.
