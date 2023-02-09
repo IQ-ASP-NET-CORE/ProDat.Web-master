@@ -905,8 +905,10 @@ CREATE TABLE [ImportTransform] (
     [EntityPseudoPK] nvarchar(max) NULL,
     [EntityPK2] int NOT NULL,
     [AttributeName] nvarchar(max) NULL,
+    [AttributeNameOrg] nvarchar(max) NULL,
     [AttributeValue] nvarchar(max) NULL,
     [AttributeValueTxt] nvarchar(max) NULL,
+    [AttributeValueOldTxt] nvarchar(max) NULL,
     [AttributeValueOld] nvarchar(max) NULL,
     [AttributeValueType] nvarchar(max) NULL,
     CONSTRAINT [PK_ImportTransform] PRIMARY KEY ([ImportTransformId]),
@@ -1405,6 +1407,7 @@ CREATE TABLE [TagXDoc] (
     [DocID] int NOT NULL,
     [DateCreated] datetime NULL,
     [xComment] nvarchar(255) NULL,
+    [PrimaryDoc] bit NOT NULL,
     CONSTRAINT [PK_TagXDoc] PRIMARY KEY ([TagID], [DocID]),
     CONSTRAINT [FK_TagXDoc_Doc] FOREIGN KEY ([DocID]) REFERENCES [Doc] ([DocID]) ON DELETE NO ACTION,
     CONSTRAINT [FK_TagXDoc_Tag] FOREIGN KEY ([TagID]) REFERENCES [Tag] ([TagID]) ON DELETE NO ACTION
@@ -2169,7 +2172,7 @@ CREATE UNIQUE INDEX [U_Vib] ON [Vib] ([VibName]);
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20230206002959_initial', N'3.1.32');
+VALUES (N'20230208064419_initial', N'3.1.32');
 
 GO
 
