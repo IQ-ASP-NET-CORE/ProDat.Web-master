@@ -237,6 +237,22 @@ namespace ProDat.Web2.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ImportAttributeType",
+                columns: table => new
+                {
+                    ImportAttributeTypeId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ImportTypeName = table.Column<string>(nullable: true),
+                    StarAttributeName = table.Column<string>(nullable: true),
+                    EntityId = table.Column<int>(nullable: false),
+                    StarType = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ImportAttributeType", x => x.ImportAttributeTypeId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ImportType",
                 columns: table => new
                 {
@@ -405,7 +421,8 @@ namespace ProDat.Web2.Migrations
                     MaintPackageName = table.Column<string>(maxLength: 255, nullable: false),
                     MaintPackageCycleLength = table.Column<int>(nullable: false),
                     MaintPackageCycleUnit = table.Column<string>(maxLength: 255, nullable: true),
-                    MaintPackageCycleText = table.Column<string>(maxLength: 255, nullable: true)
+                    MaintPackageCycleText = table.Column<string>(maxLength: 255, nullable: true),
+                    MaintPackageSeq = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -3050,12 +3067,6 @@ namespace ProDat.Web2.Migrations
                 column: "MaintClassId");
 
             migrationBuilder.CreateIndex(
-                name: "U_MaintPackageName",
-                table: "MaintPackage",
-                column: "MaintPackageName",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "U_MaintPlan",
                 table: "MaintPlan",
                 column: "MaintPlanName",
@@ -3583,12 +3594,6 @@ namespace ProDat.Web2.Migrations
                 column: "TaskListGroupID");
 
             migrationBuilder.CreateIndex(
-                name: "U_TaskListHeader",
-                table: "TaskListHeader",
-                column: "TaskListShortText",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_TaskListHeader_TasklistCatID",
                 table: "TaskListHeader",
                 column: "TasklistCatID");
@@ -3695,6 +3700,9 @@ namespace ProDat.Web2.Migrations
 
             migrationBuilder.DropTable(
                 name: "History");
+
+            migrationBuilder.DropTable(
+                name: "ImportAttributeType");
 
             migrationBuilder.DropTable(
                 name: "ImportError");

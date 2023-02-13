@@ -150,6 +150,7 @@ namespace ProDat.Web2.Data
         public virtual DbSet<ImportType> ImportType { get; set; }
         public virtual DbSet<ImportExtract> ImportExtract { get; set; }
         public virtual DbSet<ImportTransform> ImportTransform { get; set; }
+        public virtual DbSet<ImportAttributeType> ImportAttributeType { get; set; }
         public virtual DbSet<ImportError> ImportError { get; set; }
         public virtual DbSet<ImportReport> ImportReport { get; set; }
 
@@ -935,9 +936,7 @@ namespace ProDat.Web2.Data
 
             modelBuilder.Entity<MaintPackage>(entity =>
             {
-                entity.HasIndex(e => e.MaintPackageName)
-                    .HasName("U_MaintPackageName")
-                    .IsUnique();
+
 
                 entity.Property(e => e.MaintPackageId).HasColumnName("MaintPackageID");
 
@@ -1985,11 +1984,6 @@ namespace ProDat.Web2.Data
             modelBuilder.Entity<TaskListHeader>(entity =>
             {
                 entity.HasKey(e => e.TaskListHeaderId);
-
-                entity.HasIndex(e => e.TaskListShortText)
-                    .HasName("U_TaskListHeader")
-                    .IsUnique();
-
                 //entity.Property(e => e.TaskListHeaderId)
                 //    .HasColumnName("TaskListHeaderID");
                 //.ValueGeneratedNever();

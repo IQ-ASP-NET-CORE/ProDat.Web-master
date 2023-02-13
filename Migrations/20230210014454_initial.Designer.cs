@@ -10,7 +10,7 @@ using ProDat.Web2.Data;
 namespace ProDat.Web2.Migrations
 {
     [DbContext(typeof(TagContext))]
-    [Migration("20230208064419_initial")]
+    [Migration("20230210014454_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -474,6 +474,30 @@ namespace ProDat.Web2.Migrations
                     b.HasIndex("ImportTypeId");
 
                     b.ToTable("Import");
+                });
+
+            modelBuilder.Entity("ProDat.Web2.Models.ETL.ImportAttributeType", b =>
+                {
+                    b.Property<int>("ImportAttributeTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("EntityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImportTypeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StarAttributeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StarType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ImportAttributeTypeId");
+
+                    b.ToTable("ImportAttributeType");
                 });
 
             modelBuilder.Entity("ProDat.Web2.Models.ETL.ImportError", b =>
@@ -1670,11 +1694,10 @@ namespace ProDat.Web2.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
-                    b.HasKey("MaintPackageId");
+                    b.Property<int?>("MaintPackageSeq")
+                        .HasColumnType("int");
 
-                    b.HasIndex("MaintPackageName")
-                        .IsUnique()
-                        .HasName("U_MaintPackageName");
+                    b.HasKey("MaintPackageId");
 
                     b.ToTable("MaintPackage");
                 });
@@ -3566,10 +3589,6 @@ namespace ProDat.Web2.Migrations
                     b.HasIndex("SysCondId");
 
                     b.HasIndex("TaskListGroupId");
-
-                    b.HasIndex("TaskListShortText")
-                        .IsUnique()
-                        .HasName("U_TaskListHeader");
 
                     b.HasIndex("TasklistCatId");
 
