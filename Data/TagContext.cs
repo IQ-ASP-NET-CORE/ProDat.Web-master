@@ -36,6 +36,8 @@ namespace ProDat.Web2.Data
 
         public virtual DbSet<UC2ViewColumns> UC2ViewColumns { get; set; }
         public virtual DbSet<UC2ViewColumnsUser> UC2ViewColumnsUser { get; set; }
+        public virtual DbSet<UC4ViewColumns> UC4ViewColumns { get; set; }
+        public virtual DbSet<UC4ViewColumnsUser> UC4ViewColumnsUser { get; set; }
 
         public virtual DbSet<SortField> SortField { get; set; }
         public virtual DbSet<PlannerPlant> PlannerPlant { get; set; }
