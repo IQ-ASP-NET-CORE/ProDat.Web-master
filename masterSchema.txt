@@ -1453,7 +1453,7 @@ GO
 
 CREATE INDEX [IX_Area_MaintenancePlantID] ON [Area] ([MaintenancePlantID]);
 
-GO
+GOIX_EngClassRequiredDocs
 
 CREATE INDEX [IX_BOM_EquipTypeID] ON [BOM] ([EquipTypeID]);
 

@@ -442,6 +442,8 @@ namespace ProDat.Web2.Data
                 //   .HasForeignKey(e => e.DocTypeId)
                 //   .HasConstraintName("FK_EngReqDocs_DocType");
 
+                entity.HasIndex(e => e.EngClassId)
+                    .IsUnique(false);
             });
 
 
@@ -755,6 +757,9 @@ namespace ProDat.Web2.Data
                 entity.Property(e => e.MaintClassName)
                     .IsRequired()
                     .HasMaxLength(255);
+
+                entity.HasIndex(e => e.MaintClassName)
+                    .IsUnique();
             });
 
             modelBuilder.Entity<MaintCriticality>(entity =>

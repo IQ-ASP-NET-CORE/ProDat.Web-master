@@ -19,10 +19,10 @@ namespace ProDat.Web2.Models
 
         [Display(Name = "Doc")]
         public string DocNum { get; set; }
-        
+
         [Display(Name = "Alias")]
         public string DocAlias { get; set; }
-        
+
         [Display(Name = "Title")]
         public string DocTitle { get; set; }
         public int? DocTypeId { get; set; }
@@ -30,9 +30,11 @@ namespace ProDat.Web2.Models
 
         [Display(Name = "Comments")]
         public string DocComments { get; set; }
-        
+
         [Display(Name = "Source")]
         public string DocSource { get; set; }
+
+        public string DocDisc { get; set; }
 
         public virtual DocType DocType { get; set; }
         public virtual ICollection<MaintStrategy> MaintStrategys { get; set; }
