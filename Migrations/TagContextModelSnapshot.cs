@@ -700,7 +700,8 @@ namespace ProDat.Web2.Migrations
 
                     b.HasIndex("DocTypeId");
 
-                    b.HasIndex("EngClassId");
+                    b.HasIndex("EngClassId")
+                        .IsUnique();
 
                     b.ToTable("EngClassRequiredDocs");
                 });
@@ -1325,9 +1326,6 @@ namespace ProDat.Web2.Migrations
                         .HasMaxLength(255);
 
                     b.HasKey("MaintClassId");
-
-                    b.HasIndex("MaintClassName")
-                        .IsUnique();
 
                     b.ToTable("MaintClass");
                 });
@@ -3786,56 +3784,6 @@ namespace ProDat.Web2.Migrations
                     b.ToTable("UC2ViewColumnsUser");
                 });
 
-            modelBuilder.Entity("ProDat.Web2.Models.UC4ViewColumns", b =>
-                {
-                    b.Property<int>("UC4ViewColumnsId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("height")
-                        .HasColumnType("int");
-
-                    b.Property<string>("sectionName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("sectionOrder")
-                        .HasColumnType("int");
-
-                    b.Property<int>("width")
-                        .HasColumnType("int");
-
-                    b.HasKey("UC4ViewColumnsId");
-
-                    b.ToTable("UC4ViewColumns");
-                });
-
-            modelBuilder.Entity("ProDat.Web2.Models.UC4ViewColumnsUser", b =>
-                {
-                    b.Property<int>("UC4ViewColumnsUserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("UC4ViewColumnsId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("height")
-                        .HasColumnType("int");
-
-                    b.Property<int>("width")
-                        .HasColumnType("int");
-
-                    b.HasKey("UC4ViewColumnsUserId");
-
-                    b.HasIndex("UC4ViewColumnsId");
-
-                    b.ToTable("UC4ViewColumnsUser");
-                });
-
             modelBuilder.Entity("ProDat.Web2.Models.Vib", b =>
                 {
                     b.Property<int>("VibId")
@@ -4759,15 +4707,6 @@ namespace ProDat.Web2.Migrations
                     b.HasOne("ProDat.Web2.Models.UC2ViewColumns", null)
                         .WithMany("UC2ViewColumnsUser")
                         .HasForeignKey("UC2ViewColumnsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ProDat.Web2.Models.UC4ViewColumnsUser", b =>
-                {
-                    b.HasOne("ProDat.Web2.Models.UC4ViewColumns", null)
-                        .WithMany("UC4ViewColumnsUser")
-                        .HasForeignKey("UC4ViewColumnsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

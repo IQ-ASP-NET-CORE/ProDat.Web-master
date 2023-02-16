@@ -20,7 +20,7 @@ namespace ProDat.Web2.Models
         public int Pk2 { get; set; }
         public string AttributeName { get; set; }
         public string AttributeValue { get; set; }
-        public DateTime Created { get; set; }        
+        public DateTime Created { get; set; }
         public string CreatedBy { get; set; }
     }
 }

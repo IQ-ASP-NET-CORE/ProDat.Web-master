@@ -436,6 +436,8 @@ namespace ProDat.Web2.Data
             {
 
                 entity.Property(e => e.DocTypeId).HasColumnName("DocTypeId");
+                entity.Property(e => e.EngClassId).HasColumnName("EngClassId");
+
 
                 //entity.Ignore(e => e.DocTypes);
 
@@ -445,6 +447,9 @@ namespace ProDat.Web2.Data
                 //   .HasConstraintName("FK_EngReqDocs_DocType");
 
                 entity.HasIndex(e => e.EngClassId)
+                    .IsUnique(false);
+
+                entity.HasIndex(e => e.DocTypeId)
                     .IsUnique(false);
             });
 
