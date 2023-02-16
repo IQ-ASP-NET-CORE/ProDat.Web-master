@@ -23,7 +23,7 @@ namespace ProDat.Web2.Data
         // what fields to view in UC1
         public virtual DbSet<ColumnSets> ColumnSets { get; set; }
 
-        public virtual DbSet<History> History { get; set; }
+        public virtual DbSet<Historian> Historian { get; set; }
 
         public virtual DbSet<TagView> TagView { get; set; }
         public virtual DbSet<TagViewColumns> TagViewColumns { get; set; }

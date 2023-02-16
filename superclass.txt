@@ -1,25 +1,63 @@
-﻿ALTER TABLE [EngDisc] ADD [DocId] int NULL;
+﻿DROP TABLE [History];
 
 GO
 
-ALTER TABLE [EngDisc] ADD [docDisc] nvarchar(max) NULL;
+DROP INDEX [IX_EngClassRequiredDocs_EngClassId] ON [EngClassRequiredDocs];
 
 GO
 
-ALTER TABLE [Doc] ADD [DocDisc] nvarchar(max) NULL;
+CREATE TABLE [Historian] (
+    [HistorianId] int NOT NULL IDENTITY,
+    [ImportId] int NOT NULL,
+    [EntityName] int NOT NULL,
+    [Pk1] int NOT NULL,
+    [Pk2] int NOT NULL,
+    [AttributeName] nvarchar(max) NULL,
+    [AttributeValue] nvarchar(max) NULL,
+    [Created] datetime2 NOT NULL,
+    [CreatedBy] nvarchar(max) NULL,
+    CONSTRAINT [PK_Historian] PRIMARY KEY ([HistorianId])
+);
 
 GO
 
-CREATE INDEX [IX_EngDisc_DocId] ON [EngDisc] ([DocId]);
+CREATE TABLE [UC4ViewColumns] (
+    [UC4ViewColumnsId] int NOT NULL IDENTITY,
+    [sectionOrder] int NOT NULL,
+    [sectionName] nvarchar(max) NULL,
+    [height] int NOT NULL,
+    [width] int NOT NULL,
+    CONSTRAINT [PK_UC4ViewColumns] PRIMARY KEY ([UC4ViewColumnsId])
+);
 
 GO
 
-ALTER TABLE [EngDisc] ADD CONSTRAINT [FK_EngDisc_Doc_DocId] FOREIGN KEY ([DocId]) REFERENCES [Doc] ([DocID]) ON DELETE NO ACTION;
+CREATE TABLE [UC4ViewColumnsUser] (
+    [UC4ViewColumnsUserId] int NOT NULL IDENTITY,
+    [UC4ViewColumnsId] int NOT NULL,
+    [UserName] nvarchar(max) NULL,
+    [height] int NOT NULL,
+    [width] int NOT NULL,
+    CONSTRAINT [PK_UC4ViewColumnsUser] PRIMARY KEY ([UC4ViewColumnsUserId]),
+    CONSTRAINT [FK_UC4ViewColumnsUser_UC4ViewColumns_UC4ViewColumnsId] FOREIGN KEY ([UC4ViewColumnsId]) REFERENCES [UC4ViewColumns] ([UC4ViewColumnsId]) ON DELETE CASCADE
+);
+
+GO
+
+CREATE UNIQUE INDEX [IX_MaintClass_MaintClassName] ON [MaintClass] ([MaintClassName]);
+
+GO
+
+CREATE INDEX [IX_EngClassRequiredDocs_EngClassId] ON [EngClassRequiredDocs] ([EngClassId]);
+
+GO
+
+CREATE INDEX [IX_UC4ViewColumnsUser_UC4ViewColumnsId] ON [UC4ViewColumnsUser] ([UC4ViewColumnsId]);
 
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20230214023015_docDisc', N'3.1.32');
+VALUES (N'20230216030240_Historian', N'3.1.32');
 
 GO
 
