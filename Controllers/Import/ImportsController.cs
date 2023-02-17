@@ -97,25 +97,25 @@ namespace ProDat.Web2.Controllers.Import
 
             if (Import.File != null && Import.File.Length > 0 && Import.File.FileName.EndsWith(".xlsx"))
             {
-                // This should be dynamic. 
+                // This should be dynamic.
                 // TODO: Replace with Call to stored procedure which grabs table columns (and fixes fk value for suffix Num of Name)
                 // NEW_Tagnumber is not in db, so add manually always...
                 string[] ValidColumns = null;
                 string[] bitFields = new string[] { };
                 if (Import.ImportTypeId == 1) //TAG
-                { 
-                    ValidColumns = new string[] { "TagNumber", "NEW_TagNumber", "TagFloc", "TagService", "TagFLOC", "SystemNum", "SubSystemNum", "EngClassName", 
-                                "MaintLocationName", "LocationName", "MaintTypeName", "MaintStatusName", "EngStatusName", 
+                {
+                    ValidColumns = new string[] { "TagNumber", "NEW_TagNumber", "TagFloc", "TagService", "TagFLOC", "SystemNum", "SubSystemNum", "EngClassName",
+                                "MaintLocationName", "LocationName", "MaintTypeName", "MaintStatusName", "EngStatusName",
                                 "MaintWorkCentreName", "EdcName", "MaintStructureIndicatorName", "CommissioningSubsystemName", "CommClassName",
-                                "CommZoneName", "MaintPlannerGroupName", "MaintenanceplanName", "MaintCriticalityName", "PerformanceStandardName", 
+                                "CommZoneName", "MaintPlannerGroupName", "MaintenanceplanName", "MaintCriticalityName", "PerformanceStandardName",
                                 "MaintClassName", "KeyDocNum", "PoName", "TagSource", "TagDeleted",
-                                "TagFlocDesc", "TagMaintQuery", "TagComment", "ModelNum", "VibName", 
-                                "Tagnoneng", "TagVendorTag", "MaintObjectTypeName", "RbiSilName", "IpfName", 
-                                "RcmName", "TagRawNumber", "TagRawDesc", "MaintScePsReviewTeamName", "MaintScePsJustification", 
-                                "TagMaintCritComments", "RbmName", "ManufacturerName", "ExMethodName", "TagRbmMethod", 
-                                "TagVib", "TagSrcKeyList", "TagBomReq", "TagSpNo", "MaintSortProcessName", 
+                                "TagFlocDesc", "TagMaintQuery", "TagComment", "ModelNum", "VibName",
+                                "Tagnoneng", "TagVendorTag", "MaintObjectTypeName", "RbiSilName", "IpfName",
+                                "RcmName", "TagRawNumber", "TagRawDesc", "MaintScePsReviewTeamName", "MaintScePsJustification",
+                                "TagMaintCritComments", "RbmName", "ManufacturerName", "ExMethodName", "TagRbmMethod",
+                                "TagVib", "TagSrcKeyList", "TagBomReq", "TagSpNo", "MaintSortProcessName",
                                 "TagCharacteristic", "TagCharValue", "TagCharDesc", "EngParentID1", "EngDiscName",
-                                "ModelName", "SerialNumber", "PlantSectionName", "MaintenancePlantNum", 
+                                "ModelName", "SerialNumber", "PlantSectionName", "MaintenancePlantNum",
                                 // self referencing fields:
                                 "MaintParentID"
                             };
@@ -124,12 +124,12 @@ namespace ProDat.Web2.Controllers.Import
                 if(Import.ImportTypeId == 2) //TLH
                 {
                     ValidColumns = new string[] {
-                        "TaskListShortText", "PerfStdAppDel", "RegBodyAppDel", "ChangeRequired", 
-                        "MaintPackageName", "MaintStrategyName", "MaintWorkCentreName", "MaintenancePlantNum", "PerformanceStandardName", 
-                        "PmassemblyName", "RegulatoryBodyName", "SysCondName", "TasklistCatName", 
+                        "TaskListShortText", "PerfStdAppDel", "RegBodyAppDel", "ChangeRequired",
+                        "MaintPackageName", "MaintStrategyName", "MaintWorkCentreName", "MaintenancePlantNum", "PerformanceStandardName",
+                        "PmassemblyName", "RegulatoryBodyName", "SysCondName", "TasklistCatName",
                         "MaintPlannerGroupName", "StatusCode", "TLHNumber"
                         //,"TaskListGroupName", "Counter" removed as these make the PseudoPK
-                        //"ScePsReviewId", //"TaskListClassId", 
+                        //"ScePsReviewId", //"TaskListClassId",
                     };
                 }
                 if (Import.ImportTypeId == 3) //MI
@@ -163,20 +163,28 @@ namespace ProDat.Web2.Controllers.Import
                         "MaintWorkCentreName", "MaintenancePlantNum", "ControlKeyName", "SysCondName", "RelationshiptoOperationName",
                         "OperationShortText", "OperationLongText", "WorkHrs", "CapNo", "MaintPackageName",
                         "DocNum", "Ti", "OffSite", "FixedOperQty", "ChangeRequired",
-                        "TaskListOperationName" // Pseudo Column part of Export. 
+                        "TaskListOperationName" // Pseudo Column part of Export.
                         //,"TaskListHeaderId", "OperationNum" removed as these make the PseudoPK
                     };
 
                     // need this to handle nulls as false, else problems ensue in bit validation
                     bitFields = new string[] { "Ti", "OffSite" };
                 }
+                if (Import.ImportTypeId == 7) //Location
+                {
+                    ValidColumns = new string[] {
+                        "AreaId", "LocationName",
+                        "LocationDesc","Longitude","Latitude","Elevation","LocationType",
+                        "ParentLocationID"
+                    };
+                }
 
-                // This should be dynamic. 
+                // This should be dynamic.
                 // TODO: Replace with Call to stored procedure, or build using Tag metadata w/Reflection.
-                //         if heavy load, we could build using reflection into table structure. (i.e. recreate on db change only). 
+                //         if heavy load, we could build using reflection into table structure. (i.e. recreate on db change only).
                 // For now, there will only be a few of these in Tag Module.
                 //
-                // If it encounters key, dig into child entity of matching name to get attribute Named within. 
+                // If it encounters key, dig into child entity of matching name to get attribute Named within.
                 //dicAdditional[keyAttribute] = [requiredPseudoFK1, requiredPseudoFK2, ...]
                 Dictionary<string, string[]> additionalFKs = new Dictionary<string, string[]>();
                 additionalFKs.Add("SubSystemNum", new[] { "SystemNum" });
@@ -198,10 +206,10 @@ namespace ProDat.Web2.Controllers.Import
                         foreach (IXLRow row in sheet.RowsUsed())
                         {
                             //Use firstRow to get number of columns.
-                            // Create dictionary of column values. 
+                            // Create dictionary of column values.
                             if (FirstRow)
                             {
-                                //Checking the Last cell used for column generation in datatable  
+                                //Checking the Last cell used for column generation in datatable
                                 readRange = string.Format("{0}:{1}", 1, row.LastCellUsed().Address.ColumnNumber);
                                 int i = 0;
                                 foreach (IXLCell cell in row.Cells(readRange))
@@ -219,7 +227,7 @@ namespace ProDat.Web2.Controllers.Import
                             else
                             {
                                 /* squidge row into ImportExtract format:
-                                 * for each NON SPECIAL field (tagName, ?) 
+                                 * for each NON SPECIAL field (tagName, ?)
                                  *  if hasValue
                                  *    set pk
                                  *    AttributeName
@@ -278,7 +286,7 @@ namespace ProDat.Web2.Controllers.Import
                                     ImportExtract newRec = rec.Clone();
                                     newRec.AttributeName = kv.Key;
                                     var tmpVal = row.Cell(kv.Value).Value.ToString();
-                                    
+
                                     // convert null bit field (if in header) values to false.
                                     if (bitFields.Contains(kv.Key))
                                     {
@@ -333,17 +341,17 @@ namespace ProDat.Web2.Controllers.Import
 
             } // is excel file
 
-            // Update Import Status if we made it this far. 
+            // Update Import Status if we made it this far.
             Import.ImportStatus = "Imported excel File.";
             _context.Update(Import);
             await _context.SaveChangesAsync();
 
-            // ARGH. If we wait for it, then it works, but on large imports this is problematic 
-            // due to timeout by App server. This kills the running procedure. 
-            // 
+            // ARGH. If we wait for it, then it works, but on large imports this is problematic
+            // due to timeout by App server. This kills the running procedure.
+            //
             // Problem: Cannot guarantee ImportTransform Data is complete
-            //          Works when SP run manually from DB. 
-            // Solution: Need Agent on SQL Server to start procedures, so timeout is not an issue. 
+            //          Works when SP run manually from DB.
+            // Solution: Need Agent on SQL Server to start procedures, so timeout is not an issue.
             //           maybe trigger on Import Table, or Scheduled Task (every 15min; run Import Job)
             //
             //var discard = _context.Database.ExecuteSqlRaw("TransformImports");
@@ -387,7 +395,7 @@ namespace ProDat.Web2.Controllers.Import
         }
 
         // POST: Imports/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -484,7 +492,7 @@ namespace ProDat.Web2.Controllers.Import
         }
 
         // POST: Imports/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -520,7 +528,7 @@ namespace ProDat.Web2.Controllers.Import
                     }
                 }
 
-                // execute MSSQL command to start processing. 
+                // execute MSSQL command to start processing.
                 _ = _context.Database.ExecuteSqlRaw("ImportTransformById " + id);
                 return RedirectToAction(nameof(Index));
 

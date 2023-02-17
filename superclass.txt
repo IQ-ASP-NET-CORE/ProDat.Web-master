@@ -1,63 +1,24 @@
-﻿DROP TABLE [History];
-
-GO
-
-DROP INDEX [IX_EngClassRequiredDocs_EngClassId] ON [EngClassRequiredDocs];
-
-GO
-
-CREATE TABLE [Historian] (
-    [HistorianId] int NOT NULL IDENTITY,
-    [ImportId] int NOT NULL,
-    [EntityName] int NOT NULL,
-    [Pk1] int NOT NULL,
-    [Pk2] int NOT NULL,
-    [AttributeName] nvarchar(max) NULL,
-    [AttributeValue] nvarchar(max) NULL,
-    [Created] datetime2 NOT NULL,
-    [CreatedBy] nvarchar(max) NULL,
-    CONSTRAINT [PK_Historian] PRIMARY KEY ([HistorianId])
+﻿CREATE TABLE [KeyListxDocType] (
+    [KeyListxDocTypeID] int NOT NULL IDENTITY,
+    [KeyListId] int NOT NULL,
+    [DocTypeId] int NOT NULL,
+    CONSTRAINT [PK_KeyListxDocType] PRIMARY KEY ([KeyListxDocTypeID]),
+    CONSTRAINT [FK_KeyListxDocType_DocType_DocTypeId] FOREIGN KEY ([DocTypeId]) REFERENCES [DocType] ([DocTypeID]) ON DELETE CASCADE,
+    CONSTRAINT [FK_KeyListxDocType_KeyList_KeyListId] FOREIGN KEY ([KeyListId]) REFERENCES [KeyList] ([KeyListId]) ON DELETE CASCADE
 );
 
 GO
 
-CREATE TABLE [UC4ViewColumns] (
-    [UC4ViewColumnsId] int NOT NULL IDENTITY,
-    [sectionOrder] int NOT NULL,
-    [sectionName] nvarchar(max) NULL,
-    [height] int NOT NULL,
-    [width] int NOT NULL,
-    CONSTRAINT [PK_UC4ViewColumns] PRIMARY KEY ([UC4ViewColumnsId])
-);
+CREATE INDEX [IX_KeyListxDocType_DocTypeId] ON [KeyListxDocType] ([DocTypeId]);
 
 GO
 
-CREATE TABLE [UC4ViewColumnsUser] (
-    [UC4ViewColumnsUserId] int NOT NULL IDENTITY,
-    [UC4ViewColumnsId] int NOT NULL,
-    [UserName] nvarchar(max) NULL,
-    [height] int NOT NULL,
-    [width] int NOT NULL,
-    CONSTRAINT [PK_UC4ViewColumnsUser] PRIMARY KEY ([UC4ViewColumnsUserId]),
-    CONSTRAINT [FK_UC4ViewColumnsUser_UC4ViewColumns_UC4ViewColumnsId] FOREIGN KEY ([UC4ViewColumnsId]) REFERENCES [UC4ViewColumns] ([UC4ViewColumnsId]) ON DELETE CASCADE
-);
-
-GO
-
-CREATE UNIQUE INDEX [IX_MaintClass_MaintClassName] ON [MaintClass] ([MaintClassName]);
-
-GO
-
-CREATE INDEX [IX_EngClassRequiredDocs_EngClassId] ON [EngClassRequiredDocs] ([EngClassId]);
-
-GO
-
-CREATE INDEX [IX_UC4ViewColumnsUser_UC4ViewColumnsId] ON [UC4ViewColumnsUser] ([UC4ViewColumnsId]);
+CREATE INDEX [IX_KeyListxDocType_KeyListId] ON [KeyListxDocType] ([KeyListId]);
 
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20230216030240_Historian', N'3.1.32');
+VALUES (N'20230217064102_keylistxdoctype', N'3.1.32');
 
 GO
 
