@@ -446,6 +446,8 @@ namespace ProDat.Web2.Data
                 //   .HasForeignKey(e => e.DocTypeId)
                 //   .HasConstraintName("FK_EngReqDocs_DocType");
 
+                entity.HasIndex(e => new { e.DocTypeId, e.EngClassId }).IsUnique();
+
                 entity.HasIndex(e => e.EngClassId)
                     .IsUnique(false);
 
