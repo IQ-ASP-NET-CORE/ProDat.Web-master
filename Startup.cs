@@ -80,9 +80,9 @@ namespace ProDat.Web2
                     pattern: "{controller=UC1}/{action=Index}/{id?}"
                     //pattern: "{controller=TestGrid}/{action=Index}/{id?}"
                 );
-                
 
-                // added for scaffolded Identity Management 
+
+                // added for scaffolded Identity Management
                 endpoints.MapRazorPages();
             });
         }

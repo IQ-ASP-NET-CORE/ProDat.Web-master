@@ -7,20 +7,20 @@ using System.Threading.Tasks;
 
 namespace ProDat.Web2.Models
 {
-    public class History
+    public class Historian
     {
-        public History()
+        public Historian()
         {
         }
 
-        public int HistoryId { get; set; }
+        public int HistorianId { get; set; }
         public int ImportId { get; set; }
         public int EntityName { get; set; }
         public int Pk1 { get; set; }
         public int Pk2 { get; set; }
         public string AttributeName { get; set; }
         public string AttributeValue { get; set; }
-        public DateTime Created { get; set; }        
+        public DateTime Created { get; set; }
         public string CreatedBy { get; set; }
     }
 }

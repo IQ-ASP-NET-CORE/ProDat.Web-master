@@ -14,7 +14,8 @@ namespace ProDat.Web2.Migrations
                     BccCodeId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BccCodeNumber = table.Column<int>(nullable: false),
-                    BccCodeDesc = table.Column<string>(nullable: true)
+                    BccCodeDesc = table.Column<string>(nullable: true),
+                    BccColour = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -236,6 +237,22 @@ namespace ProDat.Web2.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ImportAttributeType",
+                columns: table => new
+                {
+                    ImportAttributeTypeId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ImportTypeName = table.Column<string>(nullable: true),
+                    StarAttributeName = table.Column<string>(nullable: true),
+                    EntityId = table.Column<int>(nullable: false),
+                    StarType = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ImportAttributeType", x => x.ImportAttributeTypeId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ImportType",
                 columns: table => new
                 {
@@ -260,6 +277,20 @@ namespace ProDat.Web2.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Ipf", x => x.IpfID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ItemCatalog",
+                columns: table => new
+                {
+                    ItemCatalogID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ItemCatalogClientNum = table.Column<int>(nullable: false),
+                    ItemcatalogDescription = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemCatalog", x => x.ItemCatalogID);
                 });
 
             migrationBuilder.CreateTable(
@@ -390,7 +421,8 @@ namespace ProDat.Web2.Migrations
                     MaintPackageName = table.Column<string>(maxLength: 255, nullable: false),
                     MaintPackageCycleLength = table.Column<int>(nullable: false),
                     MaintPackageCycleUnit = table.Column<string>(maxLength: 255, nullable: true),
-                    MaintPackageCycleText = table.Column<string>(maxLength: 255, nullable: true)
+                    MaintPackageCycleText = table.Column<string>(maxLength: 255, nullable: true),
+                    MaintPackageSeq = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1320,6 +1352,8 @@ namespace ProDat.Web2.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     KeyListId = table.Column<int>(nullable: false),
                     EngDataCode = table.Column<int>(nullable: false),
+                    ColumnNumber = table.Column<int>(nullable: false),
+                    Alias = table.Column<string>(nullable: true),
                     EngDataCodesEngDataCodeId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -1429,8 +1463,10 @@ namespace ProDat.Web2.Migrations
                     EntityPseudoPK = table.Column<string>(nullable: true),
                     EntityPK2 = table.Column<int>(nullable: false),
                     AttributeName = table.Column<string>(nullable: true),
+                    AttributeNameOrg = table.Column<string>(nullable: true),
                     AttributeValue = table.Column<string>(nullable: true),
                     AttributeValueTxt = table.Column<string>(nullable: true),
+                    AttributeValueOldTxt = table.Column<string>(nullable: true),
                     AttributeValueOld = table.Column<string>(nullable: true),
                     AttributeValueType = table.Column<string>(nullable: true)
                 },
@@ -1517,6 +1553,26 @@ namespace ProDat.Web2.Migrations
                         principalTable: "Project",
                         principalColumn: "ProjectID",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EquipmentTypes",
+                columns: table => new
+                {
+                    EquipTypeID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EquipTypeDesc = table.Column<string>(nullable: true),
+                    ModelID = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EquipmentTypes", x => x.EquipTypeID);
+                    table.ForeignKey(
+                        name: "FK_EquipmentTypes_Models_ModelID",
+                        column: x => x.ModelID,
+                        principalTable: "Models",
+                        principalColumn: "ModelID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1729,6 +1785,33 @@ namespace ProDat.Web2.Migrations
                         principalTable: "System",
                         principalColumn: "SystemID",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BOM",
+                columns: table => new
+                {
+                    BOMID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EquipTypeID = table.Column<int>(nullable: false),
+                    ItemCatalogID = table.Column<int>(nullable: false),
+                    ItemQuantity = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BOM", x => x.BOMID);
+                    table.ForeignKey(
+                        name: "FK_BOM_EquipmentTypes_EquipTypeID",
+                        column: x => x.EquipTypeID,
+                        principalTable: "EquipmentTypes",
+                        principalColumn: "EquipTypeID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BOM_ItemCatalog_ItemCatalogID",
+                        column: x => x.ItemCatalogID,
+                        principalTable: "ItemCatalog",
+                        principalColumn: "ItemCatalogID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1951,6 +2034,7 @@ namespace ProDat.Web2.Migrations
                     PlannerPlantdId = table.Column<int>(nullable: true),
                     ComnpanyCodeId = table.Column<int>(nullable: true),
                     WBSElementId = table.Column<int>(nullable: true),
+                    EquipTypeID = table.Column<int>(nullable: true),
                     PbsId = table.Column<int>(nullable: true),
                     EnvZoneId = table.Column<int>(nullable: true),
                     PlannerPlantId = table.Column<int>(nullable: true),
@@ -2013,6 +2097,12 @@ namespace ProDat.Web2.Migrations
                         column: x => x.EnvZoneId,
                         principalTable: "EnvZone",
                         principalColumn: "EnvZoneID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Tag_EquipmentTypes_EquipTypeID",
+                        column: x => x.EquipTypeID,
+                        principalTable: "EquipmentTypes",
+                        principalColumn: "EquipTypeID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Tag_ExMethod",
@@ -2532,7 +2622,8 @@ namespace ProDat.Web2.Migrations
                     TagID = table.Column<int>(nullable: false),
                     DocID = table.Column<int>(nullable: false),
                     DateCreated = table.Column<DateTime>(type: "datetime", nullable: true),
-                    xComment = table.Column<string>(maxLength: 255, nullable: true)
+                    xComment = table.Column<string>(maxLength: 255, nullable: true),
+                    PrimaryDoc = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2609,6 +2700,16 @@ namespace ProDat.Web2.Migrations
                 name: "IX_Area_MaintenancePlantID",
                 table: "Area",
                 column: "MaintenancePlantID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BOM_EquipTypeID",
+                table: "BOM",
+                column: "EquipTypeID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BOM_ItemCatalogID",
+                table: "BOM",
+                column: "ItemCatalogID");
 
             migrationBuilder.CreateIndex(
                 name: "U_Class",
@@ -2746,6 +2847,11 @@ namespace ProDat.Web2.Migrations
                 table: "EnvZone",
                 column: "EnvZoneName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EquipmentTypes_ModelID",
+                table: "EquipmentTypes",
+                column: "ModelID");
 
             migrationBuilder.CreateIndex(
                 name: "U_ExMethod",
@@ -2959,12 +3065,6 @@ namespace ProDat.Web2.Migrations
                 name: "IX_MaintObjectTypeXMaintClass_MaintClassId",
                 table: "MaintObjectTypeXMaintClass",
                 column: "MaintClassId");
-
-            migrationBuilder.CreateIndex(
-                name: "U_MaintPackageName",
-                table: "MaintPackage",
-                column: "MaintPackageName",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "U_MaintPlan",
@@ -3222,6 +3322,11 @@ namespace ProDat.Web2.Migrations
                 name: "IX_Tag_EnvZoneId",
                 table: "Tag",
                 column: "EnvZoneId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tag_EquipTypeID",
+                table: "Tag",
+                column: "EquipTypeID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tag_ExMethodID",
@@ -3489,12 +3594,6 @@ namespace ProDat.Web2.Migrations
                 column: "TaskListGroupID");
 
             migrationBuilder.CreateIndex(
-                name: "U_TaskListHeader",
-                table: "TaskListHeader",
-                column: "TaskListShortText",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_TaskListHeader_TasklistCatID",
                 table: "TaskListHeader",
                 column: "TasklistCatID");
@@ -3564,6 +3663,9 @@ namespace ProDat.Web2.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "BOM");
+
+            migrationBuilder.DropTable(
                 name: "ClassCharacteristics");
 
             migrationBuilder.DropTable(
@@ -3598,6 +3700,9 @@ namespace ProDat.Web2.Migrations
 
             migrationBuilder.DropTable(
                 name: "History");
+
+            migrationBuilder.DropTable(
+                name: "ImportAttributeType");
 
             migrationBuilder.DropTable(
                 name: "ImportError");
@@ -3646,6 +3751,9 @@ namespace ProDat.Web2.Migrations
 
             migrationBuilder.DropTable(
                 name: "UC2ViewColumnsUser");
+
+            migrationBuilder.DropTable(
+                name: "ItemCatalog");
 
             migrationBuilder.DropTable(
                 name: "BccCode");
@@ -3768,6 +3876,9 @@ namespace ProDat.Web2.Migrations
                 name: "EnvZone");
 
             migrationBuilder.DropTable(
+                name: "EquipmentTypes");
+
+            migrationBuilder.DropTable(
                 name: "ExMethod");
 
             migrationBuilder.DropTable(
@@ -3813,9 +3924,6 @@ namespace ProDat.Web2.Migrations
                 name: "MaintPlan");
 
             migrationBuilder.DropTable(
-                name: "Models");
-
-            migrationBuilder.DropTable(
                 name: "Pbs");
 
             migrationBuilder.DropTable(
@@ -3855,6 +3963,9 @@ namespace ProDat.Web2.Migrations
                 name: "SuperClass");
 
             migrationBuilder.DropTable(
+                name: "Models");
+
+            migrationBuilder.DropTable(
                 name: "Area");
 
             migrationBuilder.DropTable(
@@ -3870,13 +3981,13 @@ namespace ProDat.Web2.Migrations
                 name: "MeasPoint");
 
             migrationBuilder.DropTable(
-                name: "Manufacturer");
-
-            migrationBuilder.DropTable(
                 name: "System");
 
             migrationBuilder.DropTable(
                 name: "Project");
+
+            migrationBuilder.DropTable(
+                name: "Manufacturer");
 
             migrationBuilder.DropTable(
                 name: "PlantSection");

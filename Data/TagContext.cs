@@ -23,7 +23,7 @@ namespace ProDat.Web2.Data
         // what fields to view in UC1
         public virtual DbSet<ColumnSets> ColumnSets { get; set; }
 
-        public virtual DbSet<History> History { get; set; }
+        public virtual DbSet<Historian> Historian { get; set; }
 
         public virtual DbSet<TagView> TagView { get; set; }
         public virtual DbSet<TagViewColumns> TagViewColumns { get; set; }
@@ -36,6 +36,8 @@ namespace ProDat.Web2.Data
 
         public virtual DbSet<UC2ViewColumns> UC2ViewColumns { get; set; }
         public virtual DbSet<UC2ViewColumnsUser> UC2ViewColumnsUser { get; set; }
+        public virtual DbSet<UC4ViewColumns> UC4ViewColumns { get; set; }
+        public virtual DbSet<UC4ViewColumnsUser> UC4ViewColumnsUser { get; set; }
 
         public virtual DbSet<SortField> SortField { get; set; }
         public virtual DbSet<PlannerPlant> PlannerPlant { get; set; }
@@ -150,6 +152,7 @@ namespace ProDat.Web2.Data
         public virtual DbSet<ImportType> ImportType { get; set; }
         public virtual DbSet<ImportExtract> ImportExtract { get; set; }
         public virtual DbSet<ImportTransform> ImportTransform { get; set; }
+        public virtual DbSet<ImportAttributeType> ImportAttributeType { get; set; }
         public virtual DbSet<ImportError> ImportError { get; set; }
         public virtual DbSet<ImportReport> ImportReport { get; set; }
 
@@ -433,6 +436,8 @@ namespace ProDat.Web2.Data
             {
 
                 entity.Property(e => e.DocTypeId).HasColumnName("DocTypeId");
+                entity.Property(e => e.EngClassId).HasColumnName("EngClassId");
+
 
                 //entity.Ignore(e => e.DocTypes);
 
@@ -441,6 +446,11 @@ namespace ProDat.Web2.Data
                 //   .HasForeignKey(e => e.DocTypeId)
                 //   .HasConstraintName("FK_EngReqDocs_DocType");
 
+                entity.HasIndex(e => e.EngClassId)
+                    .IsUnique(false);
+
+                entity.HasIndex(e => e.DocTypeId)
+                    .IsUnique(false);
             });
 
 
@@ -754,6 +764,9 @@ namespace ProDat.Web2.Data
                 entity.Property(e => e.MaintClassName)
                     .IsRequired()
                     .HasMaxLength(255);
+
+                entity.HasIndex(e => e.MaintClassName)
+                    .IsUnique();
             });
 
             modelBuilder.Entity<MaintCriticality>(entity =>
@@ -935,9 +948,7 @@ namespace ProDat.Web2.Data
 
             modelBuilder.Entity<MaintPackage>(entity =>
             {
-                entity.HasIndex(e => e.MaintPackageName)
-                    .HasName("U_MaintPackageName")
-                    .IsUnique();
+
 
                 entity.Property(e => e.MaintPackageId).HasColumnName("MaintPackageID");
 
@@ -1985,11 +1996,6 @@ namespace ProDat.Web2.Data
             modelBuilder.Entity<TaskListHeader>(entity =>
             {
                 entity.HasKey(e => e.TaskListHeaderId);
-
-                entity.HasIndex(e => e.TaskListShortText)
-                    .HasName("U_TaskListHeader")
-                    .IsUnique();
-
                 //entity.Property(e => e.TaskListHeaderId)
                 //    .HasColumnName("TaskListHeaderID");
                 //.ValueGeneratedNever();

@@ -10,8 +10,8 @@ using ProDat.Web2.Data;
 namespace ProDat.Web2.Migrations
 {
     [DbContext(typeof(TagContext))]
-    [Migration("20230127073013_tag")]
-    partial class tag
+    [Migration("20230216030240_Historian")]
+    partial class Historian
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -54,6 +54,31 @@ namespace ProDat.Web2.Migrations
                     b.ToTable("Area");
                 });
 
+            modelBuilder.Entity("ProDat.Web2.Models.BOM", b =>
+                {
+                    b.Property<int>("BOMID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("EquipTypeID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemCatalogID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemQuantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("BOMID");
+
+                    b.HasIndex("EquipTypeID");
+
+                    b.HasIndex("ItemCatalogID");
+
+                    b.ToTable("BOM");
+                });
+
             modelBuilder.Entity("ProDat.Web2.Models.BccCode", b =>
                 {
                     b.Property<int>("BccCodeId")
@@ -66,6 +91,9 @@ namespace ProDat.Web2.Migrations
 
                     b.Property<int>("BccCodeNumber")
                         .HasColumnType("int");
+
+                    b.Property<string>("BccColour")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("BccCodeId");
 
@@ -343,6 +371,9 @@ namespace ProDat.Web2.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
+                    b.Property<string>("DocDisc")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DocLink")
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
@@ -448,6 +479,30 @@ namespace ProDat.Web2.Migrations
                     b.ToTable("Import");
                 });
 
+            modelBuilder.Entity("ProDat.Web2.Models.ETL.ImportAttributeType", b =>
+                {
+                    b.Property<int>("ImportAttributeTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("EntityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImportTypeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StarAttributeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StarType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ImportAttributeTypeId");
+
+                    b.ToTable("ImportAttributeType");
+                });
+
             modelBuilder.Entity("ProDat.Web2.Models.ETL.ImportError", b =>
                 {
                     b.Property<int>("ImportErrorId")
@@ -537,10 +592,16 @@ namespace ProDat.Web2.Migrations
                     b.Property<string>("AttributeName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("AttributeNameOrg")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("AttributeValue")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AttributeValueOld")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AttributeValueOldTxt")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AttributeValueTxt")
@@ -635,14 +696,14 @@ namespace ProDat.Web2.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("EngClassId")
+                        .HasColumnName("EngClassId")
                         .HasColumnType("int");
 
                     b.HasKey("EngClassRequiredDocsId");
 
                     b.HasIndex("DocTypeId");
 
-                    b.HasIndex("EngClassId")
-                        .IsUnique();
+                    b.HasIndex("EngClassId");
 
                     b.ToTable("EngClassRequiredDocs");
                 });
@@ -769,6 +830,9 @@ namespace ProDat.Web2.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("DocId")
+                        .HasColumnType("int");
+
                     b.Property<string>("EngDiscDesc")
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
@@ -778,7 +842,12 @@ namespace ProDat.Web2.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
+                    b.Property<string>("docDisc")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("EngDiscId");
+
+                    b.HasIndex("DocId");
 
                     b.HasIndex("EngDiscName")
                         .IsUnique()
@@ -844,7 +913,12 @@ namespace ProDat.Web2.Migrations
                     b.Property<string>("EquipTypeDesc")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("ModelID")
+                        .HasColumnType("int");
+
                     b.HasKey("EquipTypeID");
+
+                    b.HasIndex("ModelID");
 
                     b.ToTable("EquipmentTypes");
                 });
@@ -962,9 +1036,9 @@ namespace ProDat.Web2.Migrations
                     b.ToTable("FlocXPMAssembly");
                 });
 
-            modelBuilder.Entity("ProDat.Web2.Models.History", b =>
+            modelBuilder.Entity("ProDat.Web2.Models.Historian", b =>
                 {
-                    b.Property<int>("HistoryId")
+                    b.Property<int>("HistorianId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -993,9 +1067,9 @@ namespace ProDat.Web2.Migrations
                     b.Property<int>("Pk2")
                         .HasColumnType("int");
 
-                    b.HasKey("HistoryId");
+                    b.HasKey("HistorianId");
 
-                    b.ToTable("History");
+                    b.ToTable("Historian");
                 });
 
             modelBuilder.Entity("ProDat.Web2.Models.Ipf", b =>
@@ -1023,6 +1097,24 @@ namespace ProDat.Web2.Migrations
                         .HasName("U_Ipf");
 
                     b.ToTable("Ipf");
+                });
+
+            modelBuilder.Entity("ProDat.Web2.Models.ItemCatalog", b =>
+                {
+                    b.Property<int>("ItemCatalogID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ItemCatalogClientNum")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ItemcatalogDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ItemCatalogID");
+
+                    b.ToTable("ItemCatalog");
                 });
 
             modelBuilder.Entity("ProDat.Web2.Models.KeyList", b =>
@@ -1236,6 +1328,9 @@ namespace ProDat.Web2.Migrations
                         .HasMaxLength(255);
 
                     b.HasKey("MaintClassId");
+
+                    b.HasIndex("MaintClassName")
+                        .IsUnique();
 
                     b.ToTable("MaintClass");
                 });
@@ -1613,11 +1708,10 @@ namespace ProDat.Web2.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
-                    b.HasKey("MaintPackageId");
+                    b.Property<int?>("MaintPackageSeq")
+                        .HasColumnType("int");
 
-                    b.HasIndex("MaintPackageName")
-                        .IsUnique()
-                        .HasName("U_MaintPackageName");
+                    b.HasKey("MaintPackageId");
 
                     b.ToTable("MaintPackage");
                 });
@@ -3340,6 +3434,9 @@ namespace ProDat.Web2.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime");
 
+                    b.Property<bool>("PrimaryDoc")
+                        .HasColumnType("bit");
+
                     b.Property<string>("XComment")
                         .HasColumnName("xComment")
                         .HasColumnType("nvarchar(255)")
@@ -3506,10 +3603,6 @@ namespace ProDat.Web2.Migrations
                     b.HasIndex("SysCondId");
 
                     b.HasIndex("TaskListGroupId");
-
-                    b.HasIndex("TaskListShortText")
-                        .IsUnique()
-                        .HasName("U_TaskListHeader");
 
                     b.HasIndex("TasklistCatId");
 
@@ -3696,6 +3789,56 @@ namespace ProDat.Web2.Migrations
                     b.ToTable("UC2ViewColumnsUser");
                 });
 
+            modelBuilder.Entity("ProDat.Web2.Models.UC4ViewColumns", b =>
+                {
+                    b.Property<int>("UC4ViewColumnsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("height")
+                        .HasColumnType("int");
+
+                    b.Property<string>("sectionName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("sectionOrder")
+                        .HasColumnType("int");
+
+                    b.Property<int>("width")
+                        .HasColumnType("int");
+
+                    b.HasKey("UC4ViewColumnsId");
+
+                    b.ToTable("UC4ViewColumns");
+                });
+
+            modelBuilder.Entity("ProDat.Web2.Models.UC4ViewColumnsUser", b =>
+                {
+                    b.Property<int>("UC4ViewColumnsUserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("UC4ViewColumnsId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("height")
+                        .HasColumnType("int");
+
+                    b.Property<int>("width")
+                        .HasColumnType("int");
+
+                    b.HasKey("UC4ViewColumnsUserId");
+
+                    b.HasIndex("UC4ViewColumnsId");
+
+                    b.ToTable("UC4ViewColumnsUser");
+                });
+
             modelBuilder.Entity("ProDat.Web2.Models.Vib", b =>
                 {
                     b.Property<int>("VibId")
@@ -3747,6 +3890,21 @@ namespace ProDat.Web2.Migrations
                     b.HasOne("ProDat.Web2.Models.MaintenancePlant", "MaintenancePlant")
                         .WithMany("Areas")
                         .HasForeignKey("MaintenancePlantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ProDat.Web2.Models.BOM", b =>
+                {
+                    b.HasOne("ProDat.Web2.Models.EquipmentTypes", "EquipmentType")
+                        .WithMany()
+                        .HasForeignKey("EquipTypeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProDat.Web2.Models.ItemCatalog", "ItemCatalog")
+                        .WithMany()
+                        .HasForeignKey("ItemCatalogID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -3892,6 +4050,22 @@ namespace ProDat.Web2.Migrations
                     b.HasOne("ProDat.Web2.Models.EngDataCode", "EngDataCode")
                         .WithMany("TagEngDataCodeDropdowns")
                         .HasForeignKey("EngDataCodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ProDat.Web2.Models.EngDisc", b =>
+                {
+                    b.HasOne("ProDat.Web2.Models.Doc", "Doc")
+                        .WithMany()
+                        .HasForeignKey("DocId");
+                });
+
+            modelBuilder.Entity("ProDat.Web2.Models.EquipmentTypes", b =>
+                {
+                    b.HasOne("ProDat.Web2.Models.Model", "Model")
+                        .WithMany()
+                        .HasForeignKey("ModelID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -4588,6 +4762,15 @@ namespace ProDat.Web2.Migrations
                     b.HasOne("ProDat.Web2.Models.UC2ViewColumns", null)
                         .WithMany("UC2ViewColumnsUser")
                         .HasForeignKey("UC2ViewColumnsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ProDat.Web2.Models.UC4ViewColumnsUser", b =>
+                {
+                    b.HasOne("ProDat.Web2.Models.UC4ViewColumns", null)
+                        .WithMany("UC4ViewColumnsUser")
+                        .HasForeignKey("UC4ViewColumnsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

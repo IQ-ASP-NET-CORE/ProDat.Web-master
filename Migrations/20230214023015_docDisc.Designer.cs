@@ -10,8 +10,8 @@ using ProDat.Web2.Data;
 namespace ProDat.Web2.Migrations
 {
     [DbContext(typeof(TagContext))]
-    [Migration("20230127075700_bom")]
-    partial class bom
+    [Migration("20230214023015_docDisc")]
+    partial class docDisc
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -91,6 +91,9 @@ namespace ProDat.Web2.Migrations
 
                     b.Property<int>("BccCodeNumber")
                         .HasColumnType("int");
+
+                    b.Property<string>("BccColour")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("BccCodeId");
 
@@ -368,6 +371,9 @@ namespace ProDat.Web2.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
+                    b.Property<string>("DocDisc")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DocLink")
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
@@ -473,6 +479,30 @@ namespace ProDat.Web2.Migrations
                     b.ToTable("Import");
                 });
 
+            modelBuilder.Entity("ProDat.Web2.Models.ETL.ImportAttributeType", b =>
+                {
+                    b.Property<int>("ImportAttributeTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("EntityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImportTypeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StarAttributeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StarType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ImportAttributeTypeId");
+
+                    b.ToTable("ImportAttributeType");
+                });
+
             modelBuilder.Entity("ProDat.Web2.Models.ETL.ImportError", b =>
                 {
                     b.Property<int>("ImportErrorId")
@@ -562,10 +592,16 @@ namespace ProDat.Web2.Migrations
                     b.Property<string>("AttributeName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("AttributeNameOrg")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("AttributeValue")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AttributeValueOld")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AttributeValueOldTxt")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AttributeValueTxt")
@@ -794,6 +830,9 @@ namespace ProDat.Web2.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("DocId")
+                        .HasColumnType("int");
+
                     b.Property<string>("EngDiscDesc")
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
@@ -803,7 +842,12 @@ namespace ProDat.Web2.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
+                    b.Property<string>("docDisc")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("EngDiscId");
+
+                    b.HasIndex("DocId");
 
                     b.HasIndex("EngDiscName")
                         .IsUnique()
@@ -1661,11 +1705,10 @@ namespace ProDat.Web2.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
-                    b.HasKey("MaintPackageId");
+                    b.Property<int?>("MaintPackageSeq")
+                        .HasColumnType("int");
 
-                    b.HasIndex("MaintPackageName")
-                        .IsUnique()
-                        .HasName("U_MaintPackageName");
+                    b.HasKey("MaintPackageId");
 
                     b.ToTable("MaintPackage");
                 });
@@ -3388,6 +3431,9 @@ namespace ProDat.Web2.Migrations
                     b.Property<DateTime?>("DateCreated")
                         .HasColumnType("datetime");
 
+                    b.Property<bool>("PrimaryDoc")
+                        .HasColumnType("bit");
+
                     b.Property<string>("XComment")
                         .HasColumnName("xComment")
                         .HasColumnType("nvarchar(255)")
@@ -3554,10 +3600,6 @@ namespace ProDat.Web2.Migrations
                     b.HasIndex("SysCondId");
 
                     b.HasIndex("TaskListGroupId");
-
-                    b.HasIndex("TaskListShortText")
-                        .IsUnique()
-                        .HasName("U_TaskListHeader");
 
                     b.HasIndex("TasklistCatId");
 
@@ -3957,6 +3999,13 @@ namespace ProDat.Web2.Migrations
                         .HasForeignKey("EngDataCodeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ProDat.Web2.Models.EngDisc", b =>
+                {
+                    b.HasOne("ProDat.Web2.Models.Doc", "Doc")
+                        .WithMany()
+                        .HasForeignKey("DocId");
                 });
 
             modelBuilder.Entity("ProDat.Web2.Models.EquipmentTypes", b =>

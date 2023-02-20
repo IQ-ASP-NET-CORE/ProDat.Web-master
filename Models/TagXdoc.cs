@@ -17,6 +17,9 @@ namespace ProDat.Web2.Models
         [Display(Name = "Comment")]
         public string XComment { get; set; }
 
+        public Boolean PrimaryDoc { get; set; }
+
+
         public virtual Doc Doc { get; set; }
         public virtual Tag Tag { get; set; }
 
