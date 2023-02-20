@@ -38,7 +38,7 @@ namespace ProDat.Web2.Data
         public virtual DbSet<UC2ViewColumnsUser> UC2ViewColumnsUser { get; set; }
         public virtual DbSet<UC4ViewColumns> UC4ViewColumns { get; set; }
         public virtual DbSet<UC4ViewColumnsUser> UC4ViewColumnsUser { get; set; }
-
+        public virtual DbSet<KeyListxDocType> KeyListxDocType { get; set; }
         public virtual DbSet<SortField> SortField { get; set; }
         public virtual DbSet<PlannerPlant> PlannerPlant { get; set; }
         public virtual DbSet<CompanyCode> CompanyCode { get; set; }
@@ -445,6 +445,8 @@ namespace ProDat.Web2.Data
                 //   .WithOne(p => p.DocTypeId)
                 //   .HasForeignKey(e => e.DocTypeId)
                 //   .HasConstraintName("FK_EngReqDocs_DocType");
+
+                entity.HasIndex(e => new { e.DocTypeId, e.EngClassId }).IsUnique();
 
                 entity.HasIndex(e => e.EngClassId)
                     .IsUnique(false);
