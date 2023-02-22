@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ClosedXML.Excel;
 using DevExtreme.AspNet.Data;
@@ -594,11 +595,28 @@ namespace ProDat.Web2.Controllers
         {
             // TODO override to update tag state.
             var order = _context.Tag.First(o => o.TagId == key);
+            var newhistorian = new Historian();
+
+            //Takes the value string and removes the symbols and separates the value and name apart
+            string cleanValue = Regex.Replace(values, "[{|}]","");
+            string cleanName = cleanValue.Substring(cleanValue.IndexOf(':') + 2);
+            string attributeValue = cleanName.Remove(cleanName.Length - 1);
+            string attributeName = cleanValue.Substring(1, cleanValue.IndexOf(':') - 2);
+
+            //Assigns the values to the model
+            newhistorian.AttributeName = attributeName;
+            newhistorian.AttributeValue = attributeValue;
+            newhistorian.Pk1 = key;
+            newhistorian.Created = DateTime.UtcNow;
+            newhistorian.CreatedBy = User.Identity.Name;
+
             JsonConvert.PopulateObject(values, order);
 
-            if (!TryValidateModel(order))
+            if (!TryValidateModel(order) && !TryValidateModel(newhistorian))
                 return BadRequest();
 
+
+            _context.Historian.Add(newhistorian);
             _context.SaveChanges();
 
             return Ok(order);
