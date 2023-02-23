@@ -156,7 +156,7 @@ namespace ProDat.Web2.Controllers.Import
                         "SchedulingPeriodValue", "NEW_MPName"
                     };
                 }
-                if (Import.ImportTypeId == 6) //TLO
+                if (Import.ImportTypeId == 7) //TLO
                 {
                     ValidColumns = new string[] {
                         "TaskListOperationName", "SubOperationNum", "OperationName", "OperationDescription",
@@ -170,7 +170,7 @@ namespace ProDat.Web2.Controllers.Import
                     // need this to handle nulls as false, else problems ensue in bit validation
                     bitFields = new string[] { "Ti", "OffSite" };
                 }
-                if (Import.ImportTypeId == 7) //Location
+                if (Import.ImportTypeId == 6) //Location
                 {
                     ValidColumns = new string[] {
                         "AreaId", "LocationName",
@@ -261,7 +261,8 @@ namespace ProDat.Web2.Controllers.Import
                                         rec.EntityPseudoPK = row.Cell(dHeader["MaintPlanName"]).Value.ToString();
                                         break;
                                     case 6: // TaskListOperation
-                                        rec.EntityPseudoPK = row.Cell(dHeader["TaskListOperationName"]).Value.ToString();
+                                        rec.EntityPseudoPK = row.Cell(dHeader["LocationName"]).Value.ToString();
+                                        // rec.EntityPseudoPK = row.Cell(dHeader["TaskListOperationName"]).Value.ToString();
                                         break;
                                     default:
 
@@ -277,7 +278,8 @@ namespace ProDat.Web2.Controllers.Import
                                         (Import.ImportTypeId == 3 && kv.Key == "MaintItemNum") ||
                                         //(Import.ImportTypeId == 4 && kv.Key == "MaintPlanName") ||
                                         (Import.ImportTypeId == 5 && kv.Key == "MaintPlanName") ||
-                                        (Import.ImportTypeId == 6 && kv.Key == "TaskListOperationName"))
+                                        (Import.ImportTypeId == 6 && kv.Key == "LocationName"))
+                                    //(Import.ImportTypeId == 6 && kv.Key == "TaskListOperationName"))
                                     {
                                         continue;
                                     }

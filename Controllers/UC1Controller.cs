@@ -596,29 +596,31 @@ namespace ProDat.Web2.Controllers
             // TODO override to update tag state.
             var order = _context.Tag.First(o => o.TagId == key);
             var newhistorian = new Historian();
+            var value_dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(values);
 
-            //Takes the value string and removes the symbols and separates the value and name apart
-            string cleanValue = Regex.Replace(values, "[{|}]","");
-            string cleanName = cleanValue.Substring(cleanValue.IndexOf(':') + 2);
-            string attributeValue = cleanName.Remove(cleanName.Length - 1);
-            string attributeName = cleanValue.Substring(1, cleanValue.IndexOf(':') - 2);
-
-            //Assigns the values to the model
-            newhistorian.AttributeName = attributeName;
-            newhistorian.AttributeValue = attributeValue;
-            newhistorian.Pk1 = key;
-            newhistorian.Created = DateTime.UtcNow;
-            newhistorian.CreatedBy = User.Identity.Name;
+            var Created = DateTime.UtcNow;
+            var CreatedBy = User.Identity.Name;
 
             JsonConvert.PopulateObject(values, order);
 
             if (!TryValidateModel(order) && !TryValidateModel(newhistorian))
                 return BadRequest();
 
+            foreach (var (k, v) in value_dictionary)
+            {
+                _context.Historian.Add(
+                            new Historian
+                            {
+                                AttributeName = k,
+                                AttributeValue = v,
+                                Pk1 = key,
+                                CreatedBy= CreatedBy,
+                                Created = Created
+                            }
+                            );
+                _context.SaveChanges();
 
-            _context.Historian.Add(newhistorian);
-            _context.SaveChanges();
-
+            }
             return Ok(order);
         }
 
