@@ -30,13 +30,13 @@ namespace ProDat.Web2.Models.ETL
         public string EntityName { get; set; }
 
         //PK of entity to update (e,g, Tag, etc)
-        public int EntityPK { get; set; }
+        public int? EntityPK { get; set; }
 
         // used for rename only.
         public string EntityPseudoPK { get; set; }
 
         // Other modules may require complex key
-        public int EntityPK2 { get; set; }
+        public int? EntityPK2 { get; set; }
 
         public string AttributeName { get; set; }
         public string AttributeNameOrg { get; set; }
