@@ -76,12 +76,19 @@ namespace ProDat.Web2.Controllers
 
         #region manage MaintItem TreeView
 
+
+        //This one
         [Authorize(Roles = "User")]
         [HttpPost]
         public async Task<IActionResult> AjaxMaintParentUpdate(string tagId, string maintParentId, string destinationComponent)
         {
             // Validate parameters
             var tag = await _context.Tag.FindAsync(int.Parse(tagId));
+
+            var Created = DateTime.UtcNow;
+            var CreatedBy = User.Identity.Name;
+
+
             if (tag == null)
                 return BadRequest();
 
@@ -97,6 +104,8 @@ namespace ProDat.Web2.Controllers
 
                 // update Tag.
                 tag.MaintParentId = int.Parse(maintParentId);
+
+
                 // If no MaintTypeId set, or is NonMaintainable, set to M.
                 if (tag.MaintTypeId == null || tag.MaintTypeId == 4)
                     tag.MaintTypeId = 1;
@@ -113,6 +122,29 @@ namespace ProDat.Web2.Controllers
                 MaintHierarchyNodeMovedToUnassigned(tag.TagId);
             }
 
+
+            _context.Historian.Add(
+             new Historian
+             {
+                 AttributeName = "MaintTypeID",
+                 AttributeValue = tag.MaintTypeId.ToString(),
+                 Pk1 = int.Parse(tagId),
+                 CreatedBy = CreatedBy,
+                 Created = Created
+             }
+               );
+
+            _context.Historian.Add(
+           new Historian
+           {
+               AttributeName = "MaintParentID",
+               AttributeValue = maintParentId,
+               Pk1 = int.Parse(tagId),
+               CreatedBy = CreatedBy,
+               Created = Created
+           }
+           );
+            _context.SaveChanges();
 
             // return 200.
             return Ok(new { message = "Success" });
