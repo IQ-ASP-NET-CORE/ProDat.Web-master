@@ -612,7 +612,6 @@ namespace ProDat.Web2.Controllers
                 return BadRequest();
             }
 
-
             var Created = DateTime.UtcNow;
             var CreatedBy = User.Identity.Name;
 
@@ -772,7 +771,7 @@ namespace ProDat.Web2.Controllers
 
             //determine attribute type being set
             PropertyInfo myProp = record.GetType().GetProperty(attributeName);
-            var oldValue = myProp.GetValue(record) ?? "Null";
+           // var oldValue = myProp.GetValue(record) ?? "Null";
 
             string propertyType = myProp.PropertyType.Name;
 
@@ -855,11 +854,8 @@ namespace ProDat.Web2.Controllers
                 return BadRequest();
             }
 
-            await _context.SaveChangesAsync();
 
-            // Apply Historian + user date etc.
 
-            // return 200.
             var Created = DateTime.UtcNow;
             var CreatedBy = User.Identity.Name;
 
@@ -874,7 +870,13 @@ namespace ProDat.Web2.Controllers
                             Created = Created
                         }
                           );
-            _context.SaveChanges();
+
+            await _context.SaveChangesAsync();
+
+            // Apply Historian + user date etc.
+
+            // return 200.
+
 
             return Ok(new { message = "Success" });
 
