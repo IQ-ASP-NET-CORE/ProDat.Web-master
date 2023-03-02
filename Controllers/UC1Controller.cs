@@ -613,6 +613,7 @@ namespace ProDat.Web2.Controllers
                             {
                                 AttributeName = k,
                                 AttributeValue = v,
+                                EntityName = 1,
                                 Pk1 = key,
                                 CreatedBy= CreatedBy,
                                 Created = Created

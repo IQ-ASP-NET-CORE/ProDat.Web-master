@@ -77,7 +77,7 @@ namespace ProDat.Web2.Controllers
         #region manage MaintItem TreeView
 
 
-        //This one
+
         [Authorize(Roles = "User")]
         [HttpPost]
         public async Task<IActionResult> AjaxMaintParentUpdate(string tagId, string maintParentId, string destinationComponent)
@@ -163,11 +163,24 @@ namespace ProDat.Web2.Controllers
                                     .FirstOrDefaultAsync();
 
             var tag = await _context.Tag.FindAsync(int.Parse(TagId));
+            var Created = DateTime.UtcNow;
+            var CreatedBy = User.Identity.Name;
 
             if (tag == null || tagStatusId <1)
                 return BadRequest();
 
             tag.MaintTypeId = tagStatusId;
+
+            _context.Historian.Add(
+                        new Historian
+                        {
+                            AttributeName = "MaintTypeID",
+                            AttributeValue = tagStatusId.ToString(),
+                            Pk1 = int.Parse(TagId),
+                            CreatedBy = CreatedBy,
+                            Created = Created
+                        }
+                          );
 
             await _context.SaveChangesAsync();
 
@@ -194,7 +207,6 @@ namespace ProDat.Web2.Controllers
             return Ok(new { message = "Success" });
 
         }
-
 
         [Authorize(Roles = "User")]
         public async Task<IActionResult> AjaxMaintTreePMAUpdate(string pmAId, string oldParent, string newParent, string destinationComponent)
@@ -907,7 +919,7 @@ namespace ProDat.Web2.Controllers
             if (!TryValidateModel(order))
                 return BadRequest();
 
-            _context.SaveChanges();
+                 _context.SaveChanges();
 
             return Ok(order);
         }
@@ -967,7 +979,7 @@ namespace ProDat.Web2.Controllers
 
 
         #region Manage TagProperties
-
+        //loads the first tag so that there is something to display
         [HttpGet]
         public object TagProperties_GetDataGrid(DataSourceLoadOptions loadOptions, int tagId = 1561)
         {
@@ -1043,6 +1055,7 @@ namespace ProDat.Web2.Controllers
         [HttpPut]
         public IActionResult TagProperties_UpdateDataGrid(string key, string values)
         {
+
             // key = TagId:EngDataCode
             var keys = key.Split(':');
             int tagId = int.Parse(keys[0]);
@@ -1065,11 +1078,11 @@ namespace ProDat.Web2.Controllers
             if (!TryValidateModel(item))
                 return BadRequest();
 
-            _context.SaveChanges();
+                _context.SaveChanges();
 
             return Ok();
         }
-
+        //Loads the First tag so there is something to load
         public IActionResult ReloadTagProperties(int Height, int Width, int TagId=1628)
         {
             return ViewComponent("TagProperties", new { height = Height, width = Width, tagId=TagId });

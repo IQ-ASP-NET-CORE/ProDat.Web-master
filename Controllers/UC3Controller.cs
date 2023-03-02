@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using ProDat.Web2.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using ProDat.Web2.Models;
 
 namespace ProDat.Web2.Controllers
 {
@@ -106,8 +107,6 @@ namespace ProDat.Web2.Controllers
 
             if (!TryValidateModel(order))
                 return BadRequest();
-
-            _context.SaveChanges();
 
             return Ok(order);
         }
@@ -471,6 +470,21 @@ namespace ProDat.Web2.Controllers
             }
 
 
+            var Created = DateTime.UtcNow;
+            var CreatedBy = User.Identity.Name;
+
+            _context.Historian.Add(
+                        new Historian
+                        {
+                            AttributeName = attributeName,
+                            AttributeValue = newValue,
+                            EntityName = 3,
+                            Pk1 = int.Parse(sId),
+                            CreatedBy = CreatedBy,
+                            Created = Created
+                        }
+                          );
+
             await _context.SaveChangesAsync();
 
             // Apply Historian + user date etc.
@@ -598,6 +612,22 @@ namespace ProDat.Web2.Controllers
                 return BadRequest();
             }
 
+
+            var Created = DateTime.UtcNow;
+            var CreatedBy = User.Identity.Name;
+
+            _context.Historian.Add(
+                        new Historian
+                        {
+                            AttributeName = attributeName,
+                            AttributeValue = newValue,
+                            EntityName = 5,
+                            Pk1 = int.Parse(sId),
+                            CreatedBy = CreatedBy,
+                            Created = Created
+                        }
+                          );
+
             await _context.SaveChangesAsync();
 
             // Apply Historian + user date etc.
@@ -703,11 +733,28 @@ namespace ProDat.Web2.Controllers
                 return BadRequest();
             }
 
+            var Created = DateTime.UtcNow;
+            var CreatedBy = User.Identity.Name;
+
+            _context.Historian.Add(
+                        new Historian
+                        {
+                            AttributeName = attributeName,
+                            AttributeValue = newValue,
+                            EntityName = 3,
+                            Pk1 = int.Parse(sId),
+                            CreatedBy = CreatedBy,
+                            Created = Created
+                        }
+                          );
+
             await _context.SaveChangesAsync();
 
             // Apply Historian + user date etc.
 
             // return 200.
+
+
             return Ok(new { message = "Success" });
 
         }
@@ -813,6 +860,22 @@ namespace ProDat.Web2.Controllers
             // Apply Historian + user date etc.
 
             // return 200.
+            var Created = DateTime.UtcNow;
+            var CreatedBy = User.Identity.Name;
+
+            _context.Historian.Add(
+                        new Historian
+                        {
+                            AttributeName = attributeName,
+                            AttributeValue = newValue,
+                            EntityName = 2,
+                            Pk1 = int.Parse(sId),
+                            CreatedBy = CreatedBy,
+                            Created = Created
+                        }
+                          );
+            _context.SaveChanges();
+
             return Ok(new { message = "Success" });
 
         }
