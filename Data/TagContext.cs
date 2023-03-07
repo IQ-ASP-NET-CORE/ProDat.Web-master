@@ -110,6 +110,7 @@ namespace ProDat.Web2.Data
         public virtual DbSet<Manufacturer> Manufacturer { get; set; }
         public virtual DbSet<MeasPoint> MeasPoint { get; set; }
         public virtual DbSet<Model> Models { get; set; }
+        public virtual DbSet<NonAllowedWords> NonAllowedWords { get; set; }
         public virtual DbSet<Operation> Operation { get; set; }
         public virtual DbSet<Pbs> Pbs { get; set; }
         public virtual DbSet<PerformanceStandard> PerformanceStandard { get; set; }
@@ -733,6 +734,29 @@ namespace ProDat.Web2.Data
 
             });
 
+
+            modelBuilder.Entity<KeyListxEngDataCode>(entity =>
+            {
+                entity.HasIndex(e => new { e.KeyListId, e.EngDataCode }).IsUnique();
+
+            });
+
+
+            modelBuilder.Entity<KeyListxDocType>(entity =>
+            {
+                entity.HasIndex(e => new { e.KeyListId, e.DocTypeId }).IsUnique();
+
+            });
+
+            modelBuilder.Entity<KeyListxEngClass>(entity =>
+            {
+                entity.HasIndex(e => new { e.KeyListId, e.EngClassID }).IsUnique();
+
+            });
+
+
+
+
             modelBuilder.Entity<MaintArea>(entity =>
             {
                 entity.HasIndex(e => e.MaintAreaName)
@@ -1232,6 +1256,12 @@ namespace ProDat.Web2.Data
                     .IsRequired()
                     .HasMaxLength(255);
             });
+
+            modelBuilder.Entity<NonAllowedWords>(entity =>
+            {
+                entity.HasNoKey();
+            });
+
 
             modelBuilder.Entity<Operation>(entity =>
             {

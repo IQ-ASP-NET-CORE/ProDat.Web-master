@@ -13,8 +13,13 @@ namespace ProDat.Web2.Models
         public int KeyListId { get; set; }
         public int DocTypeId { get; set; }
 
+        public int? ColoumnNum { get; set; }
+        public string? Alias { get; set; }
+
         public virtual KeyList KeyList { get; set; }
         public virtual DocType DocType { get; set; }
+
+
 
     }
 }
