@@ -346,6 +346,37 @@ namespace ProDat.Web2.Controllers
         }
 
 
+        public JsonResult KeylistxEngDataCode_Insert(int keylistId, int engDataCodeId)
+        {
+            var newkeylistXengdatacode = new KeyListxEngDataCode();
+
+            newkeylistXengdatacode.KeyListId = keylistId;
+            newkeylistXengdatacode.EngDataCode = engDataCodeId;
+
+            var dataSet = from i in _context.KeyListxEngDataCode
+                          join e in _context.EngDataCode on i.EngDataCode equals e.EngDataCodeId
+                          join t in _context.EngDataClassxEngDataCode on e.EngDataCodeId equals t.EngDataCodeId
+                          join y in _context.EngClass on t.EngClassId equals y.EngClassId
+                          where i.KeyListId == keylistId
+
+                          select new
+                          {
+                              i.ColumnNumber,
+                              i.Alias,
+                              e.EngDataCodeId,
+                              e.EngDataCodeName,
+                              e.EngDataCodeDesc,
+                              e.HideFromUI,
+                              t.BccCodeId,
+                              y.EngClassName
+                          };
+
+
+            return Json("OK");
+        }
+
+
+
         //This lookup takes in the superclassID and uses it search for the engclass and the attributes that are required
         [HttpGet]
         public object SuperClassToEngCodeData_Lookup(DataSourceLoadOptions loadOptions, int superClassId)
