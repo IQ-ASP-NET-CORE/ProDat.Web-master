@@ -9,7 +9,7 @@ namespace ProDat.Web2.TagLibrary
     public class ProjectDetails
     {
         private static string projectName;
-        private readonly TagContext _context;
+        //private readonly TagContext _context;
 
         private static readonly ProjectDetails _ProjectDetails = new ProjectDetails();
 

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Serialization;
 using ProDat.Web2.Data;
 using ProDat.Web2.TagLibrary;
 
@@ -43,6 +44,7 @@ namespace ProDat.Web2
             });
 
             services.AddControllersWithViews().AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
+
 
         }
 

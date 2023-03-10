@@ -536,7 +536,7 @@ namespace ProDat.Web2.Controllers
          *
          *
          */
-        public async Task<IActionResult> ExcelReport(string fileName, bool ExportAll)
+        public IActionResult ExcelReport(string fileName, bool ExportAll)
         {
             using (var workbook = new XLWorkbook())
             {
@@ -587,7 +587,7 @@ namespace ProDat.Web2.Controllers
                             }
                             else
                             {
-                                var value = GetPropertyValue(rec, field.Path)??"";
+                                var value = GetPropertyValue(rec, field.Path) ?? "";
                                 worksheet.Cell(currentRow, colIndex).SetValue(value);
                             }
 

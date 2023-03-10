@@ -21,11 +21,11 @@ namespace ProDat.Web2.ViewComponents
         }
 
         //public async Task<IViewComponentResult> InvokeAsync(int height,int width, int? parent)
-        public async Task<IViewComponentResult> InvokeAsync(int height, int width)
+        public IViewComponentResult Invoke(int height, int width, int? parent)
         {
             var viewModel = new UC2ComponentVM
             {
-                //parent = parent,
+                parent = parent,
                 height = height,
                 width = width
 

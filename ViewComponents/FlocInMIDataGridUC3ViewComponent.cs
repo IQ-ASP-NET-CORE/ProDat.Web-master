@@ -22,7 +22,7 @@ namespace ProDat.Web2.ViewComponents
             _context = context;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(int height,int width, int? parent)
+        public IViewComponentResult Invoke(int height, int width, int? parent)
         {
             // retrieve MI name into vm.
             string MINum = null;
@@ -33,7 +33,7 @@ namespace ProDat.Web2.ViewComponents
                 .Select(x => x.MaintItemNum)
                 .FirstOrDefault();
             }
-            
+
             var viewModel = new UC2ComponentVM
             {
                 height = height,

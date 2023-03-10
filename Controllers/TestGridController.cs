@@ -41,7 +41,7 @@ namespace ProDat.Web2.Controllers
             _configuration = Configuration;
         }
 
-        public async Task<IActionResult> Index(string columnSetsName="Default")
+        public IActionResult Index(string columnSetsName = "Default")
         {
             return View();
         }

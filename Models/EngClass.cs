@@ -27,6 +27,7 @@ namespace ProDat.Web2.Models
 
         public virtual ICollection<KeyListxEngClass> KeyListxEngClass { get; set; }
 
-        public virtual ICollection<EngDataClassxEngDataCode> EngDataClassxEngDataCodes { get; set; }
+        public virtual ICollection<EngDataClassxEngDataCode> EngDataClassxEngDataCodes { get; }  = new List<EngDataClassxEngDataCode>();
     }
 }
+

@@ -1,0 +1,58 @@
+﻿@model ProDat.Web2.ViewModels.KeyListInclusiveClassViewModel
+
+@{
+    if (Model != null)
+    { 
+        var ms = Model.EngDataCodeId;
+        var id = -1;
+        if (ms != 0)
+        id = ms;
+
+            
+        @(Html.DevExtreme().DataGrid<ProDat.Web2.ViewModels.KeyListInclusiveClassViewModel>()
+    .ID("EngClassDataGridX")
+    .DataSource(d => d.Mvc()
+        .Controller("UC5")
+        //.LoadParams(new { parent = Model.parent })
+        .LoadAction("EngClassDataGrid_GetData")
+                .Key("EngClassID")
+    )
+    @* .OnContextMenuPreparing("KeyListEngDataGrid_OnContextMenuPreparing")*@
+    .RemoteOperations(false)
+    .Columns(
+        columns =>
+        {
+            //columns.AddFor(m => m.EngDataClassxEngDataCodeId)
+                    columns.AddFor(m => m.ColumnNumber).SortOrder(SortOrder.Asc); ;
+                    columns.AddFor(m => m.Alias).Caption("Alias");
+                    columns.AddFor(m => m.EngDataCodeId).Caption("Id");
+                    columns.AddFor(m => m.EngDataCodeName).Caption("Code Name");
+                    columns.AddFor(m => m.EngDataCodeDesc).Caption("Description");
+                    columns.AddFor(m => m.BccCodeId).Caption("BCC Code");
+                    columns.AddFor(m => m.EngClassName).Caption("Class Name");
+                    //columns.AddFor(m => m.Eng).Caption("Data Code");
+            @*            .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintStrategy_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Text")
+                );*@
+        })
+    .FilterRow(f => f.Visible(true))
+    .HeaderFilter(f => f.Visible(true))
+    .GroupPanel(p => p.Visible(false))
+    .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+    .AllowColumnResizing(true)
+    .ColumnAutoWidth(true)
+    //.Selection(x => x.Mode(SelectionMode.Single))
+    .OnSelectionChanged("EngClassDataGrid_SelectionChanged")
+    @*.Height(mod_h)*@
+    //.Width(Model.width)
+    .ShowBorders(true)
+    .Editing(e => e.AllowAdding(false).AllowDeleting(false).AllowUpdating(false))
+
+)
+{
+            <input type="hidden" id="parent" value="@id" />
+        }
+    }
+    }

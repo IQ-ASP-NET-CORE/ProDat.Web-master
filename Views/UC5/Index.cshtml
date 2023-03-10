@@ -1,20 +1,687 @@
 ﻿@model ProDat.Web2.ViewModels.UC5
-
+@using DevExtreme.AspNet.Mvc
 @using ProDat.Web2.TagLibrary
 
+
+
 @{
-    ViewData["Title"] = "Maintenance Plan1";
+    ViewData["Title"] = "KeyLists";
 }
 
-@(Html.DevExtreme().DataGrid()
-    .ID("gridContainer")
-        .DataSource(ds => ds.Mvc()
-        .Controller("UC5")
-        .LoadAction("TagRegister_GetData")
-       // .InsertAction("TagRegister_Insert")
-       // .UpdateAction("TagRegister_Update")
-       // .DeleteAction("TagRegister_Delete")
-       // .Key("TagId")
-    )
-    .ShowBorders(true)
-)
+<!-- add components for UC5 here. Control UI using UC5 View Model -->
+<div id="wrapper">
+    <section class="col-1">
+        <div id="uc5sidecontrols" class="">
+            <form action="/UC5/Simplified" method="post">
+                <label for="KeyLists">Key Lists:</label>
+                <select name="KeyLists" id="KeyLists" onchange="this.form.submit()" class="form-select form-select-sm">
+                    <option value="Key Lists">Key Lists</option>
+                    <option value="PSV">PSV</option>
+                </select>
+            </form>
+            <br />
+            <br />
+
+            <button name="CreateNewKeyList" onclick="ToggleDiv('AddNewKeyList');">
+                New Key List
+            </button>
+
+        </div>
+        <div id="AddNewKeyList" class="block dx-swatch-Datagrid_Green" width="250px" height="250px" style="border: solid; border-color:#000000; visibility:hidden; position: relative; left:100px; top:0px; z-index: 1000;">This is a test div for creation of a new keylist, the form will appear here.@*<br><br /><a href="onclick(HideShownDiv('AddNewKeyList');"*@</div>
+    </section>
+    <table>
+        <tr>
+            <td>Key List Attributes</td>
+            <td>Unassigned Attributes Data Grid</td>
+        </tr>
+        <tr>
+            <td style=" height: calc(50vh + 100px); width:500px;"><div id="KeyListAttributes"></div></td>
+            <td style=" height: calc(50vh + 100px); width:500px;"><div id="UnassignedAttDataGrid"></div></td>
+        </tr>
+        <tr>
+            <td>Key List Doc Types</td>
+            <td>Unassigned Doc Types</td>
+        </tr>
+        <tr>
+            <td><div id="AssignedDocTypesDataGrid"></div></td>
+            <td><div id="UnassignedDocTypesDataGrid"></div></td>
+        </tr>
+        <tr>
+            <td>Key List Inclusive Classifications</td>
+            <td>Unassigned Classifications</td>
+        </tr>
+        <tr>
+            <td><div id="KeyListInclusiveClass"></div></td>
+            <td><div id="UnAssignedClassDataGrid"></div></td>
+        </tr>
+
+
+
+        </table>
+
+
+
+</div>
+
+
+
+<!-- Ajax, field change functions-->
+<script>
+    console.log("test1");
+    $(document).ready(function () {
+        // apparently this determines how gridview and form components appear...
+        // I suspect we need to set this within each component view.
+        localStorage.setItem("stylingMode", "outlined");
+
+        // Load the various View Components using wrappers.
+        //MaintenanceStrategiesDataGrid_Reload();
+        //KeyListDataGrid_Reload();
+        //KeyListEngClassDataGridUC5_Reload();
+        KeyListAttributes_Reload();
+        KeyListInclusiveClass_Reload();
+        ////TaskListHeaderMasterDetail_Reload();
+        //FlocListingDataGridUC3_Reload();
+        //Assigned / Unsassigned
+        UnassignedAttDataGrid_Reload();
+        AssignedDocTypesDataGrid_Reload();
+        UnassignedDocTypesDataGrid_Reload();
+        UnAssignedClassDataGrid_Reload();
+        ////Form loading
+        ////MaintenanceStrategiesForm_Reload();
+        //MaintPlanForm_Reload();
+        //MaintItemForm_Reload();
+        ////TaskListHeaderForm_Reload();
+
+        //// set form colours until George creates styles?
+        //// still need colours, as swatch only affects the item in question (dxWidget)
+        ////MWM messing with colour swatches
+
+        //applyColour('#MaintPlanForm', '#FFFFFF');
+        //applyColour('#MaintItemForm', '#FFFFFF');
+        //applyColour('#wrapper_bot', '#000000');
+        //applyColour('#FlocInMIDataGridUC3', '#FFFFFF');
+        //applyColour('FlocListingDataGridUC3', '#000000');
+        //applyColour('TaskListOperationsDataGrid', '#FCF2FF');
+
+        ////applyColour('#MaintPlanForm', '#EEF7E4');
+        ////applyColour('#MaintItemForm', '#EDF9FC');
+        ////applyColour('#wrapper_bot', '#F7F2FF');
+        ////applyColour('#FlocInMIDataGridUC3', '#EDF9FC');
+        ////applyColour('FlocListingDataGridUC3', '#EDF9FC');
+        ////applyColour('TaskListOperationsDataGrid', '#FCF2FF');
+
+        //console.log("test2");
+        ////applyColour('#TaskListHeaderForm', '#fbedff');
+
+        //// Event for resize of browser. Reloads window content
+        $(window).resize(function () {
+            location.reload();
+        })
+    });
+    function ToggleDiv(id) {
+        if (document.getElementById(id).style.visibility == "visible") {
+
+            document.getElementById(id).style.visibility = "hidden";
+        } else {
+
+            document.getElementById(id).style.visibility = "visible";
+        }
+
+    }
+    function applyColour(divId, color) {
+        $(divId).css('background-color', color);
+    }
+
+    function KeyListDataGrid_SelectionChanged(e) {
+        var id = e.selectedRowKeys[0];
+        if (id > 0) {
+            // reload related child content
+
+            EngClassDataGrid_Reload(id);
+
+            // apply filters to colA as required.
+            //EngClass_SelectFilter(id);
+
+            // reload forms which filters were updated.
+            // can take reloads out, if we can verify currently selected item remains selected.
+            //EngClassDataGrid_Reload();
+            //TaskListHeaderForm_Reload();
+            //added by MWM for background colours.
+            $("KeyListDataGrid").css('background-color', "#83a38c");
+        }
+    }
+
+    function EngClassDataGrid_SelectionChanged(e) {
+        var id = e.selectedRowKeys[0];
+        if (id > 0) {
+            // reload related child content
+
+            EngClassDataGrid_Reload(id);
+
+            // apply filters to colA as required.
+            EngClass_SelectFilter(id);
+
+            // reload forms which filters were updated.
+            // can take reloads out, if we can verify currently selected item remains selected.
+            //EngClassDataGrid_Reload();
+            //TaskListHeaderForm_Reload();
+            //added by MWM for background colours.
+            $("EngClassDataGrid").css('background-color', "#83a38c");
+        }
+    }
+
+    function KeyListAttributes_SelectionChanged(e) {
+        var id = e.selectedRowKeys[0];
+        if (id > 0) {
+            // reload related child content
+
+            KeyListAttributes_Reload(id);
+
+            // apply filters to colA as required.
+            //EngClass_SelectFilter(id);
+
+            // reload forms which filters were updated.
+            // can take reloads out, if we can verify currently selected item remains selected.
+            //EngClassDataGrid_Reload();
+            //TaskListHeaderForm_Reload();
+            //added by MWM for background colours.
+            $("EngClassDataGrid").css('background-color', "#83a38c");
+        }
+    }
+
+
+
+
+
+    function loadVC(divId, componentName) {
+
+        //load a component that gets its dimensions directly from its div.
+        var w = $("#" + divId).width();
+        var h = $("#" + divId).height();
+        $.ajax({
+            url: "/UC5/" + componentName + "_Reload",
+            data: { Height: parseInt(h), Width: parseInt(w) },
+            success: function (data) {
+                $("#" + divId).html(data);
+                console.log((data));
+            }
+        })
+    }
+
+    function loadVC_withID(divId, componentName, Id) {
+        //console.log(Id);
+        //load a component that gets its dimensions directly from its div.
+        var w = $("#" + divId).width();
+        var h = $("#" + divId).height();
+
+        $.ajax({
+            url: "/UC5/" + componentName + "_Reload",
+            data: { Height: parseInt(h), Width: parseInt(w), parent: Id },
+            success: function (data) {
+                $("#" + divId).html(data);
+            }
+        })
+        //console.log(Id);
+    }
+
+    function loadVC2(divId, componentName, sizedDiv) {
+        //load a component that gets its dimensions from its div parent.
+        var w = $("#" + sizedDiv).width();
+        var h = $("#" + sizedDiv).height();
+
+        $.ajax({
+            url: "/UC5/" + componentName + "_Reload",
+            data: { Height: parseInt(h), Width: parseInt(w) },
+            success: function (data) {
+                $("#" + divId).html(data);
+            }
+        })
+    }
+
+    function loadVC3(divId, componentName, tagId) {
+        //load a component that gets its dimensions from its div parent,
+        // Include TagId
+        var w = $("#" + divId).width();
+        var h = $("#" + divId).height();
+
+        $.ajax({
+            url: "/UC5/" + componentName + "_Reload",
+            data: { Height: parseInt(h), Width: parseInt(w), TagId: tagId },
+            success: function (data) {
+                $("#" + divId).html(data);
+            }
+        })
+    }
+
+    // ##################################################
+    // wrappers for loading view components from client #
+    // ##################################################
+
+
+    //function KeyListDataGrid_Reload() {
+    //    loadVC("KeyListDataGrid", "KeylistxEngDataCode_GetData");
+    //        console.log(id);
+    //}
+
+    function KeyListAttributes_Reload(id) {
+        if (id == null) {
+            id = 1;
+        }
+        loadVC_withID("KeyListAttributes", "KeylistxEngClass_GetData", id);
+    }
+
+    function KeyListInclusiveClass_Reload(id) {
+        if (id == null) {
+            id = 1;
+        }
+        loadVC_withID("KeyListInclusiveClass", "KeylistxEngClassNoMatches_GetData", id);
+        //console.log(id);
+    }
+
+    function UnassignedAttDataGrid_Reload(id) {
+        if (id == null) {
+            id = 1;
+        }
+        loadVC_withID("UnassignedAttDataGrid", "UnassignedAttDataGrid", id)
+        //console.log(id);
+    }
+
+    function AssignedDocTypesDataGrid_Reload(id){
+        if (id == null) {
+            id = 1;
+        }
+        loadVC_withID("AssignedDocTypesDataGrid", "AssignedDocTypesDataGrid", id)
+
+    }
+    function UnassignedDocTypesDataGrid_Reload(id){
+        if (id == null) {
+            id = 1;
+        }
+        loadVC_withID("UnassignedDocTypesDataGrid", "UnassignedDocTypesDataGrid", id)
+    }
+
+    function UnAssignedClassDataGrid_Reload(id){
+        if (id == null) {
+            id = 1;
+        }
+            loadVC_withID("UnAssignedClassDataGrid", "KeylistxEngClassNoMatches_GetData", id)
+    }
+    //This is the name of the controller function that I will be calling.
+    // ShowEngClass_KeyList
+    //function MaintPlanForm_Reload(id) {
+    //    loadVC_withID("KeyListForm", "KeyListForm", id);
+    //}
+
+
+    // ####################################################
+    // # Form updating using Ajax
+    // ####################################################
+
+
+    // ####################################################
+    // # Form updating using Ajax
+    // ####################################################
+
+    function KeyListAttributes_OnChange(e) {
+        // this hidden input box is injected by view component
+        var id = $('#KeyListAttributes').val();
+
+        if (e.value < 1 && e.value != null) {
+            var cruds = {};
+            // replace below with ddls in the form.
+            //cruds['MaintStrategyId'] = '/MaintStrategies';
+            //cruds['MaintSortProcessId'] = '/MaintSortProcesses';
+            //cruds['MeasPointId'] = '/MeasPoints';
+            //cruds['SchedulingPeriodUom'] = '/SchedulingPeriodUom';
+
+            if (e.dataField in cruds)
+                window.open(cruds[e.dataField]);
+
+            // There is no way to get old value without going to database! Devexpress...
+            EngClassDataGrid_Reload(id);
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/UC5/" + "KeyListAttributes",
+                data: { sId: id, attributeName: e.dataField, newValue: e.value },
+                dataType: "json",
+
+                success: function () {
+                    console.log("SUCCESS: field db update");
+                },
+
+                error: function () {
+                    console.log("FAIL: field db update");
+                }
+            })
+        }
+    }
+
+    function KeyListInclusiveClass_OnChange(e) {
+        // this hidden input box is injected by view component
+        var id = $('#KeyListInclusiveClass').val();
+
+        if (e.value < 1 && e.value != null) {
+            var cruds = {};
+            // replace below with ddls in the form.
+            //cruds['MaintStrategyId'] = '/MaintStrategies';
+            //cruds['MaintSortProcessId'] = '/MaintSortProcesses';
+            //cruds['MeasPointId'] = '/MeasPoints';
+            //cruds['SchedulingPeriodUom'] = '/SchedulingPeriodUom';
+
+            if (e.dataField in cruds)
+                window.open(cruds[e.dataField]);
+
+            // There is no way to get old value without going to database! Devexpress...
+            EngClassDataGrid_Reload(id);
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/UC5/" + "KeyListInclusiveClass",
+                data: { sId: id, attributeName: e.dataField, newValue: e.value },
+                dataType: "json",
+
+                success: function () {
+                    console.log("SUCCESS: field db update");
+                },
+
+                error: function () {
+                    console.log("FAIL: field db update");
+                }
+            })
+        }
+    }
+
+    function UnassignedAttDataGrid_OnChange(e) {
+        // this hidden input box is injected by view component
+        var id = $('#UnassignedAttDataGrid').val();
+
+        if (e.value < 1 && e.value != null) {
+            var cruds = {};
+            // replace below with ddls in the form.
+            //cruds['MaintStrategyId'] = '/MaintStrategies';
+            //cruds['MaintSortProcessId'] = '/MaintSortProcesses';
+            //cruds['MeasPointId'] = '/MeasPoints';
+            //cruds['SchedulingPeriodUom'] = '/SchedulingPeriodUom';
+
+            if (e.dataField in cruds)
+                window.open(cruds[e.dataField]);
+
+            // There is no way to get old value without going to database! Devexpress...
+            EngClassDataGrid_Reload(id);
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/UC5/" + "UnassignedAttDataGrid",
+                data: { sId: id, attributeName: e.dataField, newValue: e.value },
+                dataType: "json",
+
+                success: function () {
+                    console.log("SUCCESS: field db update");
+                },
+
+                error: function () {
+                    console.log("FAIL: field db update");
+                }
+            })
+        }
+    }
+
+    function AssignedDocTypesDataGrid_OnChange(e) {
+        // this hidden input box is injected by view component
+        var id = $('#AssignedDocTypesDataGrid_').val();
+
+        if (e.value < 1 && e.value != null) {
+            var cruds = {};
+            // replace below with ddls in the form.
+            //cruds['MaintStrategyId'] = '/MaintStrategies';
+            //cruds['MaintSortProcessId'] = '/MaintSortProcesses';
+            //cruds['MeasPointId'] = '/MeasPoints';
+            //cruds['SchedulingPeriodUom'] = '/SchedulingPeriodUom';
+
+            if (e.dataField in cruds)
+                window.open(cruds[e.dataField]);
+
+            // There is no way to get old value without going to database! Devexpress...
+            EngClassDataGrid_Reload(id);
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/UC5/" + "AssignedDocTypesDataGrid_",
+                data: { sId: id, attributeName: e.dataField, newValue: e.value },
+                dataType: "json",
+
+                success: function () {
+                    console.log("SUCCESS: field db update");
+                },
+
+                error: function () {
+                    console.log("FAIL: field db update");
+                }
+            })
+        }
+    }
+
+    function UnassignedDocTypesDataGrid_OnChange(e) {
+        // this hidden input box is injected by view component
+        var id = $('#UnassignedDocTypesDataGrid').val();
+
+        if (e.value < 1 && e.value != null) {
+            var cruds = {};
+            // replace below with ddls in the form.
+            //cruds['MaintStrategyId'] = '/MaintStrategies';
+            //cruds['MaintSortProcessId'] = '/MaintSortProcesses';
+            //cruds['MeasPointId'] = '/MeasPoints';
+            //cruds['SchedulingPeriodUom'] = '/SchedulingPeriodUom';
+
+            if (e.dataField in cruds)
+                window.open(cruds[e.dataField]);
+
+            // There is no way to get old value without going to database! Devexpress...
+            EngClassDataGrid_Reload(id);
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/UC5/" + "UnassignedDocTypesDataGrid",
+                data: { sId: id, attributeName: e.dataField, newValue: e.value },
+                dataType: "json",
+
+                success: function () {
+                    console.log("SUCCESS: field db update");
+                },
+
+                error: function () {
+                    console.log("FAIL: field db update");
+                }
+            })
+        }
+    }
+
+    function UnAssignedClassDataGrid_OnChange(e) {
+        // this hidden input box is injected by view component
+        var id = $('#UnAssignedClassDataGrid').val();
+
+        if (e.value < 1 && e.value != null) {
+            var cruds = {};
+            // replace below with ddls in the form.
+            //cruds['MaintStrategyId'] = '/MaintStrategies';
+            //cruds['MaintSortProcessId'] = '/MaintSortProcesses';
+            //cruds['MeasPointId'] = '/MeasPoints';
+            //cruds['SchedulingPeriodUom'] = '/SchedulingPeriodUom';
+
+            if (e.dataField in cruds)
+                window.open(cruds[e.dataField]);
+
+            // There is no way to get old value without going to database! Devexpress...
+            EngClassDataGrid_Reload(id);
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/UC5/" + "UnAssignedClassDataGrid",
+                data: { sId: id, attributeName: e.dataField, newValue: e.value },
+                dataType: "json",
+
+                success: function () {
+                    console.log("SUCCESS: field db update");
+                },
+
+                error: function () {
+                    console.log("FAIL: field db update");
+                }
+            })
+        }
+    }
+
+
+    function KeyListInclusiveClass_SelectionChanged() {
+        // this hidden input box is injected by view component
+        var id = $('#KeyListInclusiveClass').val();
+
+        if (e.value < 1 && e.value != null) {
+            var cruds = {};
+            // replace below with ddls in the form.
+            //cruds['MaintStrategyId'] = '/MaintStrategies';
+            //cruds['MaintSortProcessId'] = '/MaintSortProcesses';
+            //cruds['MeasPointId'] = '/MeasPoints';
+            //cruds['SchedulingPeriodUom'] = '/SchedulingPeriodUom';
+
+            if (e.dataField in cruds)
+                window.open(cruds[e.dataField]);
+
+            // There is no way to get old value without going to database! Devexpress...
+            EngClassDataGrid_Reload(id);
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/UC5/" + "KeyListInclusiveClass",
+                data: { sId: id, attributeName: e.dataField, newValue: e.value },
+                dataType: "json",
+
+                success: function () {
+                    console.log("SUCCESS: field db update");
+                },
+
+                error: function () {
+                    console.log("FAIL: field db update");
+                }
+            })
+        }
+
+    }
+
+    function UnAssignedClassDataGrid_SelectionChanged() {
+        // this hidden input box is injected by view component
+        var id = $('#UnAssignedClassDataGrid').val();
+
+        if (e.value < 1 && e.value != null) {
+            var cruds = {};
+            // replace below with ddls in the form.
+            //cruds['MaintStrategyId'] = '/MaintStrategies';
+            //cruds['MaintSortProcessId'] = '/MaintSortProcesses';
+            //cruds['MeasPointId'] = '/MeasPoints';
+            //cruds['SchedulingPeriodUom'] = '/SchedulingPeriodUom';
+
+            if (e.dataField in cruds)
+                window.open(cruds[e.dataField]);
+
+            // There is no way to get old value without going to database! Devexpress...
+            EngClassDataGrid_Reload(id);
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/UC5/" + "UnAssignedClassDataGrid",
+                data: { sId: id, attributeName: e.dataField, newValue: e.value },
+                dataType: "json",
+
+                success: function () {
+                    console.log("SUCCESS: field db update");
+                },
+
+                error: function () {
+                    console.log("FAIL: field db update");
+                }
+            })
+        }
+
+    }
+
+    function KeyListExclusiveClass_SelectionChanged() {
+        // this hidden input box is injected by view component
+        var id = $('#UnAssignedClassDataGrid').val();
+
+        if (e.value < 1 && e.value != null) {
+            var cruds = {};
+            // replace below with ddls in the form.
+            //cruds['MaintStrategyId'] = '/MaintStrategies';
+            //cruds['MaintSortProcessId'] = '/MaintSortProcesses';
+            //cruds['MeasPointId'] = '/MeasPoints';
+            //cruds['SchedulingPeriodUom'] = '/SchedulingPeriodUom';
+
+            if (e.dataField in cruds)
+                window.open(cruds[e.dataField]);
+
+            // There is no way to get old value without going to database! Devexpress...
+            EngClassDataGrid_Reload(id);
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/UC5/" + "KeyListInclusiveClass",
+                data: { sId: id, attributeName: e.dataField, newValue: e.value },
+                dataType: "json",
+
+                success: function () {
+                    console.log("SUCCESS: field db update");
+                },
+
+                error: function () {
+                    console.log("FAIL: field db update");
+                }
+            })
+        }
+
+    }
+
+
+
+</script>
+
+<!-- Filter datagrid functions -->
+<script>
+
+    function EngClass_SelectFilter(ecId) {
+
+        // filter MaintItem
+        var divId = '#EngClassDataGrid';
+        var filterFieldName = 'EngClassId';
+        var dataGridInstance = getDataGrid(divId);
+        dataGridInstance.clearFilter();
+        filter_Datagrid(dataGridInstance, filterFieldName, ecId);
+
+    }
+
+    function filter_Datagrid(dxInstance, filterFieldName, filterValue) {
+        dxInstance.columnOption(filterFieldName, {
+            selectedFilterOperation: "=",
+            filterValue: filterValue
+        });
+    }
+
+    function getDataGrid(divId) {
+        // Convention: component dxInstance Names are always same as componentName, suffixed with X
+        // this way, we dont create duplicate id's by accident in calling function.
+        divId = divId + 'X';
+        return $(divId).dxDataGrid('instance');
+    }
+
+
+</script>
+

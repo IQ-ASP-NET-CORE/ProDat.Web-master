@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ProDat.Web2.ViewModels
 {
-    // Used by UC2 and UC3 to constrain width of DataGrid view components
+    // Used by UC2, UC3 and UC5 to constrain width of DataGrid view components
     public class UC2ComponentVM
     {
         public int height { get; set; }

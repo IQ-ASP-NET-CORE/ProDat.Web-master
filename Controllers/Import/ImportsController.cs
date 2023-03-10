@@ -531,7 +531,7 @@ namespace ProDat.Web2.Controllers.Import
         }
 
 
-        public async Task<IActionResult> ExcelReport(int id)
+        public IActionResult ExcelReport(int id)
         {
             // get data from ImportReport, for this importId
             var tagData = _context.ImportReport.Where(x => x.importId == id).ToList();

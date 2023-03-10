@@ -28,7 +28,7 @@ namespace ProDat.Web2.Controllers.CRUDS
         }
 
         // GET: Areas
-        public async Task<IActionResult> Index(string columnSetsName = "Default")
+        public IActionResult Index(string columnSetsName = "Default")
         {
             Dictionary<string, ColParams> colIndex = new Dictionary<string, ColParams>();
             var col_customisations = _context.ColumnSets
@@ -63,7 +63,7 @@ namespace ProDat.Web2.Controllers.CRUDS
 
             return View();
         }
-    
+
 
         private void PopulateModel(Area model, IDictionary values)
         {

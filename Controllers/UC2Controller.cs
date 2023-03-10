@@ -61,13 +61,13 @@ namespace ProDat.Web2.Controllers
         }
 
         #region  Display Eng Attributes associated by MaintType
-        public async Task<IActionResult> EngAttributesByClassification(int id)
+        public IActionResult EngAttributesByClassification(int id)
         {
             var tag = _context.Tag.Where(x => x.TagId == id).FirstOrDefault();
 
             ViewBag.TagId = tag.TagId;
             ViewBag.TagNumber = tag.TagNumber;
-            ViewBag.TagFlocDesc = tag.TagFlocDesc != null? " - " + tag.TagFlocDesc : "";
+            ViewBag.TagFlocDesc = tag.TagFlocDesc != null ? " - " + tag.TagFlocDesc : "";
             ViewBag.GlobalProjectDescription = _context.Project.First().ProjectName;
             return View();
         }

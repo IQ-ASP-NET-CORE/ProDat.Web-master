@@ -41,7 +41,7 @@ namespace ProDat.Web2.Controllers
             _configuration = Configuration;
         }
 
-        public async Task<IActionResult> Index(string columnSetsName="Default")
+        public IActionResult Index(string columnSetsName = "Default")
         {
 
             // confirm user has mfa, else redirect to MFA setup.
@@ -57,23 +57,28 @@ namespace ProDat.Web2.Controllers
                 return Redirect(
                     // Modified by MWM
                     "/Identity/Account/Login");
-                    //"/Identity/Account/Manage/TwoFactorAuthentication");
+                //"/Identity/Account/Manage/TwoFactorAuthentication");
             }
 
             //TODO:  Update Dictionary<str, int> to <str, obj> so we can capture default width as well.
             Dictionary<string, ColParams> colIndex = new Dictionary<string, ColParams>();
-            var col_customisations =  _context.ColumnSets
+            var col_customisations = _context.ColumnSets
                                         .Where(x => x.ColumnSetsEntity == "Tag")
                                         .Where(x => x.ColumnSetsName == columnSetsName)
-                                        .Select(x => new { x.ColumnName
-                                                            , x.ColumnOrder
-                                                            , x.ColumnWidth
-                                                            , x.ColumnVisible
-                                                         }
+                                        .Select(x => new
+                                        {
+                                            x.ColumnName
+                                                            ,
+                                            x.ColumnOrder
+                                                            ,
+                                            x.ColumnWidth
+                                                            ,
+                                            x.ColumnVisible
+                                        }
                                                );
             foreach (var cust in col_customisations)
             {
-                colIndex.Add(cust.ColumnName, new ColParams(cust.ColumnOrder, cust.ColumnWidth) );
+                colIndex.Add(cust.ColumnName, new ColParams(cust.ColumnOrder, cust.ColumnWidth));
             }
 
             // SAP Validation

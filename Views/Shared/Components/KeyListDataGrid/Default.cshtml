@@ -1,0 +1,42 @@
+﻿@model ProDat.Web2.ViewModels.UC2ComponentVM
+
+
+@(Html.DevExtreme().DataGrid<ProDat.Web2.Models.KeyListxEngDataCode>()
+    .ID("KeyListAttributesX")
+    .DataSource(d => d.Mvc()
+        .Controller("UC5")
+        //.LoadParams(new { parent = Model.parent })
+        .LoadAction("KeyListDataGrid_GetData")
+        .Key("KeyListId")
+    )
+@* .OnContextMenuPreparing("KeyListEngDataGrid_OnContextMenuPreparing")*@
+.RemoteOperations(true)
+    .Columns(
+        columns =>
+        {
+            @*columns.AddFor(m => m.KeyListId).SortOrder(SortOrder.Asc);*@
+            columns.AddFor(m => m.EngDataCodes.EngDataClasss.EngDataClassName).Caption("Group");
+            columns.AddFor(m => m.EngDataCodes.EngDataCodeName).Caption("Name");
+            columns.AddFor(m => m.EngDataCodes.EngDataCodeDesc).Caption("Description");
+            columns.AddFor(m => m.Alias).Caption("Alias");
+            
+            //TODO: Remove. Caption Use the Model MaintPlan to dictate caption names.
+@*            .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintStrategy_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Text")
+                );*@
+        })
+    .FilterRow(f => f.Visible(true))
+    .HeaderFilter(f => f.Visible(true))
+    .GroupPanel(p => p.Visible(false))
+    .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+    .AllowColumnResizing(true)
+    .ColumnAutoWidth(true)
+    .Selection(x => x.Mode(SelectionMode.Single))
+    .OnSelectionChanged("KeyListDataGrid_SelectionChanged")
+    @*.Height(mod_h)*@
+    .Width(Model.width)
+    .ShowBorders(true)
+    .Editing(e => e.AllowAdding(false).AllowDeleting(false).AllowUpdating(false))
+)

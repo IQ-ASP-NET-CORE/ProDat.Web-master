@@ -29,7 +29,7 @@ namespace ProDat.Web2.Controllers.CRUDS
 
         // GET: SortFields
 
-        public async Task<IActionResult> Index(string columnSetsName = "Default")
+        public IActionResult Index(string columnSetsName = "Default")
         {
             Dictionary<string, ColParams> colIndex = new Dictionary<string, ColParams>();
             var col_customisations = _context.ColumnSets

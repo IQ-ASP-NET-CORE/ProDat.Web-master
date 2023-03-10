@@ -65,7 +65,7 @@ namespace ProDat.Web2.TagLibrary
                         } 
                         catch(Exception ex)
                         {
-                            Console.WriteLine("error with " + entity);
+                            Console.WriteLine("error with " + entity + ex);
                         }
                     }
                 }
@@ -119,7 +119,7 @@ namespace ProDat.Web2.TagLibrary
                         }
                         catch(Exception ex)
                         {
-                            Console.WriteLine("error with " + entity);
+                            Console.WriteLine("error with " + entity + ex);
                         }
                     }
                 }

@@ -22,7 +22,7 @@ namespace ProDat.Web2.ViewComponents
             _context = context;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(int Height,int Width)
+        public IViewComponentResult Invoke(int Height, int Width)
         {
             var viewModel = new UC2ComponentVM
             {

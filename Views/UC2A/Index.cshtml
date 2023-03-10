@@ -12,9 +12,10 @@
     // Also apply controller side!
     // 1. render content as readonly (VC functionality, not here.)
     // 2. Update DnD scripts to do nothing if isReadOnly.
-    string sDisabled = "disabled";
+
     if (User.IsInRole("User"))
     {
+        string sDisabled = "disabled";
         //isReadOnly = false;
         sDisabled = "";
     }
@@ -71,6 +72,7 @@
         // start with index #1 (zero based) item selected.
         initVCSelector(1);
 
+
         // Collapse functionality of form groupings in TagProperties Form
         var btn = document.getElementsByClassName("CollapseBtn");
         for (var i = 0; i < btn.length; i++) {
@@ -104,6 +106,7 @@
         // No DEX method to do this. using DOM/Pure JS.
         // On content ready, apply icon based on SAPStatusId
         sapId = $('#TagProperties_SAPStatusId').val();
+        console.log(sapId);
         let myForm = document.getElementById("form")
         let caption = myForm.getElementsByClassName("dx-form-group-caption")[0];
         newHtml = '<div><img src="./img/Status'+sapId+'A.ico" height="20" />' + caption.innerHTML + '</div>';
@@ -1100,7 +1103,7 @@
             if (!thisTree.selectItem(arrQueue[i])) {
                 // store unfound part of path for OnContentReady.
                 for (j = 0; j < i; j++) {
-                    futureQueue.shift(); 
+                    futureQueue.shift();
                 }
 
                 path = futureQueue.join("/");

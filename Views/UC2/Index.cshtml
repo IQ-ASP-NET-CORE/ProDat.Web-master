@@ -12,9 +12,10 @@
     // Also apply controller side!
     // 1. render content as readonly (VC functionality, not here.)
     // 2. Update DnD scripts to do nothing if isReadOnly.
-    string sDisabled = "disabled";
+    
     if (User.IsInRole("User"))
     {
+        string sDisabled = "disabled";
         //isReadOnly = false;
         sDisabled = "";
     }

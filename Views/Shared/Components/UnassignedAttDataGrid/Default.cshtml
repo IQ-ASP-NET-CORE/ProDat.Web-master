@@ -1,0 +1,55 @@
+﻿@model ProDat.Web2.ViewModels.EngDataKeyListViewModel
+
+@{
+    if (Model != null)
+    { 
+        var ms = Model.KeyListId;
+        int? id = -1;
+        if (ms != 0)
+            id = ms;
+
+            
+@(Html.DevExtreme().DataGrid<ProDat.Web2.ViewModels.EngDataKeyListViewModel>()
+            .ID("UnassignedAttDataGridX")
+    .DataSource(d => d.Mvc()
+        .Controller("UC5")
+        //.LoadParams(new { parent = Model.parent })
+                .LoadAction("UnassignedAttDataGrid_GetData")
+                .Key("EngClassID")
+    )
+    @* .OnContextMenuPreparing("KeyListEngDataGrid_OnContextMenuPreparing")*@
+    .RemoteOperations(false)
+    .Columns(
+        columns =>
+        {
+            //columns.AddFor(m => m.EngDataClassxEngDataCodeId)
+                    columns.AddFor(m => m.KeyListId).SortOrder(SortOrder.Asc); ;
+            columns.AddFor(m => m.hideFromUI).Caption("Name");
+            columns.AddFor(m => m.engDataCodeDesc).Caption("Desc");
+                    columns.AddFor(m => m.Parent).Caption("Parent");
+                    //columns.AddFor(m => m.Eng).Caption("Data Code");
+            @*            .Lookup(lookup => lookup
+                    .DataSource(d => d.Mvc().Controller("Lookups").LoadAction("MaintStrategy_Lookup").Key("Value"))
+                    .ValueExpr("Value")
+                    .DisplayExpr("Text")
+                );*@
+        })
+    .FilterRow(f => f.Visible(true))
+    .HeaderFilter(f => f.Visible(true))
+    .GroupPanel(p => p.Visible(false))
+    .Scrolling(s => s.Mode(GridScrollingMode.Virtual))
+    .AllowColumnResizing(true)
+    .ColumnAutoWidth(true)
+    //.Selection(x => x.Mode(SelectionMode.Single))
+    .OnSelectionChanged("EngClassDataGrid_SelectionChanged")
+    @*.Height(mod_h)*@
+    //.Width(Model.width)
+    .ShowBorders(true)
+    .Editing(e => e.AllowAdding(false).AllowDeleting(false).AllowUpdating(false))
+
+)
+{
+            <input type="hidden" id="parent" value="@id" />
+        }
+    }
+    }

@@ -20,7 +20,7 @@ namespace ProDat.Web2.ViewComponents
             _context = context;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(int height,int width, int parent = -1)
+        public IViewComponentResult Invoke(int height, int width, int parent = -1)
         {
             var ms = _context.MaintStrategy
                                 .Where(x => x.MaintStrategyId == parent).FirstOrDefault();

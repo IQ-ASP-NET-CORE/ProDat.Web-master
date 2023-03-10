@@ -29,7 +29,7 @@ namespace ProDat.Web2.Controllers.CRUDS
 
         // GET: TagEngDatas
 
-        public async Task<IActionResult> Index(int id, string columnSetsName = "Default")
+        public IActionResult Index(int id, string columnSetsName = "Default")
         {
             Dictionary<string, ColParams> colIndex = new Dictionary<string, ColParams>();
             var col_customisations = _context.ColumnSets
