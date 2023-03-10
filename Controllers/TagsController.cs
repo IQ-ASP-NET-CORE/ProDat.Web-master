@@ -529,6 +529,18 @@ namespace ProDat.Web2.Controllers
                 return BadRequest(new { reset_value = oldValue, errors = Validation_errors });
             }
 
+            var Created = DateTime.UtcNow;
+            var CreatedBy = User.Identity.Name;
+            _context.Historian.Add(
+            new Historian
+            {
+                AttributeName = attributeName,
+                AttributeValue = newValue,
+                Pk1 = int.Parse(sId),
+                CreatedBy = CreatedBy,
+                Created = Created
+            }
+              );
 
             await _context.SaveChangesAsync();
 
